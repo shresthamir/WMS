@@ -1,0 +1,17 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+                    xmlns:vc="clr-namespace:GTransfer.Converters"
+                  
+                    >
+    <vc:BooleanToVisiblityConverter x:Key="BoolToVisibility"></vc:BooleanToVisiblityConverter>
+    <vc:TimeSpanToDateConverter x:Key="TimeToDate"/>
+    <vc:ReverseBoolConverter x:Key="ReverseBool"/>
+    <vc:RadioButtonTrueFalseConveter x:Key="RptOption"/>    
+    <vc:TreeNodeToImageConverter x:Key="treeNode"/>
+    <vc:HideZeroConverter x:Key="HideZero"/>
+    <vc:RowToIndexConverter x:Key="RowToIndex"/>
+    <vc:ByteToBooleanConverter x:Key="ByteToBool"/>
+    <vc:IntToVisiblityConverter x:Key="IntToVisibility"/>
+    <vc:ByteToVisiblityConverter x:Key="ByteToVisibility"/>
+    <vc:DateToMitiConverter x:Key="ToMiti"/>
+</ResourceDictionary>

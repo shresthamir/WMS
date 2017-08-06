@@ -1,0 +1,127 @@
+﻿<UserControl x:Class="GTransfer.UserInterfaces.ItemLocationMapping"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+            xmlns:y="clr-namespace:GTransfer.CommandBehavior" 
+             xmlns:local="clr-namespace:GTransfer.UserInterfaces"
+              xmlns:Repo ="clr-namespace:GTransfer.Repository"
+             mc:Ignorable="d" 
+             xmlns:syncfusion="http://schemas.syncfusion.com/wpf" >
+    <UserControl.Resources>
+        <!--<Style TargetType="Button" BasedOn="{StaticResource RoundCornerButton}"></Style>-->
+        <Repo:LocationRepository x:Key="LocationList"/>
+        <!--<DataTemplate x:Key="TopLeftCommentTemplate">
+            <Border BorderBrush="AliceBlue"
+                    BorderThickness="2"
+                    CornerRadius="3">
+                <TextBlock HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontSize="10"
+                           Text="{Binding TopCenter}" />
+            </Border>
+        </DataTemplate>
+        <DataTemplate x:Key="ToolTipTemplate">
+            <Border BorderBrush="AliceBlue" BorderThickness="2" CornerRadius="3">
+                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="10" Text="{Binding CellValue}"/>
+
+            </Border>
+        </DataTemplate>-->
+
+    </UserControl.Resources>
+    <UserControl.InputBindings>
+        <KeyBinding Key="S" Modifiers="Control" Command="{Binding SaveCommand}"></KeyBinding>
+    </UserControl.InputBindings>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="80"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Border Grid.Row="0"  Style="{StaticResource PlainBackground }">
+            <Grid>
+                <StackPanel>
+                    <Border Style="{StaticResource TransparentBackground}" Width="320" HorizontalAlignment="Left" Height="30" Margin="0">
+                        <StackPanel     Orientation="Horizontal" HorizontalAlignment="Left">
+                            <RadioButton  Command="{Binding  RadioButtonValidationCommand}"  Content="Tree"   Width="100" VerticalAlignment="Center" IsChecked="{Binding IsTreeFormat}" ></RadioButton>
+                            <RadioButton Content="Non Tree" Width="100" VerticalAlignment="Center"  IsChecked="{Binding IsTreeFormat, Converter={StaticResource ReverseBool}}" Command="{Binding  RadioButtonValidationCommand}" ></RadioButton>
+                        </StackPanel>
+                    </Border>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Product Category:"  VerticalAlignment="Center" HorizontalAlignment="Center" />
+
+                        <ComboBox Width="200" VerticalAlignment="Center" ItemsSource="{Binding MGroupList}" DisplayMemberPath="DESCA" 
+                              SelectedItem="{Binding SelectedMGroup}"
+                              IsEditable="True" >
+                            <ComboBox.InputBindings>
+                                <KeyBinding Key="Enter" Command="{Binding RunCommand}"></KeyBinding>
+                            </ComboBox.InputBindings>
+                        </ComboBox>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel  Orientation="Horizontal" HorizontalAlignment="Right">
+
+                    <Button Width="100" Height="40"  Margin="5" Content="Load" Style="{StaticResource NewButton}" Command="{Binding RunCommand}" />
+                    <Button Width="100" Height="40" Command="{Binding SaveCommand}" Style="{StaticResource NewButton}" Margin="5"  Content="Save">
+
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+        <Border Grid.Row="1">
+
+            <syncfusion:GridTreeControl ChildPropertyName="Children"
+                                AllowAutoSizingNodeColumn="False" 
+                                ReadOnly="False" 
+                                        PercentSizingBehavior="SizeAlwaysPercent"
+                                syncfusion:GridCommentService.ShowComment="True" 
+                                ToolTipService.IsEnabled="True"
+                                UpdateMode="PropertyChanged"
+                                AutoPopulateColumns="False">
+                <syncfusion:GridTreeControl.ItemsSource>
+                    <Binding   Path="oMenuitemlist">
+                        <Binding.ValidationRules>
+                            <ExceptionValidationRule></ExceptionValidationRule>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </syncfusion:GridTreeControl.ItemsSource>
+
+                <i:Interaction.Behaviors>
+                    <y:GridTreeBehavior CoveredRange="2" ComboBoxIndex="3" ComboProperty="LocationId"/>
+                </i:Interaction.Behaviors>
+
+                <syncfusion:GridTreeControl.Columns  >
+                    <syncfusion:GridTreeColumn PercentWidth="50" MappingName="DESCA"  HeaderText="Item Description" >
+                        <syncfusion:GridTreeColumn.StyleInfo>
+                            <syncfusion:GridStyleInfo ReadOnly="True" />
+                        </syncfusion:GridTreeColumn.StyleInfo>
+                    </syncfusion:GridTreeColumn>
+
+                    <syncfusion:GridTreeColumn    PercentWidth="15" MappingName="MENUCODE" HeaderText="Item Code"  >
+                        <syncfusion:GridTreeColumn.StyleInfo>
+                            <syncfusion:GridStyleInfo ReadOnly="True" />
+                        </syncfusion:GridTreeColumn.StyleInfo>
+                    </syncfusion:GridTreeColumn>
+                    <syncfusion:GridTreeColumn    PercentWidth="15" MappingName="PreviousLocation" HeaderText="Previous Location"  >
+                        <syncfusion:GridTreeColumn.StyleInfo>
+                            <syncfusion:GridStyleInfo ReadOnly="True" />
+                        </syncfusion:GridTreeColumn.StyleInfo>
+                    </syncfusion:GridTreeColumn>
+
+                    <syncfusion:GridTreeColumn    PercentWidth="15" MappingName="LocationId" HeaderText="Locations"  >
+                        <syncfusion:GridTreeColumn.StyleInfo>
+                            <syncfusion:GridStyleInfo  x:Name="CatName" CellType ="ComboBox"  DropDownStyle="AutoComplete" ImageWidth="250"  ItemsSource="{StaticResource LocationList}" DisplayMember="LocationName" ValueMember="LocationId"   ShowDataValidationTooltip="True" />
+                        </syncfusion:GridTreeColumn.StyleInfo>
+                    </syncfusion:GridTreeColumn>
+
+                    <!--<syncfusion:GridTreeColumn PercentWidth="20" MappingName="MCAT1" HeaderText="Category" >
+                        <syncfusion:GridTreeColumn.StyleInfo>
+                            <syncfusion:GridStyleInfo   x:Name="CatName" CellType ="ComboBox" DropDownStyle="AutoComplete" ImageWidth="250"  ItemsSource="{StaticResource MCatList}"  ShowDataValidationTooltip="True" />
+                        </syncfusion:GridTreeColumn.StyleInfo>
+                    </syncfusion:GridTreeColumn>-->
+                </syncfusion:GridTreeControl.Columns>
+            </syncfusion:GridTreeControl>
+        </Border>
+    </Grid>
+
+</UserControl>
