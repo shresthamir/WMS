@@ -127,6 +127,7 @@ namespace GTransfer.ViewModels
                 {
                     foreach (Product p in oMenuitemlist)
                     {
+                        CatagoryGroupTreeMapping(p);
                         UpdateProduct(p,tran);
                     }
                     tran.Commit();
@@ -141,6 +142,21 @@ namespace GTransfer.ViewModels
                 }
             }
 
+        }
+        private void CatagoryGroupTreeMapping(Product p) {
+               
+                    foreach (Product pro in p.Children)
+                {
+                if (!string.IsNullOrEmpty(p.LocationId)) { 
+                    pro.LocationId = p.LocationId;
+                    pro.RowChanged = 1; }
+                if (p.TYPE == "G")
+                {
+                    CatagoryGroupTreeMapping(pro);
+                }
+             
+                
+            }
         }
         public void ExecuteSearch(object obj)
         {
@@ -221,18 +237,16 @@ namespace GTransfer.ViewModels
                     else
                     {
                         var IL2 = new ItemVsLocation() { Id = mi.LocationVsItemId, LID = mi.LocationId, MCODE = mi.MCODE };
-                        tran.Connection.Execute("UPDATE TBL_ITEM_DEFAULT_LOCATION SET LID = @LID,MCODE=@MCODE WHERE Id = @Id", IL2, tran);
-
+                        tran.Connection.Execute("UPDATE TBL_ITEM_DEFAULT_LOCATION SET LID = @LID,MCODE=@MCODE WHERE Id = @Id", IL2, tran); 
                     }
                 }
-                foreach (Product p in mi.Children)
-                {
-                    UpdateProduct(p, tran);
-                }
-         
-
-    }
-}
+              
+            }
+            foreach (Product p in mi.Children)
+            {
+                UpdateProduct(p, tran);
+            }
+        }
 
 private void NewNode_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 {

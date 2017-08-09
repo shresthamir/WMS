@@ -159,7 +159,7 @@ namespace GTransfer.ViewModels
             {
                 //if (MessageBox.Show("You are about to save current Location. Do you want to proceed?", "Save Data", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                 //    return;
-                if (Tmode == "NEW")
+                if (_action == ButtonAction.New)
                 {
                     LocationObj.Path = selectedLocation.Path + "\\" + LocationObj.LocationName;
                     using (SqlConnection Conn = new SqlConnection(GlobalClass.DataConnectionString))
@@ -169,7 +169,7 @@ namespace GTransfer.ViewModels
                         MessageBox.Show("Location is Saved Sucessfully...");
                     }
                 }
-                else if (Tmode == "EDIT")
+                else if (_action == ButtonAction.Edit)
                 {
                     using (SqlConnection Conn = new SqlConnection(GlobalClass.DataConnectionString))
                     {

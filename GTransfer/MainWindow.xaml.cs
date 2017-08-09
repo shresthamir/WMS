@@ -44,5 +44,14 @@ namespace GTransfer
             la.Title = "Item-Location Mapping";
             LayDocPane.Children.Add(la);
         }
+
+        private void RequisitionEntry_Click(object sender, RoutedEventArgs e)
+        {
+            LayoutAnchorable la = new LayoutAnchorable();
+            la.Content = new UserInterfaces.requisitionEntry();
+            la.IsActive = true;
+            la.Title = "Requisition Entry";
+            LayDocPane.Children.Add(la);
+        }
     }
 }

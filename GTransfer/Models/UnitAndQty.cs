@@ -47,4 +47,9 @@ namespace GTransfer.Models
         }
 
     }
-}
+    public class Unit : BaseModel
+    {
+        string _UNITS;
+        public string UNITS { get { return _UNITS; }set { _UNITS = value;OnPropertyChanged("UNITS"); } }
+    }
+    }

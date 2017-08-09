@@ -148,8 +148,10 @@
     <Compile Include="Library\VisualClass.cs" />
     <Compile Include="Models\AlternateUnit.cs" />
     <Compile Include="Models\DataTables\TMenuitem.cs" />
+    <Compile Include="Models\Division.cs" />
     <Compile Include="Models\Location.cs" />
     <Compile Include="Models\Product.cs" />
+    <Compile Include="Models\Requisition.cs" />
     <Compile Include="Models\UnitAndQty.cs" />
     <Compile Include="Models\UserProfiles.cs" />
     <Compile Include="Repository\Repositories.cs" />
@@ -159,8 +161,12 @@
     <Compile Include="UserInterfaces\LocationEntry.xaml.cs">
       <DependentUpon>LocationEntry.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserInterfaces\requisitionEntry.xaml.cs">
+      <DependentUpon>requisitionEntry.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModels\ItemLocationMappingViewModel.cs" />
     <Compile Include="ViewModels\LocationEntryViewModel.cs" />
+    <Compile Include="ViewModels\RequisitionEntryViewModel.cs" />
     <Page Include="Controls\ucActionBar.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -202,6 +208,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserInterfaces\LocationEntry.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserInterfaces\requisitionEntry.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

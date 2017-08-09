@@ -1,4 +1,4 @@
-﻿using GTransfer.Library;
+﻿ using GTransfer.Library;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,7 +17,7 @@ namespace GTransfer.Repository
         {
             using (SqlConnection conn = new SqlConnection(GlobalClass.DataConnectionString))
             {
-                foreach (Location L in conn.Query<Location>("SELECT * FROM TBL_LOCATIONS"))
+                foreach (Location L in conn.Query<Location>("SELECT * FROM TBL_LOCATIONS WHERE Level='"+Settings.LocationLevelLimit+"'"))
                 {
                     this.Add(L);
                 }

@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using GTransfer.Interfaces;
+using GTransfer.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -18,7 +19,9 @@ namespace GTransfer.Library
 {
     public static class GlobalClass
     {
-        public static string DataConnectionString = "SERVER = IMS-D1; DATABASE = Miniso; UID = sa; PWD = tebahal";
+        public static string DataConnectionString = "SERVER = PRO-PC; DATABASE = DB_POSDBS; UID = sa; PWD = tebahal";
+        // public static string DataConnectionString = "SERVER = IMS-D1; DATABASE = Miniso; UID = sa; PWD = tebahal";
+        public static UserProfiles CurrentUser = new UserProfiles() {UNAME="Test" };
 
         public static object CopyPropertyValuesOnlyPresent(object source, object Destination)
         {

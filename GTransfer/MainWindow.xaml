@@ -20,6 +20,7 @@
 
                     <MenuItem Name="Location" Header="Location Entry" Click="LocationEntry_Click"></MenuItem>
                     <MenuItem Name="ItemLocationMapping" Header="Item-Location Mapping" Click="ItemLocationMapping_Click"></MenuItem>
+                    <MenuItem Name="RequisitionEntry" Header="Requisition Entry" Click="RequisitionEntry_Click"></MenuItem>
 
 
 

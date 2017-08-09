@@ -1,0 +1,116 @@
+﻿<UserControl x:Class="GTransfer.UserInterfaces.requisitionEntry"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:GTransfer.UserInterfaces"
+                xmlns:myCombobox="clr-namespace:ExtendedComboBox;assembly=ExtendedComboBox"
+             mc:Ignorable="d" 
+              xmlns:uc="clr-namespace:GTransfer.Controls"
+             xmlns:CommandBehavior="clr-namespace:GTransfer.CommandBehavior"
+             d:DesignHeight="1000" d:DesignWidth="700">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60"></RowDefinition>
+            <RowDefinition Height="120"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Border Style="{StaticResource PlainBackground}">
+            <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="150"></ColumnDefinition>
+                <ColumnDefinition Width="200"></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
+                <StackPanel Orientation="Horizontal" IsEnabled="{Binding EntryPanelEnabled,Converter={StaticResource ReverseBool}}" >
+                <Label Content="ID:" Width="50"></Label>
+                    <TextBox Width="100" Text="{Binding RequisitionObj.ReqId,UpdateSourceTrigger=PropertyChanged}"  >
+                        <TextBox.InputBindings>
+                            <KeyBinding Key="Enter" Command="{Binding LoadDataCommand}" />
+                        </TextBox.InputBindings>
+                    </TextBox>
+            </StackPanel>
+               
+           
+            <uc:ucActionBar Grid.Column="2" HasGroup="False" HorizontalAlignment="Right"/>
+           
+        </Grid>
+        </Border>
+        <Grid Grid.Row="1" IsEnabled="{Binding EntryPanelEnabled}" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="280"> </ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Border Style="{StaticResource PlainBackground}">
+                <StackPanel>
+                    <StackPanel  Orientation="Horizontal" >
+                        <Label Content="Division:" Width="140"></Label>
+                        <ComboBox  Width="110" ItemsSource="{Binding divisionList}" DisplayMemberPath="NAME" SelectedValuePath="INITIAL" SelectedValue="{Binding RequisitionObj.Division}"></ComboBox>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Transaction Date:" HorizontalAlignment="Left" Width="140" ></Label>
+                        <DatePicker  Width="110" Text="{Binding RequisitionObj.TDate}"></DatePicker>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                    <Label Content="Excepted Delivery Date:" HorizontalAlignment="Left" Width="140" ></Label>
+                        <DatePicker Width="110" Text="{Binding RequisitionObj.Exp_DeliveryDate}"></DatePicker>
+                </StackPanel>
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource PlainBackground}" Grid.Column="1">
+                <StackPanel>
+                    <DockPanel Margin="5 0">
+                        <Label Content="Item :" Width="60" ></Label>
+                        <myCombobox:ExendedComboBoxDatagrid Tag="" KeyboardNavigation.TabNavigation="{Binding ItemCodeFocus}" HorizontalAlignment="Stretch"  
+                                                               Style="{DynamicResource VirtualizationKey}"  ItemsSource="{Binding ItemList}"   WaterMarkDescription="NAME" WaterMarkID="ITEMCODE"
+                                                               DisplayMemberPath="DESCA"  SelectedValue="{Binding SelectedItemMcode}" SelectedValuePath="MCODE"
+                                                                
+                                                               IdMemberPath="MENUCODE"     IsEditable="True">
+                            <myCombobox:ExendedComboBoxDatagrid.Columns >
+
+                                <DataGridTextColumn Header="CODE" Width="2*" Binding="{Binding MENUCODE}"/>
+                                <DataGridTextColumn Header="DESCRIPTION" Width="6*" Binding="{Binding DESCA}"/>
+                                <DataGridTextColumn Header="UNIT" Width="*" Binding="{Binding BASEUNIT}"/>
+                               
+
+                            </myCombobox:ExendedComboBoxDatagrid.Columns>
+                            <myCombobox:ExendedComboBoxDatagrid.InputBindings>
+                                <KeyBinding Key="Enter" Command="{Binding ItemCodeFocusLostEvent}"/>
+                            </myCombobox:ExendedComboBoxDatagrid.InputBindings>
+                        </myCombobox:ExendedComboBoxDatagrid>
+                    </DockPanel>
+                    <StackPanel Orientation="Horizontal" >
+                        <Label Content="Units:" Width="60" ></Label>
+                        <ComboBox   Width="100" ItemsSource="{Binding Requisition_DetailObj.Item.AlternateUnits}" DisplayMemberPath="ALTUNIT" SelectedValuePath="ALTUNIT" SelectedValue="{Binding Requisition_DetailObj.Unit}"></ComboBox>
+                        <Label Content="Quantity :" Width="80"></Label>
+                        <TextBox   Width="100"  Text="{Binding Requisition_DetailObj.Quantity}"></TextBox>
+                        <Button Style="{StaticResource NewButton}"  Margin=" 10 0" Content="Add" Width="60" Height="30" Command="{Binding AddCommand}"  >
+                            <Button.InputBindings>
+                                <KeyBinding Key="Enter" Command="{Binding AddCommand}" />
+                            </Button.InputBindings>
+                        </Button>
+                    </StackPanel>
+                   
+                </StackPanel>
+            </Border>
+        </Grid>
+        <Grid Grid.Row="2" IsEnabled="{Binding EntryPanelEnabled}" >
+            <DataGrid Name="dataGrid" KeyboardNavigation.TabNavigation="None"   
+                  ItemsSource="{Binding RequisitionObj.Requisition_Details,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"  SelectedItem="{Binding selectedReqDetails}" 
+                  AutoGenerateColumns="False" CommandBehavior:CommandBehavior.Event="MouseDoubleClick"
+                  CommandBehavior:CommandBehavior.Command="{Binding GridDoubleClickEvent}" 
+                  
+                  IsEnabled="{Binding  EntryPanelEnabled}"  Grid.RowSpan="2" IsReadOnly="True"  >
+                <DataGrid.Columns >
+                    <!--<DataGridTextColumn  Header="Sn" Width="30" Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow}, Converter={RowSn:RowToIndexConverter}}" />-->
+                    <DataGridTextColumn  Header="Item Code" Width="150" Binding="{Binding Item.MENUCODE}"/>
+                    <DataGridTextColumn  Header="Product Description" Width="*" Binding="{Binding  Item.DESCA}"/>
+                    <DataGridTextColumn  Header="Unit"  Width="150" Binding="{Binding Unit}" />
+                    <DataGridTextColumn  Header="Quantity"  Width="150" Binding="{Binding Quantity}" />
+                  
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+    </Grid>
+</UserControl>
