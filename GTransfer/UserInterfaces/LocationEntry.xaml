@@ -21,11 +21,12 @@
     <Grid>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="45"></RowDefinition>
+            <RowDefinition Height="60"></RowDefinition>
             <RowDefinition/>
         </Grid.RowDefinitions>
-       
-        <uc:ucActionBar HasGroup="False"/>
+        <Border Style="{StaticResource PlainBackground}">
+        <uc:ucActionBar HasGroup="False" HorizontalAlignment="Right"/>
+        </Border>
         <Border Grid.Row="1" Style="{StaticResource PlainBackground}" >
 
             <Grid Grid.Row="1">
@@ -113,7 +114,7 @@
                                     </StackPanel>
                                     <StackPanel Style="{StaticResource RowStackPanel}" >
                                         <Label Content="Location Path" />
-                                        <TextBox   Text="{Binding LocationObj.Path}" Width="400"  >
+                                        <TextBox   Text="{Binding LocationObj.Path}" Width="400"  IsReadOnly="True">
                                         </TextBox>
                                     </StackPanel>
                                 </StackPanel>

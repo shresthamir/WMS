@@ -24,6 +24,7 @@ namespace GTransfer.UserInterfaces
         {
             InitializeComponent();
             this.DataContext = new ViewModels.RequisitionEntryViewModel();
+            Loaded += (sender, e) => MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
 
         }
 

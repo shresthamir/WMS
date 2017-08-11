@@ -66,7 +66,12 @@ namespace GTransfer.ViewModels
         {
             if (Requisition_DetailObj.Item == null) { return; }
             if (Requisition_DetailObj.Quantity <= 0) { MessageBox.Show("Please provide valid Quantity");return; }
-   
+            if (RequisitionObj.Requisition_Details.Any((item) => item.Mcode == Requisition_DetailObj.Mcode))
+            {
+                    MessageBox.Show("Item  is already in the Table below", "Duplicate Data", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+            }
+
             RequisitionObj.Requisition_Details.Add(Requisition_DetailObj);
             Requisition_DetailObj = new Requisition_Detail();
             SelectedItemMcode = null;
@@ -128,7 +133,7 @@ namespace GTransfer.ViewModels
         }
         public override void SaveMethod(object obj)
         {
-            if (MessageBox.Show("You are about to Save the Requisition. Do you want to proceed?", "Delete Data", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+            if (MessageBox.Show("You are about to Save the Requisition. Do you want to proceed?", "Save Data", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                 return;
             if (RequisitionObj == null || RequisitionObj.Requisition_Details == null || RequisitionObj.Requisition_Details.Count <= 0) return;
             if (string.IsNullOrEmpty(RequisitionObj.Division)) { MessageBox.Show("Please select a Division"); return; }
@@ -154,7 +159,7 @@ namespace GTransfer.ViewModels
                             tran.Commit();
                             MessageBox.Show("Requisition is Saved Sucessfully...");
                         }
-                        catch { tran.Rollback(); }
+                        catch(Exception ex) { tran.Rollback();MessageBox.Show(ex.Message);return; }
 
                     }
                 }
@@ -178,7 +183,7 @@ namespace GTransfer.ViewModels
                             tran.Commit();
                             MessageBox.Show("Requisition is Updated Sucessfully...");
                         }
-                        catch { tran.Rollback(); }
+                        catch(Exception ex) { tran.Rollback();MessageBox.Show(ex.Message);return; }
 
                     }
                 }
