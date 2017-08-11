@@ -1,0 +1,225 @@
+﻿<UserControl x:Class="GTransfer.UserInterfaces.GRN"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:GTransfer.UserInterfaces"
+             xmlns:uc="clr-namespace:GTransfer.Controls"
+             xmlns:myCombobox="clr-namespace:ExtendedComboBox;assembly=ExtendedComboBox"
+             mc:Ignorable="d" 
+             d:DesignHeight="768" d:DesignWidth="1366">
+    <UserControl.Resources>
+        <Style x:Key="VirtualizationKey" TargetType="{x:Type ComboBox}" >
+            <Setter Property="ItemsPanel">
+                <Setter.Value >
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel/>
+                    </ItemsPanelTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="Label">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Height" Value="26"/>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Border Style="{StaticResource PlainBackground}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="400"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!--<Grid  x:Name="VoucherGrid" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Stretch"  >
+                    <Grid.RowDefinitions >
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="30"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="90" />
+                        <ColumnDefinition Width="120"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Content ="Vouchar No:"  x:Name="lblVoucherNo" />
+                    <Grid  x:Name="VocherNoGrid" Height="26" Grid.Row="0" Grid.Column="1" IsEnabled="{Binding  EntryPanelEnabled,Converter={StaticResource ReverseBool}}" HorizontalAlignment="Stretch"  >
+                        <Grid.ColumnDefinitions >
+                            <ColumnDefinition Width = "20"/>
+                            <ColumnDefinition Width = "80"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox Grid.Row="0" Grid.Column="0" IsReadOnly="True"   FontWeight="Bold" Text="{Binding TMain.VoucherPrefix}" Focusable="False" />
+                        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding TMain.VNUM}"  />
+                    </Grid>
+                    <Label x:Name="LblChalan" Grid.Row="1"  Content ="Chalan No :"  />
+                    <TextBox x:Name="TxtBoxChalan" Grid.Row="1" Grid.Column="1" Height="26"  Width="100" HorizontalAlignment="Left"
+                                 Text="{Binding TrnMainBaseModelObj.CHALANNO, Mode=TwoWay}"  
+                                 IsEnabled="{Binding  EntryPanelEnabled}"   />
+
+                </Grid>
+                <Grid  Grid.Column="1"  IsEnabled="{Binding  EntryPanelEnabled}" VerticalAlignment="Center" >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="90"/>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition Width="90"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="30"/>
+                    </Grid.RowDefinitions>
+
+                    <Label   Content="Entry Date :" x:Name="lblEntryDate"  />
+                    -->
+                <!--<DatePicker    Text="{Binding TrnMainBaseModelObj.TRNDATE, Mode=TwoWay}" Width="95" Height="30" />-->
+                <!--
+
+                    <uc:Dameer Grid.Column="1" Value ="{Binding TMain.TRNDATE, Mode=TwoWay}"  ShowCheckBox="False" Format="Short" Height="26" />
+                    <uc:BsDate Grid.Column="2" Value ="{Binding TMain.BSDATE, Mode=TwoWay}"  Checked="{Binding ElementName=DtTrn_date,Path=Checked}" Height="26" Margin="5 0 0 0" />
+
+
+                    <Label Grid.Row="1" Content ="Trn Date :"  x:Name="lblTrnDate" />
+                    <uc:Dameer Grid.Row="1" Grid.Column="1" Value ="{Binding TMain.TRN_DATE, Mode=TwoWay}" ShowCheckBox="True"  Format="Short"  x:Name="trn_date" Height="26" />
+                    <uc:BsDate Grid.Row="1" Grid.Column="2" Value="{Binding TMain.BS_DATE,Mode=TwoWay}"  Margin=" 5 0 0 0" Checked="{Binding ElementName=trn_date  ,Path=Checked ,Mode=TwoWay,NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged }" Height="26" />
+
+                </Grid>-->
+
+
+                <Grid VerticalAlignment="Center"  Margin="10 0 0 0" >
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="30"/>
+                    </Grid.RowDefinitions>
+                    <Label HorizontalAlignment="Left" VerticalAlignment="Bottom" Content="Order Reference: #" Margin="0 0 0 -5"  />
+                    <TextBox Grid.Row="1" Tag="" HorizontalAlignment="Stretch"  Text="{Binding TMain.REFORDBILL,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" >
+                        <TextBox.InputBindings>
+                            <KeyBinding Key="Enter" Command="{Binding OrderReferenceCommand}"/>
+                        </TextBox.InputBindings>
+                    </TextBox>
+
+                </Grid>
+                <GroupBox Grid.Column="1"  Header="Filter Items" Margin="20 0 0 5">
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal">
+                        <RadioButton Content="Show All" />
+                        <RadioButton Content="Show Variant only" Margin="10 0 0 0"/>
+                        <RadioButton Content="Show Non-variant only" Margin="10 0 0 0"/>
+                    </StackPanel>
+                </GroupBox>
+                <Button Style="{StaticResource NewButton}" Content="Generate Purchase Invoice" Grid.Column="2" Width="170" HorizontalAlignment="Right"></Button>
+            </Grid>
+        </Border>
+        <!--<Border Grid.Row="1" Style="{StaticResource PlainBackground}">
+            <Grid VerticalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="90"/>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="20"/>
+                    <ColumnDefinition Width="90"/>
+                    <ColumnDefinition Width="250"/>
+                </Grid.ColumnDefinitions>
+                <Label  Content="Purchase Ac:" />
+                <ComboBox Grid.Column="1" Style="{DynamicResource VirtualizationKey}" Height="26" ItemsSource="{Binding PurchaseAccountList}" DisplayMemberPath="ACNAME"  SelectedItem="{Binding SelectedPurchaseAccount}" IsEditable="True"/>
+                <Label Grid.Row="1"  Content="Supplier:" />
+                <TextBox Grid.Row="1" Grid.Column="1"  Text="{Binding SupplierName}" IsReadOnly="True"  Height="26"/>
+
+
+                <Label Grid.Column="3" Content="Tran Mode :" />
+                <StackPanel VerticalAlignment="Center" Orientation="Horizontal" Grid.Column="4">
+                    <RadioButton Content="Credit" x:Name="rbCredit"  GroupName="tranMode" IsChecked="{Binding CreditCheck}"></RadioButton>
+                    <RadioButton  Content="Cash" x:Name="rbCash"   GroupName="tranMode" IsChecked="{Binding CashCheck}"></RadioButton>
+                    <RadioButton  Content="Bank"  x:Name="rbBank"  GroupName="tranMode" IsChecked="{Binding BankCheck}"></RadioButton>
+                </StackPanel>
+
+                <Label Grid.Row="1" Grid.Column="3" Content="Trn Account :" />
+                <myCombobox:ExendedComboBoxDatagrid Grid.Row="1" Grid.Column="4"  Style="{DynamicResource VirtualizationKey}"
+                                                          ItemsSource="{Binding AccountList}" PopUpWidth="500" DisplayMemberPath="ACNAME" WaterMarkID="AcCode" WaterMarkDescription="Name" IdMemberPath="ACCODE" SelectedProduct="{Binding SelectedAccount}" SelectedProductPath="ACID" SelectedItem="{Binding SelectedAccount}" SelectedValuePath="ACID" Width="245" Height="28" IsEditable="True">
+                    <myCombobox:ExendedComboBoxDatagrid.Columns>
+
+                        <DataGridTextColumn Header="ACCODE" Binding="{Binding ACCODE}"/>
+
+                        <DataGridTextColumn Header="NAME" Width="*" Binding="{Binding ACNAME}"/>
+                        <DataGridTextColumn Header="VATNO" Binding="{Binding VATNO}"/>
+                        <DataGridTextColumn Header="ADDRESS" Binding="{Binding ADDRESS}"/>
+                    </myCombobox:ExendedComboBoxDatagrid.Columns>
+                </myCombobox:ExendedComboBoxDatagrid>
+            </Grid>
+        </Border>-->
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="220"/>
+            </Grid.ColumnDefinitions>
+
+
+            <DataGrid Name="dataGrid" IsReadOnly="True"  KeyboardNavigation.TabNavigation="None"  EnableRowVirtualization="False"  
+                  ItemsSource="{Binding ProdList, Mode=TwoWay}" SelectedItem="{Binding selectedTrnProd, Mode=TwoWay}"  BorderThickness="1" BorderBrush="Black" AutoGenerateColumns="False"   Margin="2" 
+                           CanUserResizeRows="False">
+                <DataGrid.Columns >
+                    <DataGridTextColumn Header="SN" Width="40"  Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow}, Converter={StaticResource RowToIndex}}" />
+                    <DataGridTextColumn  Header="Item code" Width="80" Binding="{Binding MENUCODE}" />
+                    <DataGridTextColumn  Header="Item Description" Width="*" Binding="{Binding ITEMDESC}"/>
+                    <DataGridTextColumn  Header="Warehouse"  Width="120" Binding="{Binding WAREHOUSE}" />
+                    <DataGridTextColumn  Header="Unit"  Width="60" Binding="{Binding UNIT}"/>
+                    <DataGridTextColumn  Header="Order Qty"  Width="70" Binding="{Binding OrderQty,StringFormat=#0.00}" />
+                    <DataGridTextColumn  Header="Received Qty"  Width="80" Binding="{Binding Quantity,StringFormat=#0.00}" />
+                    <DataGridTextColumn  Header="Variance Qty"  Width="80" Binding="{Binding VarianceQty,StringFormat=#0.00}" />
+                    
+                    <DataGridTextColumn  Header="Rate"  Width="70" Binding="{Binding RATE,StringFormat=#0.00}" />
+                    <DataGridTextColumn  Header="Amount"  Width="100" Binding="{Binding AMOUNT,StringFormat=#0.00}" />
+                    <!--<DataGridTextColumn  Header="VAT"  Width="100" Binding="{Binding VAT,StringFormat=#0.00}" />
+                    <DataGridTextColumn  Header="Total"  Width="110"  Binding="{Binding NETAMOUNT,StringFormat=#0.00}"/>-->
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <GroupBox Header="Total Balance" Grid.Column="1"  BorderBrush="Black" FontSize="11" >
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel  KeyboardNavigation.TabNavigation="None" >
+                        <StackPanel Orientation="Horizontal" >
+                            <Label Width="85" Content="Sub Total :" Background="Azure"   Padding="3" ToolTip="Gross Amount - Discount" />
+                            <TextBox Height="25"  Width="100" Padding="0 6 0 0"   Text="{Binding TMain.TOTAMNT,StringFormat=#0.00}" Background="Azure" BorderBrush="Black" IsReadOnly="True"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal"  >
+                            <Label Width="85" Content="Gross Amount:" Background="Azure"   Padding="3" ToolTip="Rate * Quantity"/>
+                            <TextBox Height="25" Width="100" Padding="0 6 0 0" Text="{Binding TMain.TOTAMNT,StringFormat=#0.00}" Background="Azure" BorderBrush="Black" IsReadOnly="True"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" >
+                            <Label Width="85" Content="Taxable Amt:" Background="Azure"   Padding="3" />
+                            <TextBox Height="25"  Width="100" Padding="0 6 0 0"   Text="{Binding TMain.TAXABLE,StringFormat=#0.00}" Background="Azure" BorderBrush="Black" IsReadOnly="True"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal"  >
+                            <Label Width="85" Content="NonTaxableAmt:" Background="Azure"  Padding="3" />
+                            <TextBox Height="25"  Width="100" Padding="0 6 0 0"  IsReadOnly="True" Text="{Binding TMain.NONTAXABLE,StringFormat=#0.00}" Background="Azure" BorderBrush="Black" />
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal"  >
+                            <Label Width="85" Content="VAT:" Background="Azure"  Padding="3" ToolTip="{Binding tooltipsforVat}"/>
+                            <TextBox ToolTip="" Height="25"  Width="100" Padding="0 6 0 0"  Text="{Binding  TMain.VATAMNT,StringFormat=#0.00}" Background="Azure" BorderBrush="Black" IsReadOnly="True"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal"  >
+                            <Label Width="85" Content="Rounding Adj:" Background="Azure" Padding="3" />
+                            <TextBox Height="25"  Width="100" Padding="0 6 0 0"   Text="{Binding TMain.ROUNDOFF,UpdateSourceTrigger=PropertyChanged}" Background="Azure" BorderBrush="Black"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" >
+                            <Label Width="85"  Content="Net Amount:" Background="Azure"   Padding="3" ToolTip="TAXABLE + NONTAXABLE + SERVICETAX + VAT" />
+                            <TextBox Height="25" Width="100" Padding="0 6 0 0"  Text="{Binding  TrnMainBaseModelObj.NETAMNT,StringFormat=#0.00,UpdateSourceTrigger=PropertyChanged}" Background="Azure" BorderBrush="Black"/>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </GroupBox>
+        </Grid>
+    </Grid>
+</UserControl>

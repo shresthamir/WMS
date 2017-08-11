@@ -111,6 +111,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\DatePIcker.cs" />
     <Compile Include="Controls\ucActionBar.xaml.cs">
       <DependentUpon>ucActionBar.xaml</DependentUpon>
     </Compile>
@@ -152,9 +153,15 @@
     <Compile Include="Models\Location.cs" />
     <Compile Include="Models\Product.cs" />
     <Compile Include="Models\Requisition.cs" />
+    <Compile Include="Models\TTrnMain.cs" />
+    <Compile Include="Models\TTrnProd.cs" />
+    <Compile Include="Models\TTrnTran.cs" />
     <Compile Include="Models\UnitAndQty.cs" />
     <Compile Include="Models\UserProfiles.cs" />
     <Compile Include="Repository\Repositories.cs" />
+    <Compile Include="UserInterfaces\GRN.xaml.cs">
+      <DependentUpon>GRN.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserInterfaces\ItemLocationMapping.xaml.cs">
       <DependentUpon>ItemLocationMapping.xaml</DependentUpon>
     </Compile>
@@ -164,6 +171,7 @@
     <Compile Include="UserInterfaces\requisitionEntry.xaml.cs">
       <DependentUpon>requisitionEntry.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\GRNViewModel.cs" />
     <Compile Include="ViewModels\ItemLocationMappingViewModel.cs" />
     <Compile Include="ViewModels\LocationEntryViewModel.cs" />
     <Compile Include="ViewModels\RequisitionEntryViewModel.cs" />
@@ -202,6 +210,10 @@
     <Page Include="Styles\ValueConverters.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserInterfaces\GRN.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserInterfaces\ItemLocationMapping.xaml">
       <SubType>Designer</SubType>

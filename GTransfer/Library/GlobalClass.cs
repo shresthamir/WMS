@@ -4,6 +4,8 @@ using GTransfer.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -19,10 +21,12 @@ namespace GTransfer.Library
 {
     public static class GlobalClass
     {
-        public static string DataConnectionString = "SERVER = PRO-PC; DATABASE = DB_POSDBS; UID = sa; PWD = tebahal";
-        // public static string DataConnectionString = "SERVER = IMS-D1; DATABASE = Miniso; UID = sa; PWD = tebahal";
-        public static UserProfiles CurrentUser = new UserProfiles() {UNAME="Test" };
+        //public static string DataConnectionString = "SERVER = PRO-PC; DATABASE = DB_POSDBS; UID = sa; PWD = tebahal";
+         public static string DataConnectionString = "SERVER = IMS-D1; DATABASE = Miniso; UID = sa; PWD = tebahal";
+        public static UserProfiles CurrentUser = new UserProfiles() { UNAME = "Test" };
 
+        public static string DIVISION = "MMX";
+        public static object CurFiscalYear = "074/75";
         public static object CopyPropertyValuesOnlyPresent(object source, object Destination)
         {
             if (source == null)
@@ -235,5 +239,95 @@ namespace GTransfer.Library
             }
             return current as T;
         }
+
+        public static int GetBillSequences(IDbCommand Cmd, string VNAME, string VoucherType, string VoucherName, String Series, ref string Vno, ref String Chalanno, ref string Vnum)
+        {
+
+            string Div = DIVISION;
+            int Curno;
+           
+            try
+            {
+                Cmd.CommandText = "SELECT isnull(CURNO,0) CURNO FROM RMD_SEQUENCES WHERE VNAME = '" + VNAME + "' AND DIVISION LIKE  '" + Div + "'";
+                var cur = Cmd.ExecuteScalar();
+                if (cur != null)
+                {
+                    Curno = Convert.ToInt32(cur);
+                    Vnum = Curno.ToString();
+                    Vno = Series + Convert.ToString(Curno);
+                    Chalanno = Vno;
+                }
+                else
+                {
+                    Cmd.CommandText = "INSERT INTO RMD_SEQUENCES (VNAME,CURNO,DIVISION,VoucherType,VOUCHERNAME) VALUES ( '" + VNAME + "',1,'" + Div + "','" + VoucherType + "','" + VoucherName + "')";
+                    Cmd.ExecuteNonQuery();
+                    Curno = 1;
+                    Vnum = "1";
+                    Vno = Series + Convert.ToString(Curno);
+                    Chalanno = Vno;
+                }
+                return Curno;
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            return 0;
+
+        }
+
+        public static int GetBillSequences(string VNAME, string VoucherType, string VoucherName, String Series, ref string Vno, ref String Chalanno, ref string Vnum)
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(DataConnectionString))
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    conn.Open();
+                    GetBillSequences(cmd, VNAME, VoucherType, VoucherName, Series, ref Vno, ref Chalanno, ref Vnum);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            return 0;
+
+        }
+
+        /// <summary>
+        /// returns BS Date string of given AD Date
+        /// </summary>
+        /// <param name="Adate">AD Date to be converted</param>
+        /// <returns></returns>
+        public static string GetBSDate(DateTime Adate)
+        {
+            try
+            {               
+                using (SqlConnection Con = new SqlConnection(GlobalClass.DataConnectionString))
+                using (SqlCommand Cmd = Con.CreateCommand())
+                {
+                    Con.Open();
+                    Cmd.CommandText = "select dbo.dateToMiti('" + Adate.ToString("dd/MMM/yyyy") + "','/')";
+                    var bsdate = Cmd.ExecuteScalar();
+                    if (bsdate != null)
+                        return (string)bsdate;
+                    else
+                        return "";
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+    }
+
+    public enum VoucherTypeEnum
+    {
+        Default = 0, Sales = 1, SalesReturn = 2, Purchase = 3, PurchaseReturn = 4, StockIssue = 5, StockReceive = 6, BranchTransferIn = 7,
+        BranchTransferOut = 8, StockSettlement = 9, Stockadjustment = 10, Receipe = 11, Journal = 12, Delivery = 13, TaxInvoice = 14,
+        CreditNote = 15, DebitNote = 16, PaymentVoucher = 17, ReceiveVoucher = 18, PurchaseOrder = 19, SalesOrder = 20, DeliveryReturn = 21, AccountOpeningBalance = 22, PartyOpeningBalance = 23, OpeningStockBalance = 24, SubLedgerOpeningBalance = 25
     }
 }

@@ -16,14 +16,12 @@
         <Border BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}">
             <Menu x:Name="MainMenu" Background="#FFDCE6E8">
                 <MenuItem Name="Master" Header="Master" >
-
-
                     <MenuItem Name="Location" Header="Location Entry" Click="LocationEntry_Click"></MenuItem>
                     <MenuItem Name="ItemLocationMapping" Header="Item-Location Mapping" Click="ItemLocationMapping_Click"></MenuItem>
                     <MenuItem Name="RequisitionEntry" Header="Requisition Entry" Click="RequisitionEntry_Click"></MenuItem>
-
-
-
+                </MenuItem>
+                <MenuItem Name="Transaction" Header="Transaction">
+                    <MenuItem Name="GRN" Header="GRN" Click="GRN_Click"/>
                 </MenuItem>
             </Menu>
         </Border>

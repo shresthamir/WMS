@@ -555,8 +555,4 @@ namespace GTransfer.Converters
             return GParse.ToDecimal(value);
         }
     }
-
-   
-
-
 }

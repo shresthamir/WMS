@@ -53,5 +53,14 @@ namespace GTransfer
             la.Title = "Requisition Entry";
             LayDocPane.Children.Add(la);
         }
+
+        private void GRN_Click(object sender, RoutedEventArgs e)
+        {
+            LayoutAnchorable la = new LayoutAnchorable();
+            la.Content = new UserInterfaces.GRN();
+            la.IsActive = true;
+            la.Title = "GRN";
+            LayDocPane.Children.Add(la);
+        }
     }
 }
