@@ -1,0 +1,129 @@
+﻿<UserControl x:Class="GTransfer.UserInterfaces.ShipmentReceiveLog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:GTransfer.UserInterfaces"
+             xmlns:uc="clr-namespace:GTransfer.Controls"
+             xmlns:myCombobox="clr-namespace:ExtendedComboBox;assembly=ExtendedComboBox"
+             mc:Ignorable="d" 
+             d:DesignHeight="768" d:DesignWidth="1366">
+    <UserControl.Resources>
+        <Style x:Key="VirtualizationKey" TargetType="{x:Type ComboBox}" >
+            <Setter Property="ItemsPanel">
+                <Setter.Value >
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel/>
+                    </ItemsPanelTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="Label">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Height" Value="26"/>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Border Style="{StaticResource PlainBackground}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="400"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!--<Grid  x:Name="VoucherGrid" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Stretch"  >
+                    <Grid.RowDefinitions >
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="30"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="90" />
+                        <ColumnDefinition Width="120"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Content ="Vouchar No:"  x:Name="lblVoucherNo" />
+                    <Grid  x:Name="VocherNoGrid" Height="26" Grid.Row="0" Grid.Column="1" IsEnabled="{Binding  EntryPanelEnabled,Converter={StaticResource ReverseBool}}" HorizontalAlignment="Stretch"  >
+                        <Grid.ColumnDefinitions >
+                            <ColumnDefinition Width = "20"/>
+                            <ColumnDefinition Width = "80"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox Grid.Row="0" Grid.Column="0" IsReadOnly="True"   FontWeight="Bold" Text="{Binding TMain.VoucherPrefix}" Focusable="False" />
+                        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding TMain.VNUM}"  />
+                    </Grid>
+                    <Label x:Name="LblChalan" Grid.Row="1"  Content ="Chalan No :"  />
+                    <TextBox x:Name="TxtBoxChalan" Grid.Row="1" Grid.Column="1" Height="26"  Width="100" HorizontalAlignment="Left"
+                                 Text="{Binding TrnMainBaseModelObj.CHALANNO, Mode=TwoWay}"  
+                                 IsEnabled="{Binding  EntryPanelEnabled}"   />
+
+                </Grid>
+                <Grid  Grid.Column="1"  IsEnabled="{Binding  EntryPanelEnabled}" VerticalAlignment="Center" >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="90"/>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition Width="90"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="30"/>
+                    </Grid.RowDefinitions>
+
+                    <Label   Content="Entry Date :" x:Name="lblEntryDate"  />
+                    -->
+                <!--<DatePicker    Text="{Binding TrnMainBaseModelObj.TRNDATE, Mode=TwoWay}" Width="95" Height="30" />-->
+                <!--
+
+                    <uc:Dameer Grid.Column="1" Value ="{Binding TMain.TRNDATE, Mode=TwoWay}"  ShowCheckBox="False" Format="Short" Height="26" />
+                    <uc:BsDate Grid.Column="2" Value ="{Binding TMain.BSDATE, Mode=TwoWay}"  Checked="{Binding ElementName=DtTrn_date,Path=Checked}" Height="26" Margin="5 0 0 0" />
+
+
+                    <Label Grid.Row="1" Content ="Trn Date :"  x:Name="lblTrnDate" />
+                    <uc:Dameer Grid.Row="1" Grid.Column="1" Value ="{Binding TMain.TRN_DATE, Mode=TwoWay}" ShowCheckBox="True"  Format="Short"  x:Name="trn_date" Height="26" />
+                    <uc:BsDate Grid.Row="1" Grid.Column="2" Value="{Binding TMain.BS_DATE,Mode=TwoWay}"  Margin=" 5 0 0 0" Checked="{Binding ElementName=trn_date  ,Path=Checked ,Mode=TwoWay,NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged }" Height="26" />
+
+                </Grid>-->
+
+
+                <Grid VerticalAlignment="Center"  Margin="10 0 0 0" >
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="30"/>
+                    </Grid.RowDefinitions>
+                    <Label HorizontalAlignment="Left" VerticalAlignment="Bottom" Content="Order Reference: #" Margin="0 0 0 -5"  />
+                    <TextBox Grid.Row="1" Tag="" HorizontalAlignment="Stretch"  Text="{Binding PONumber,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" >
+                        <TextBox.InputBindings>
+                            <KeyBinding Key="Enter" Command="{Binding OrderReferenceCommand}"/>
+                        </TextBox.InputBindings>
+                    </TextBox>
+
+                </Grid>
+                <Button Style="{StaticResource NewButton}" Content="Print" Grid.Column="2" Width="170" HorizontalAlignment="Right"></Button>
+            </Grid>
+        </Border>
+        
+        <DataGrid Grid.Row="1" Name="dataGrid" IsReadOnly="True"  KeyboardNavigation.TabNavigation="None"  EnableRowVirtualization="False"  
+                  ItemsSource="{Binding SRLog, Mode=TwoWay}" BorderThickness="1" BorderBrush="Black" AutoGenerateColumns="False"   Margin="2" 
+                           CanUserResizeRows="False" >
+            <DataGrid.Columns >
+                <DataGridTextColumn Header="SN" Width="40"  Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow}, Converter={StaticResource RowToIndex}}" />
+                <DataGridTextColumn  Header="Item code" Width="80" Binding="{Binding MENUCODE}" />
+                <DataGridTextColumn  Header="Item Description" Width="*" Binding="{Binding DESCA}"/>
+                
+                <DataGridTextColumn  Header="Unit"  Width="60" Binding="{Binding UNIT}"/>
+                <DataGridTextColumn  Header="Qty"  Width="70" Binding="{Binding Quantity,StringFormat=#0.00}" />
+                <DataGridTextColumn  Header="Warehouse"  Width="120" Binding="{Binding Warehouse}" />
+                <DataGridTextColumn  Header="Location"  Width="120" Binding="{Binding LocationName}" />
+                <DataGridTextColumn  Header="Path"  Width="*" Binding="{Binding Path}" />
+
+                <DataGridTextColumn  Header="User"  Width="80" Binding="{Binding UserId}" />
+                <DataGridTextColumn  Header="Device"  Width="80" Binding="{Binding DeviceId}" />
+            </DataGrid.Columns>
+        </DataGrid>
+
+    </Grid>
+</UserControl>

@@ -57,9 +57,18 @@ namespace GTransfer
         private void GRN_Click(object sender, RoutedEventArgs e)
         {
             LayoutAnchorable la = new LayoutAnchorable();
-            la.Content = new UserInterfaces.GRN();
+            la.Content = new UserInterfaces.ShipmentVariance();
             la.IsActive = true;
-            la.Title = "GRN";
+            la.Title = "Shipment Receive Variance";
+            LayDocPane.Children.Add(la);
+        }
+
+        private void SRL_Click(object sender, RoutedEventArgs e)
+        {
+            LayoutAnchorable la = new LayoutAnchorable();
+            la.Content = new UserInterfaces.ShipmentReceiveLog();
+            la.IsActive = true;
+            la.Title = "Shipment Receive Log";
             LayDocPane.Children.Add(la);
         }
     }

@@ -155,8 +155,7 @@ namespace GTransfer.Models
         public string PhiscalID
         {
             get
-            {
-                if (_PhiscalID == null) _PhiscalID = GlobalClass.CurFiscalYear.ToString();
+            {                
                 return _PhiscalID;
             }
             set { _PhiscalID = value; OnPropertyChanged("PhiscalID"); }

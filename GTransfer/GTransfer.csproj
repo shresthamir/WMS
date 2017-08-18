@@ -159,8 +159,11 @@
     <Compile Include="Models\UnitAndQty.cs" />
     <Compile Include="Models\UserProfiles.cs" />
     <Compile Include="Repository\Repositories.cs" />
-    <Compile Include="UserInterfaces\GRN.xaml.cs">
-      <DependentUpon>GRN.xaml</DependentUpon>
+    <Compile Include="UserInterfaces\ShipmentReceiveLog.xaml.cs">
+      <DependentUpon>ShipmentReceiveLog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserInterfaces\ShipmentReceiveVariance.xaml.cs">
+      <DependentUpon>ShipmentReceiveVariance.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserInterfaces\ItemLocationMapping.xaml.cs">
       <DependentUpon>ItemLocationMapping.xaml</DependentUpon>
@@ -171,7 +174,7 @@
     <Compile Include="UserInterfaces\requisitionEntry.xaml.cs">
       <DependentUpon>requisitionEntry.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModels\GRNViewModel.cs" />
+    <Compile Include="ViewModels\ShipmentVarianceViewModel.cs" />
     <Compile Include="ViewModels\ItemLocationMappingViewModel.cs" />
     <Compile Include="ViewModels\LocationEntryViewModel.cs" />
     <Compile Include="ViewModels\RequisitionEntryViewModel.cs" />
@@ -211,7 +214,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UserInterfaces\GRN.xaml">
+    <Page Include="UserInterfaces\ShipmentReceiveLog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserInterfaces\ShipmentReceiveVariance.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

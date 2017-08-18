@@ -1,4 +1,5 @@
-﻿using GTransfer.ViewModels;
+﻿using GTransfer.Models;
+using GTransfer.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,15 +20,24 @@ namespace GTransfer.UserInterfaces
     /// <summary>
     /// Interaction logic for GRN.xaml
     /// </summary>
-    public partial class GRN : UserControl
+    public partial class ShipmentVariance : UserControl
     {
-        public GRN()
+        public ShipmentVariance()
         {
             InitializeComponent();
-            this.DataContext = new GRNViewModel();
+            this.DataContext = new ShipmentVarianceViewModel();
+        }
+
+        private void dGrid_LoadingRow(object sender, DataGridRowEventArgs e)
+        {
+            if (e.Row.Item is TrnProd)
+                if ((e.Row.Item as TrnProd).VarianceQty != 0)
+                {
+                    e.Row.Background = Brushes.Red;
+                }
         }
     }
 
 
-    
+   
 }
