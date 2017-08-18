@@ -555,4 +555,19 @@ namespace GTransfer.Converters
             return GParse.ToDecimal(value);
         }
     }
+    [ValueConversion(typeof(bool), typeof(Visibility))]
+    public class ReverseBooleanToVisiblityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            //return Visibility.Visible;
+            return (bool)value ? Visibility.Collapsed : Visibility.Visible;
+
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return (Visibility)value != Visibility.Visible;
+        }
+    }
 }

@@ -30,16 +30,16 @@ namespace GTransfer.Models
     {
         private int _ReqId;
         private string _Mcode;
-        private int _Quantity;
-        private int _ApprovedQty;
+        private decimal _Quantity;
+        private decimal _ApprovedQty;
         private string _Unit;
         private Product _Item;
 
         public Product Item { get { return _Item; } set { _Item = value; OnPropertyChanged("Item"); } }
         public int ReqId { get { return _ReqId; } set { _ReqId = value; OnPropertyChanged("ReqId"); } }
         public string Mcode { get { return _Mcode; } set { _Mcode = value; OnPropertyChanged("Mcode"); } }
-        public int Quantity { get { return _Quantity; } set { _Quantity = value; OnPropertyChanged("Quantity"); } }
-        public int ApprovedQty { get { return _ApprovedQty; } set { _ApprovedQty = value; OnPropertyChanged("ApprovedQty"); } }
+        public decimal Quantity { get { return _Quantity; } set { _Quantity = value; OnPropertyChanged("Quantity"); } }
+        public decimal ApprovedQty { get { return _ApprovedQty; } set { _ApprovedQty = value; OnPropertyChanged("ApprovedQty"); } }
         public string Unit { get { return _Unit; } set { _Unit = value; OnPropertyChanged("Unit"); } }
     }
 }

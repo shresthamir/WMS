@@ -9,6 +9,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Dapper;
 using System.Windows;
+using System.Data;
+using Microsoft.Win32;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace GTransfer.ViewModels
 {
@@ -45,7 +48,7 @@ namespace GTransfer.ViewModels
 
         public RelayCommand AddCommand { get { return new RelayCommand(ExecuteAdd); } }
         public RelayCommand GridDoubleClickEvent { get { return new RelayCommand(ExecuteGridDoubleClickEvent); } }
-
+        public RelayCommand ExcelImportEvent { get { return new RelayCommand(ExecuteExcelImportEvent); } }
 
         public RequisitionEntryViewModel()
         {try
@@ -219,5 +222,122 @@ namespace GTransfer.ViewModels
                 return con.Query<Division>("SELECT * FROM DIVISION");
             }
         }
+
+        private void ExecuteExcelImportEvent(object obj)
+        {try
+            {
+                if (_action != ButtonAction.New) { MessageBox.Show("Please create new Id By Clicking New And Then Import the file...");return; }
+                convertDataTableToObsCollection();
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
+        }
+
+        #region importFromExcel
+        private DataTable getExcelDataToDataTable()
+        {
+            DataTable dt = new DataTable();
+            OpenFileDialog openFile = new OpenFileDialog();
+            openFile.DefaultExt = ".xlsx";
+            openFile.Filter = "(.xlsx)|*.xlsx|All Files(*.*)|*.*";
+
+            var browsefile = openFile.ShowDialog();
+            if (browsefile == true)
+            {
+
+                string txtFilePath = (openFile.FileName).ToString();
+                Excel.Application excelApp = new Excel.Application();
+                //Static File From Base Path...........
+                //Microsoft.Office.Interop.Excel.Workbook excelBook = excelApp.Workbooks.Open(AppDomain.CurrentDomain.BaseDirectory + "TestExcel.xlsx", 0, true, 5, "", "", true, Microsoft.Office.Interop.Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
+                //Dynamic File Using Uploader...........
+
+                Excel.Workbook excelBook = excelApp.Workbooks.Open(txtFilePath, 0, true, 5, "", "", true, Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
+                Excel.Worksheet excelSheet = (Excel.Worksheet)excelBook.Worksheets.get_Item(1); ;
+                Excel.Range excelRange = excelSheet.UsedRange;
+
+                string strCellData = "";
+                double douCellData;
+                int rowCnt = 0;
+                int colCnt = 0;
+
+
+
+                for (colCnt = 1; colCnt <= excelRange.Columns.Count; colCnt++)
+                {
+                    string strColumn = "";
+                    strColumn = (string)(excelRange.Cells[1, colCnt] as Excel.Range).Value2;
+                    dt.Columns.Add(strColumn, typeof(string));
+                }
+                for (rowCnt = 2; rowCnt <= excelRange.Rows.Count; rowCnt++)
+                {
+                    string strData = "";
+                    for (colCnt = 1; colCnt <= excelRange.Columns.Count; colCnt++)
+                    {
+                        try
+                        {
+                            strCellData = (string)(excelRange.Cells[rowCnt, colCnt] as Excel.Range).Value2;
+                            strData += strCellData + "|";
+                        }
+                        catch (Exception ex)
+                        {
+                            douCellData = (excelRange.Cells[rowCnt, colCnt] as Excel.Range).Value2;
+                            strData += douCellData.ToString() + "|";
+                        }
+                    }
+                    strData = strData.Remove(strData.Length - 1, 1);
+                    dt.Rows.Add(strData.Split('|'));
+
+                }
+                excelBook.Close(true, null, null);
+                excelApp.Quit();
+                return dt;
+            }
+            else { return null; }
+            
+        }
+        private void convertDataTableToObsCollection()
+        {
+            var _dataTable = getExcelDataToDataTable();
+            if (_dataTable == null) return;
+            DataColumnCollection columns = _dataTable.Columns;
+            if (columns.Contains("BARCODE") || columns.Contains("MENUCODE"))
+            {      
+                }
+            else
+            {
+                MessageBox.Show("Invalid Excel File.Must contain MENUCODE Or BARCODE Column And QUANTITY Column");return;
+            }
+            if (columns.Contains("QUANTITY")) { }
+            else { MessageBox.Show("Invalid Excel File.Must contain QUANTITY Column"); return; }
+            var productList = new ObservableCollection<Requisition_Detail>(_dataTable.AsEnumerable().Select(i => {
+                var RD = new Requisition_Detail();
+                Product P=new Product();
+                if (columns.Contains("BARCODE"))
+                {
+                    P = ItemList.FirstOrDefault(item => item.BARCODE == i["BARCODE"].ToString());
+                    if (P == null)
+                    {
+                        if (columns.Contains("MENUCODE"))
+                        {
+                            P = ItemList.FirstOrDefault(item => item.MENUCODE == i["MENUCODE"].ToString());
+                        }
+                    }
+                }
+                else if (columns.Contains("MENUCODE"))
+                {
+                    P = ItemList.FirstOrDefault(item => item.MENUCODE == i["MENUCODE"].ToString());
+                }               
+                var Q = Convert.ToDecimal(i["QUANTITY"]);
+                if (P == null || Q <= 0) { return new Requisition_Detail(); }
+                RD.Item = P;
+                RD.Mcode = P.MCODE;
+                RD.Unit = P.BASEUNIT;
+                RD.ApprovedQty = Q;
+                RD.Quantity = Q;
+                return RD;
+            }));
+            if (productList != null) { this.RequisitionObj.Requisition_Details =new ObservableCollection<Requisition_Detail>(productList.Where(item=>item.Item!=null)); }
+       
+        }
+        #endregion
     }
 }
