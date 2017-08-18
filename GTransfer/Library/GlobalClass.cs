@@ -21,8 +21,8 @@ namespace GTransfer.Library
 {
     public static class GlobalClass
     {
-        //public static string DataConnectionString = "SERVER = PRO-PC; DATABASE = DB_POSDBS; UID = sa; PWD = tebahal";
-         public static string DataConnectionString = "SERVER = IMS-D1; DATABASE = Miniso; UID = sa; PWD = tebahal";
+        public static string DataConnectionString = "SERVER = PRO-PC; DATABASE = DB_POSDBS; UID = sa; PWD = tebahal";
+       //  public static string DataConnectionString = "SERVER = IMS-D1; DATABASE = Miniso; UID = sa; PWD = tebahal";
         public static UserProfiles CurrentUser = new UserProfiles() { UNAME = "Test" };
 
         public static string DIVISION = "MMX";

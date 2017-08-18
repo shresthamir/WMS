@@ -32,9 +32,11 @@
                         </TextBox.InputBindings>
                     </TextBox>
             </StackPanel>
-               
-           
-            <uc:ucActionBar Grid.Column="2" HasGroup="False" HorizontalAlignment="Right"/>
+
+                <Button Grid.Column="1" Width="90" Height="28" Style="{StaticResource RoundCornerButton}" Command="{Binding ExcelImportEvent}" Content="Excel Import">
+                   
+                </Button>
+                <uc:ucActionBar Grid.Column="2" HasGroup="False" HorizontalAlignment="Right"/>
            
         </Grid>
         </Border>

@@ -17,7 +17,7 @@ namespace GTransfer.Repository
         {
             using (SqlConnection conn = new SqlConnection(GlobalClass.DataConnectionString))
             {
-                foreach (Location L in conn.Query<Location>("SELECT * FROM TBL_LOCATIONS WHERE Level='"+Settings.LocationLevelLimit+"'"))
+                foreach (Location L in conn.Query<Location>("SELECT * FROM TBL_LOCATIONS WHERE Level='"+Settings.LocationLevelLimit+"' ORDER BY LocationName"))
                 {
                     this.Add(L);
                 }

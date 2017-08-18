@@ -13,13 +13,27 @@ using GTransfer.Interfaces;
 
 namespace GTransfer.ViewModels
 {
+    class parentlabel
+    {
+        public string label { get; set; }
+        public string value { get; set; }
+    }
     class LocationEntryViewModel : BaseViewModelWithTree
     {
         private Location _LocationObj;
         private Location _selectedLocation;
         private bool _editMode;
         private string _InformationTest;
+        private int _noOfChild;
+        private bool _autogenerateCode;
+        private string _labelNoOfChild = "No. Of Child";
+        private string _labelCode = "Code";
+        private bool _autoGenerateVisible;
 
+        public bool autoGenerateVisible { get { return _autoGenerateVisible; } set { _autoGenerateVisible = value; OnPropertyChanged("autoGenerateVisible"); } }
+        public string labelNoOfChild { get { return _labelNoOfChild; } set { _labelNoOfChild = value; OnPropertyChanged("labelNoOfChild"); } }
+        public bool autogenerateCode { get { return _autogenerateCode; } set { _autogenerateCode = value; OnPropertyChanged("autogenerateCode"); } }
+        public int noOfChild { get { return _noOfChild; } set { _noOfChild = value; OnPropertyChanged("noOfChild"); } }
         public string InformationTest { get { return _InformationTest; } set { _InformationTest = value; OnPropertyChanged("InformationTest"); } }
         public bool editMode { get { return _editMode; } set { _editMode = value; OnPropertyChanged("editMode"); } }
         public Location selectedLocation { get { return _selectedLocation; } set { _selectedLocation = value; OnPropertyChanged("selectedLocation"); } }
@@ -27,12 +41,42 @@ namespace GTransfer.ViewModels
         private ObservableCollection<ITreeNode> _LocationTreeList;
         public ObservableCollection<ITreeNode> LocationTreeList { get { return _LocationTreeList; } set { _LocationTreeList = value; OnPropertyChanged("LocationTreeList"); } }
 
+
+        public string labelCode { get { return _labelCode; } set { _labelCode = value; OnPropertyChanged("labelCode"); } }
+
+        private ObservableCollection<parentlabel> _parentList;
+        public ObservableCollection<parentlabel> parentList { get { return _parentList; } set { _parentList = value; OnPropertyChanged("parentList"); } }
+
         public LocationEntryViewModel()
         {
             NewEnabled = false;
             EditVisible = true;
             DeleteVisible = true;
+            autoGenerateVisible = false;
             LocationTreeMaker();
+            parentList = new ObservableCollection<parentlabel>();
+
+        }
+        private string LevelLabel(int level)
+        {
+            string label = "";
+            switch (level)
+            {
+                case 1:
+                    label = "Floor";
+                    break;
+                case 2:
+                    label = "Rack";
+                    break;
+                case 3:
+                    label = "Shelf";
+                    break;
+                case 4:
+                    label = "Cell";
+                    break;
+
+            }
+            return label;
         }
 
         private void LocationTreeMaker()
@@ -49,7 +93,7 @@ namespace GTransfer.ViewModels
                 LocationTreeList = new ObservableCollection<ITreeNode>();
                 foreach (var W in WList)
                 {
-                    Root = new Location() { LocationId = W.NAME, LocationName = W.NAME, Path = W.NAME, IsExpanded = true, IsMatch = true, Level = 0, Warehouse = W.NAME, Children = new ObservableCollection<ITreeNode>(), Parent = new Location() { LocationId = "Root", LocationName = "Root" } };
+                    Root = new Location() { LocationId = W.NAME, LocationCode = W.NAME, LocationName = W.NAME, Path = W.NAME, IsExpanded = true, IsMatch = true, Level = 0, Warehouse = W.NAME, Children = new ObservableCollection<ITreeNode>(), Parent = new Location() };
                     (Root as Location).PropertyChanged += ATree_PropertyChanged;
                     LoadChild(Root as Location);
                     LocationTreeList.Add(Root as Location);
@@ -70,7 +114,7 @@ namespace GTransfer.ViewModels
             {
                 foreach (Location l in TreeSource.Where(x => x.ParentID == Parent.LocationId).OrderBy(x => x.NodeName))
                 {
-                    Location NewNode = new Location() { LocationId = l.LocationId, LocationName = l.LocationName, Parent = Parent, Path = l.Path, IsMatch = true, Level = l.Level, ParentLocation = Parent.LocationId, Warehouse = Parent.Warehouse, Children = new ObservableCollection<ITreeNode>() };
+                    Location NewNode = new Location() { LocationId = l.LocationId, LocationCode = l.LocationCode, LocationName = l.LocationName, Parent = Parent, Path = l.Path, IsMatch = true, Level = l.Level, ParentLocation = Parent.LocationId, Warehouse = Parent.Warehouse, Children = new ObservableCollection<ITreeNode>() };
 
                     Parent.Children.Add(NewNode);
                     NewNode.PropertyChanged += ATree_PropertyChanged;
@@ -81,22 +125,28 @@ namespace GTransfer.ViewModels
                     //  }
 
                 }
+
             }
             catch (Exception ex)
             {
                 GlobalClass.ProcessError(ex, "Ledger Account");
             }
         }
+
         public void ATree_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "IsSelected" && (sender as ITreeNode).IsSelected)
             {
                 try
                 {
+                    // parentList.Add(new parentlabel() {label=LevelLabel() });
                     InformationTest = "";
 
                     selectedLocation = (Location)sender;
+                    labelCode = LevelLabel(selectedLocation.Level) + " Code";
+                    labelNoOfChild = "No.Of " + LevelLabel(selectedLocation.Level);
                     LocationObj = selectedLocation;
+                    LocationObj.PropertyChanged += LocationObj_PropertyChanged;
                     editMode = true;
                     SetAction(ButtonAction.Selected);
                     if (selectedLocation.Level == 0)
@@ -106,7 +156,7 @@ namespace GTransfer.ViewModels
                     }
                     if (selectedLocation.Level == Settings.LocationLevelLimit)
                     {
-                        InformationTest = "Location Level Limit Reached.Can't add further sub Location.";
+                        InformationTest = "Level Limit Reached.Can't add further sub Level.";
                         NewEnabled = false;
                     }
 
@@ -119,10 +169,14 @@ namespace GTransfer.ViewModels
         }
         public override bool UndoMethod(object obj)
         {
+            autoGenerateVisible = false;
+            autogenerateCode = false;
+            noOfChild = 0;
             editMode = false;
             selectedLocation = null;
             LocationObj = null;
             InformationTest = "";
+            parentList = new ObservableCollection<parentlabel>();
             return false;
         }
         public override void DeleteMethod(object obj)
@@ -134,6 +188,8 @@ namespace GTransfer.ViewModels
                 Conn.Open();
                 var checkChild = Conn.ExecuteScalar("SELECT LocationId FROM TBL_LOCATIONS WHERE ParentLocation='" + selectedLocation.LocationId + "'");
                 if (checkChild != null) { MessageBox.Show("Location contains another sub location so it can't be deleted"); return; }
+
+                //validation of stock needed
                 Conn.Query("DELETE FROM TBL_LOCATIONS WHERE LocationId='" + selectedLocation.LocationId + "'");
             }
             MessageBox.Show("Selected Location is Deleted Successfully...");
@@ -144,16 +200,77 @@ namespace GTransfer.ViewModels
         {
             if (selectedLocation == null) { MessageBox.Show("Please select the location in Tree to insert sub Location"); return; }
             LocationObj = new Location();
+            LocationObj.PropertyChanged += LocationObj_PropertyChanged;
             LocationObj.Parent = selectedLocation;
             LocationObj.ParentLocation = selectedLocation.LocationId;
             LocationObj.Warehouse = selectedLocation.Warehouse;
-            LocationObj.Level = selectedLocation.Level + 1;            
+            LocationObj.Level = selectedLocation.Level + 1;
+            labelCode = LevelLabel(LocationObj.Level) + " Code";
+            labelNoOfChild = "No.Of " + LevelLabel(LocationObj.Level);
+            //if (LocationObj.Level == Settings.LocationLevelLimit) {
+            //LocationObj.LocationCode=}     
             editMode = false;
+            if (selectedLocation.Level == 0) { autoGenerateVisible = false; }
+            else { autoGenerateVisible = true; }
         }
+
+        private void LocationObj_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "LocationCode")
+            {
+                LocationObj.LocationName = LocationObj.LocationCode + "(" + LevelLabel(LocationObj.Level) + ")";
+            }
+        }
+
+        //private IEnumerable<Location> GetParentList(int level) {
+        //    parentList.Add(new parentlabel() {label=LevelLabel(level),value= });
+        //     }
+        private string GetNewLId()
+        {
+            using (SqlConnection Conn = new SqlConnection(GlobalClass.DataConnectionString))
+            {
+
+                return Conn.ExecuteScalar("SELECT ISNULL(MAX(CAST(LocationId AS Int)),0)+1 FROM TBL_LOCATIONS WHERE LocationId NOT LIKE '%[a-z]%' AND ISNUMERIC(LocationId) = 1").ToString();
+            }
+        }
+        private string GetNewLCode(int level, string warehouse, string parent)
+        {
+            using (SqlConnection Conn = new SqlConnection(GlobalClass.DataConnectionString))
+            {
+
+                var code = Conn.ExecuteScalar("SELECT ISNULL(MAX(CAST(LocationCode AS Int)),0)+1 FROM TBL_LOCATIONS WHERE LocationCode NOT LIKE '%[a-z]%' AND ISNUMERIC(LocationCode) = 1 AND Level=" + level + " AND Warehouse='" + warehouse + "' AND ParentLocation='" + parent + "'").ToString();
+                if (code.Length == 1) { code = "0" + code; }
+                return code;
+            }
+        }
+        private string GetNewCellRowCode(int Level, string warehouse,string parent)
+        {
+            using (SqlConnection Conn = new SqlConnection(GlobalClass.DataConnectionString))
+            {
+                Conn.Open();
+               
+                var C = Conn.ExecuteScalar("SELECT ISNULL(MAX(CAST(cellRowCode AS Int)),0)+1 FROM TBL_LOCATIONS WHERE cellRowCode NOT LIKE '%[a-z]%' AND ISNUMERIC(cellRowCode) = 1 AND Level="+Level+ "AND Warehouse='" + warehouse + "' AND ParentLocation='" + parent + "'").ToString();
+                if (C.Length == 1) { C = "0" + C; }
+               
+                return C;
+            }
+        }
+        string CellRCode = "";
         public override void SaveMethod(object obj)
         {
             if (selectedLocation == null) { MessageBox.Show("Invalid Data."); return; }
-            if (LocationObj.Level > Settings.LocationLevelLimit) { MessageBox.Show("Location Level exceed the Level Limits"); return; }
+            if (LocationObj.Level > Settings.LocationLevelLimit) { MessageBox.Show("Level exceed the Level Limits"); return; }
+            if (autogenerateCode == false && _action == ButtonAction.New)
+            {
+                if (string.IsNullOrEmpty(LocationObj.LocationCode) || string.IsNullOrEmpty(LocationObj.LocationName)) { return; }
+                if (LocationObj.Level == Settings.LocationLevelLimit) {
+                    if (validateCellLCode(LocationObj.LocationCode, LocationObj.Level, LocationObj.Warehouse) == false) { return; }
+                }
+                else
+                {
+                    if (validateLCode(LocationObj.LocationCode, LocationObj.Level, LocationObj.Warehouse, LocationObj.ParentLocation) == false) { return; }
+                }
+            }
 
             try
             {
@@ -161,20 +278,61 @@ namespace GTransfer.ViewModels
                 //    return;
                 if (_action == ButtonAction.New)
                 {
-                    LocationObj.Path = selectedLocation.Path + "\\" + LocationObj.LocationName;
-                    using (SqlConnection Conn = new SqlConnection(GlobalClass.DataConnectionString))
+                    if (autogenerateCode == true)
                     {
-                        Conn.Open();
-                        Conn.Query("INSERT INTO TBL_LOCATIONS(LocationId, LocationName, ParentLocation, Level, Warehouse, Path) VALUES(@LocationId,@LocationName,@ParentLocation,@Level,@Warehouse, @Path)", LocationObj);
-                        MessageBox.Show("Location is Saved Sucessfully...");
+                        if (noOfChild == 0)
+                        {
+                            noOfChild = 1;
+                        }
+                        for (int i = 0; i < noOfChild; i++)
+                        {
+                            var LCode = "";
+                            var cellRow = "";
+                            if (LocationObj.Level == Settings.LocationLevelLimit)
+                            {
+                                
+                                var F = (LocationObj.Parent.Parent.Parent as Location).LocationCode;
+                                var R = (LocationObj.Parent.Parent as Location).LocationCode;
+                                var S = (LocationObj.Parent as Location).LocationCode;
+                                cellRow = GetNewCellRowCode(LocationObj.Level,LocationObj.Warehouse,LocationObj.ParentLocation);
+                                getUniqueCellRowCode(F+R+S,cellRow);
+                                if (string.IsNullOrEmpty(CellRCode)) { MessageBox.Show("Error On generating Code"); break;}
+                                LCode = F + R + S + CellRCode;
+
+                               
+                            }
+                            else
+                            {
+                                LCode = GetNewLCode(LocationObj.Level, LocationObj.Warehouse, LocationObj.ParentLocation);
+                            }
+                            var L = new Location() { LocationId = GetNewLId(), LocationCode = LCode, LocationName = LCode + "(" + LevelLabel(LocationObj.Level) + ")", ParentLocation = LocationObj.ParentLocation, Level = LocationObj.Level, Warehouse = LocationObj.Warehouse, Path = selectedLocation.Path + "\\" + LCode ,cellRowCode= CellRCode };
+                            using (SqlConnection Conn = new SqlConnection(GlobalClass.DataConnectionString))
+                            {
+                                Conn.Open();
+                                Conn.Query("INSERT INTO TBL_LOCATIONS(LocationId,LocationCode, LocationName, ParentLocation, Level, Warehouse, Path,cellRowCode) VALUES(@LocationId,@LocationCode,@LocationName,@ParentLocation,@Level,@Warehouse, @Path,@cellRowCode)", L);
+                            }
+                        }
+
                     }
+                    else
+                    {
+                        LocationObj.Path = selectedLocation.Path + "\\" + LocationObj.LocationCode;
+                        LocationObj.LocationId = GetNewLId();
+                        using (SqlConnection Conn = new SqlConnection(GlobalClass.DataConnectionString))
+                        {
+                            Conn.Open();
+                            Conn.Query("INSERT INTO TBL_LOCATIONS(LocationId,LocationCode, LocationName, ParentLocation, Level, Warehouse, Path) VALUES(@LocationId,@LocationCode,@LocationName,@ParentLocation,@Level,@Warehouse, @Path)", LocationObj);
+                        }
+                    }
+                    MessageBox.Show(LevelLabel(LocationObj.Level)+" Added Sucessfully...");
                 }
                 else if (_action == ButtonAction.Edit)
                 {
+                    LocationObj.Path=(LocationObj.Parent as Location).Path + "\\" + LocationObj.LocationCode;
                     using (SqlConnection Conn = new SqlConnection(GlobalClass.DataConnectionString))
                     {
                         Conn.Open();
-                        Conn.Query("UPDATE TBL_LOCATIONS SET LocationName=@LocationName,ParentLocation=@ParentLocation,Level=@Level,Warehouse=@Warehouse WHERE LocationId=@LocationId", LocationObj);
+                        Conn.Query("UPDATE TBL_LOCATIONS SET LocationCode=@LocationCode,LocationName=@LocationName,ParentLocation=@ParentLocation,Level=@Level,Warehouse=@Warehouse,Path=@Path WHERE LocationId=@LocationId", LocationObj);
                         MessageBox.Show("Selected Location is Updated Sucessfully...");
                     }
                 }
@@ -186,6 +344,50 @@ namespace GTransfer.ViewModels
                 MessageBox.Show("Error On Saving..." + ex.Message);
             }
         }
-
+        private void getUniqueCellRowCode(string LCodeWithoutRowCode,string cellRowCode) {
+            var C = cellRowCode;
+            if (validateCellLCode(LCodeWithoutRowCode+cellRowCode, LocationObj.Level, LocationObj.Warehouse) == false)
+            {
+                 C = (Convert.ToInt32(cellRowCode) + 1).ToString();
+                if (C.Length == 1) { C = "0" + C; }
+                getUniqueCellRowCode(LCodeWithoutRowCode,C);
+            }
+            else {
+                CellRCode=C;
+            }
+        }
+        private bool validateLCode(string code, int level, string warehouse, string parent)
+        {
+            try
+            {
+                using (SqlConnection Conn = new SqlConnection(GlobalClass.DataConnectionString))
+                {
+                    var result = Conn.ExecuteScalar("SELECT LocationId from TBL_LOCATIONS WHERE Level=" + level + " AND LocationCode='" + code + "' AND Warehouse='" + warehouse + "' AND ParentLocation='" + parent + "'");
+                    if (result != null) { MessageBox.Show("Code Duplication Error...Please Choose another Code"); return false; }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error ..." + ex.Message);
+                return false;
+            }
+        }
+        private bool validateCellLCode(string code, int level, string warehouse) {
+            try
+            {
+                using (SqlConnection Conn = new SqlConnection(GlobalClass.DataConnectionString))
+                {
+                    var result = Conn.ExecuteScalar("SELECT LocationId from TBL_LOCATIONS WHERE LocationCode='" + code + "' AND Warehouse='" + warehouse + "'");
+                    if (result != null) { if (autogenerateCode == false) { MessageBox.Show("Code Duplication Error...Please Choose another Code"); } return false; }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error..." + ex.Message);
+                return false;
+            }
+        }
     }
 }

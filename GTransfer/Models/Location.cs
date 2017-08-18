@@ -12,10 +12,12 @@ namespace GTransfer.Models
     public class Location:BaseModel,ITreeNode
     {
         private string _LocationId;
+        private string _LocationCode;
         private string _LocationName;
         private string _ParentLocation;
         private int _Level;
         private string _Warehouse;
+        private string _cellRowCode;
 
         private ObservableCollection<ITreeNode> _Children;
         private ITreeNode _Parent;
@@ -25,7 +27,9 @@ namespace GTransfer.Models
         private bool _IsGroup;
         private string _Path;
 
+        public string cellRowCode { get { return _cellRowCode; }set { _cellRowCode = value;OnPropertyChanged("cellRowCode"); } }
         public string LocationId { get { return _LocationId; }set { _LocationId = value;OnPropertyChanged("LocationId"); } }
+        public string LocationCode { get { return _LocationCode; }set { _LocationCode = value;OnPropertyChanged("LocationCode"); } }
         public string LocationName { get { return _LocationName; } set { _LocationName = value; OnPropertyChanged("LocationName"); } }
         public string ParentLocation { get { return _ParentLocation; } set { _ParentLocation = value; OnPropertyChanged("ParentLocation"); } }
         public int Level { get { return _Level; } set { _Level = value; OnPropertyChanged("Level"); } }
