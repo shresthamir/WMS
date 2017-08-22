@@ -20,8 +20,9 @@
                     <MenuItem Name="ItemLocationMapping" Header="Item-Location Mapping" Click="ItemLocationMapping_Click"></MenuItem>
                     <MenuItem Name="RequisitionEntry" Header="Requisition Entry" Click="RequisitionEntry_Click"></MenuItem>
                 </MenuItem>
-                <MenuItem Name="Transaction" Header="Transaction">
-                    <MenuItem Name="GRN" Header="GRN" Click="GRN_Click"/>
+                <MenuItem Name="Utilities" Header="Utilities">
+                    <MenuItem Name="SRL" Header="Shipment Receive Log" Click="SRL_Click"/>
+                    <MenuItem Name="GRN" Header="Shipment Receive Variance" Click="GRN_Click"/>
                 </MenuItem>
             </Menu>
         </Border>

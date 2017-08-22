@@ -22,11 +22,43 @@ namespace GTransfer.Library
     public static class GlobalClass
     {
         public static string DataConnectionString = "SERVER = PRO-PC; DATABASE = Miniso; UID = sa; PWD = tebahal";
-       //  public static string DataConnectionString = "SERVER = IMS-D1; DATABASE = Miniso; UID = sa; PWD = tebahal";
+        //public static string DataConnectionString = "SERVER = IMS-D1; DATABASE = Miniso; UID = sa; PWD = tebahal";
         public static UserProfiles CurrentUser = new UserProfiles() { UNAME = "Test" };
 
         public static string DIVISION = "MMX";
-        public static object CurFiscalYear = "074/75";
+        
+        static GlobalClass()
+        {
+            SqlConnectionStringBuilder sbr = new SqlConnectionStringBuilder();
+            if(File.Exists(Path.Combine(Environment.SystemDirectory, "dbpath.dll")))
+            {
+                string[] connProps = File.ReadAllLines(Path.Combine(Environment.SystemDirectory, "dbpath.dll"));
+                for(int i = 0; i<connProps.Count(); i++)
+                {
+                    switch(i)
+                    {
+                        case 0:
+                            sbr.UserID = connProps[i];
+                            break;
+                        case 1:
+                            sbr.Password = connProps[i];
+                            break;
+                        case 2:
+                            sbr.InitialCatalog = connProps[i];
+                            break;
+                        case 3:
+                            sbr.DataSource = connProps[i];
+                            break;
+                        case 5:
+                            DIVISION = connProps[i];
+                            break;
+                    }
+                }
+                DataConnectionString = sbr.ConnectionString;
+            }
+        }
+
+
         public static object CopyPropertyValuesOnlyPresent(object source, object Destination)
         {
             if (source == null)
@@ -242,10 +274,8 @@ namespace GTransfer.Library
 
         public static int GetBillSequences(IDbCommand Cmd, string VNAME, string VoucherType, string VoucherName, String Series, ref string Vno, ref String Chalanno, ref string Vnum)
         {
-
             string Div = DIVISION;
-            int Curno;
-           
+            int Curno;           
             try
             {
                 Cmd.CommandText = "SELECT isnull(CURNO,0) CURNO FROM RMD_SEQUENCES WHERE VNAME = '" + VNAME + "' AND DIVISION LIKE  '" + Div + "'";
