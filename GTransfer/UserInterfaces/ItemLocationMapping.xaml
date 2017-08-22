@@ -59,6 +59,13 @@
                         </ComboBox>
                     </StackPanel>
                 </StackPanel>
+                <StackPanel>
+                    <Label Content="Filter Product:"  VerticalAlignment="Center" HorizontalAlignment="Center" />
+
+                    <ComboBox Width="200" VerticalAlignment="Center" ItemsSource="{Binding filters}" DisplayMemberPath="name" 
+                              SelectedValue="{Binding Selectedfilter}" SelectedValuePath="id">
+                    </ComboBox>
+                </StackPanel>
                 <StackPanel  Orientation="Horizontal" HorizontalAlignment="Right">
 
                     <Button Width="100" Height="40"  Margin="5" Content="Load" Style="{StaticResource NewButton}" Command="{Binding RunCommand}" />
