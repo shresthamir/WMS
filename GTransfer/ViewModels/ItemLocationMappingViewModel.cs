@@ -18,7 +18,18 @@ namespace GTransfer.ViewModels
         private bool _IsCheckedTree;
         private List<Product> _menuList;
         IEnumerable<Product> DataSource;
+        private List<Product> tempList;
         public ObservableCollection<Product> _omenuitemlist;
+        private int _Selectedfilter;
+        private ObservableCollection<filterL> _filters = new ObservableCollection<filterL>() { new filterL { id = 1, name = "All" }, new filterL { id = 2, name = "With Location" }, new filterL { id = 3, name = "Without Location" } };
+        public int Selectedfilter { get { return _Selectedfilter; } set { _Selectedfilter = value; OnPropertyChanged("Selectedfilter"); } }
+
+
+        public ObservableCollection<filterL> filters
+        {
+            get { return _filters; }
+            set { _filters = value; OnPropertyChanged("filters"); }
+        }
         public ObservableCollection<Product> oMenuitemlist
         {
             get { return _omenuitemlist; }
@@ -49,12 +60,14 @@ namespace GTransfer.ViewModels
             try
             {
                 oMenuitemlist = new ObservableCollection<Product>();
-
+                Selectedfilter = 1;
                 using (SqlConnection conn = new SqlConnection(GlobalClass.DataConnectionString))
                 {
                     //DataSource = ;
-                    MGroupList = new List<Product>(conn.Query<Product>("SELECT MCODE,PARENT,DESCA,MENUCODE,MCAT,MGROUP,TYPE,DISMODE,DISRATE, BASEUNIT, DISAMOUNT, RATE_A FROM MENUITEM WHERE PARENT = 'MI' ORDER BY DESCA"));
-                }
+                    MGroupList = new List<Product>(conn.Query<Product>("SELECT MCODE,PARENT,DESCA,MENUCODE,MCAT,MGROUP,TYPE,DISMODE,DISRATE, BASEUNIT, DISAMOUNT, RATE_A FROM MENUITEM WHERE PARENT = 'MI'  ORDER BY DESCA"));
+
+                   }
+                getDataSource();
                 SaveCommand = new RelayCommand(ExecuteSave);
                 RunCommand = new RelayCommand(ExecuteSearch);
                 RadioButtonValidationCommand = new RelayCommand(ExecuteValidation);
@@ -62,6 +75,14 @@ namespace GTransfer.ViewModels
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Discount Setting", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+        private void getDataSource() {
+            using (SqlConnection conn = new SqlConnection(GlobalClass.DataConnectionString))
+            {
+               var strSql = string.Format("SELECT MI.MCODE,MI.PARENT,MI.DESCA,MI.MENUCODE,MI.MCAT,MI.MGROUP,MI.TYPE,MI.DISMODE,MI.DISRATE, MI.RATE_A, MI.BASEUNIT, MI.DISAMOUNT,IVL.Id LocationVsItemId,L.LocationName PreviousLocation FROM MENUITEM MI LEFT JOIN TBL_ITEM_DEFAULT_LOCATION IVL ON MI.MCODE=IVL.MCODE LEFT JOIN TBL_LOCATIONS L ON IVL.LID=L.LocationId");
+                DataSource = conn.Query<Product>(strSql);
+
             }
         }
         void LoadTree(Product Parent)
@@ -89,9 +110,13 @@ namespace GTransfer.ViewModels
                 NewNode.PreviousLocation = p.PreviousLocation;
 
                 NewNode.PropertyChanged += NewNode_PropertyChanged;
+
                 if (p.TYPE == "G")
                     LoadTree(NewNode);
-                Parent.Children.Add(NewNode);
+                if (Selectedfilter == 1) Parent.Children.Add(NewNode);
+                else if (Selectedfilter == 2 && NewNode.LocationVsItemId > 0) Parent.Children.Add(NewNode);
+                else if (Selectedfilter == 3 && NewNode.LocationVsItemId <= 0) Parent.Children.Add(NewNode);
+
             }
         }
 
@@ -128,11 +153,12 @@ namespace GTransfer.ViewModels
                     foreach (Product p in oMenuitemlist)
                     {
                         CatagoryGroupTreeMapping(p);
-                        UpdateProduct(p,tran);
+                        UpdateProduct(p, tran);
                     }
                     tran.Commit();
                     System.Windows.MessageBox.Show("Item Location Mapped Sucessfully...", "Information");
                     oMenuitemlist = new ObservableCollection<Product>();
+                    getDataSource();
 
                 }
                 catch (Exception ex)
@@ -143,19 +169,22 @@ namespace GTransfer.ViewModels
             }
 
         }
-        private void CatagoryGroupTreeMapping(Product p) {
-               
-                    foreach (Product pro in p.Children)
+        private void CatagoryGroupTreeMapping(Product p)
+        {
+
+            foreach (Product pro in p.Children)
+            {
+                if (!string.IsNullOrEmpty(p.LocationId))
                 {
-                if (!string.IsNullOrEmpty(p.LocationId)) { 
                     pro.LocationId = p.LocationId;
-                    pro.RowChanged = 1; }
+                    pro.RowChanged = 1;
+                }
                 if (p.TYPE == "G")
                 {
                     CatagoryGroupTreeMapping(pro);
                 }
-             
-                
+
+
             }
         }
         public void ExecuteSearch(object obj)
@@ -168,11 +197,7 @@ namespace GTransfer.ViewModels
             }
             try
             {
-                using (SqlConnection conn = new SqlConnection(GlobalClass.DataConnectionString))
-                {
-                    var strSql = string.Format("SELECT MI.MCODE,MI.PARENT,MI.DESCA,MI.MENUCODE,MI.MCAT,MI.MGROUP,MI.TYPE,MI.DISMODE,MI.DISRATE, MI.RATE_A, MI.BASEUNIT, MI.DISAMOUNT,IVL.Id LocationVsItemId,L.LocationName PreviousLocation FROM MENUITEM MI LEFT JOIN TBL_ITEM_DEFAULT_LOCATION IVL ON MI.MCODE=IVL.MCODE LEFT JOIN TBL_LOCATIONS L ON IVL.LID=L.LocationId WHERE MGROUP = '{0}'", SelectedMGroup.MCODE);
-                    DataSource = conn.Query<Product>(strSql);
-                }
+
                 if (IsTreeFormat == true)
                 {
                     var source = new List<Product>();
@@ -183,30 +208,10 @@ namespace GTransfer.ViewModels
                 }
                 else
                 {
-                    oMenuitemlist = new ObservableCollection<Product>(DataSource.Where(x => x.MGROUP == SelectedMGroup.MCODE && x.TYPE == "A").Select(x =>
-                        new Product
-                        {
-                            MCODE = x.MCODE,
-                            MENUCODE = x.MENUCODE,
-                            PARENT = x.PARENT,
-                            DESCA = x.DESCA,
-                            TYPE = x.TYPE,
-                            DISMODE = x.DISMODE,
-                            DISRATE = x.DISRATE,
-                            MGROUP = x.MGROUP,
-                            MCAT = x.MCAT,
-                            PDisrate = x.DISRATE,
-                            PDisMode = x.DISMODE,
-                            PMCAT = x.MCAT,
-                            PMCAT1 = x.MCAT1,
-                            DISAMOUNT = x.DISAMOUNT,
-                            BASEUNIT = x.BASEUNIT,
-                            RATE_A = x.RATE_A,
-                            PreviousLocation=x.PreviousLocation,
-                            LocationVsItemId=x.LocationVsItemId
-
-                        }
-                        ));
+                    tempList = null;
+                    getNonTreeList(SelectedMGroup);
+                    oMenuitemlist = new ObservableCollection<Product>(tempList);
+                    tempList = null;
                     foreach (Product p in oMenuitemlist)
                     {
                         p.PropertyChanged += NewNode_PropertyChanged;
@@ -221,7 +226,24 @@ namespace GTransfer.ViewModels
 
         }
 
-        private void UpdateProduct(Product mi,SqlTransaction tran)
+        private void getNonTreeList(Product Par)
+        {
+            if (tempList == null) tempList = new List<Product>();
+            //  var result = DataSource.Where(x => x.PARENT == Par.MCODE);
+            foreach (Product i in DataSource.Where(x => x.PARENT == Par.MCODE))
+            {
+                if (i.TYPE == "G") getNonTreeList(i);
+                else
+                {
+                    if (Selectedfilter == 1) tempList.Add(i);
+                    else if (Selectedfilter == 2 && i.LocationVsItemId > 0) tempList.Add(i);
+                    else if (Selectedfilter == 3 && i.LocationVsItemId <= 0) tempList.Add(i);
+
+                }
+            }
+        }
+
+        private void UpdateProduct(Product mi, SqlTransaction tran)
         {
 
             if (mi.RowChanged > 0)
@@ -237,10 +259,10 @@ namespace GTransfer.ViewModels
                     else
                     {
                         var IL2 = new ItemVsLocation() { Id = mi.LocationVsItemId, LID = mi.LocationId, MCODE = mi.MCODE };
-                        tran.Connection.Execute("UPDATE TBL_ITEM_DEFAULT_LOCATION SET LID = @LID,MCODE=@MCODE WHERE Id = @Id", IL2, tran); 
+                        tran.Connection.Execute("UPDATE TBL_ITEM_DEFAULT_LOCATION SET LID = @LID,MCODE=@MCODE WHERE Id = @Id", IL2, tran);
                     }
                 }
-              
+
             }
             foreach (Product p in mi.Children)
             {
@@ -248,10 +270,17 @@ namespace GTransfer.ViewModels
             }
         }
 
-private void NewNode_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-{
-    if (e.PropertyName == "LocationId")
-        (sender as Product).RowChanged = 1;
-}
+        private void NewNode_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "LocationId")
+                (sender as Product).RowChanged = 1;
+        }
+    }
+    class filterL : BaseModel
+    {
+        private int _id;
+        private string _name;
+        public int id { get { return _id; } set { _id = value; OnPropertyChanged("id"); } }
+        public string name { get { return _name; } set { _name = value; OnPropertyChanged("name"); } }
     }
 }

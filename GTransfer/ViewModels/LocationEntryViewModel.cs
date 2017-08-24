@@ -46,36 +46,49 @@ namespace GTransfer.ViewModels
 
         private ObservableCollection<parentlabel> _parentList;
         public ObservableCollection<parentlabel> parentList { get { return _parentList; } set { _parentList = value; OnPropertyChanged("parentList"); } }
+        public List<dynamic> LocationLevelLabel { get; set; }
 
         public LocationEntryViewModel()
-        {
-            NewEnabled = false;
-            EditVisible = true;
-            DeleteVisible = true;
-            autoGenerateVisible = false;
-            LocationTreeMaker();
-            parentList = new ObservableCollection<parentlabel>();
+        {try
+            {
+                NewEnabled = false;
+                EditVisible = true;
+                DeleteVisible = true;
+                autoGenerateVisible = false;
+                LocationTreeMaker();
+                parentList = new ObservableCollection<parentlabel>();
+                LocationLevelLabel = new List<dynamic>(GetLL());
+            }
+            catch (Exception ex) {
+                MessageBox.Show(ex.Message);
+            }
+
 
         }
+        private IEnumerable<dynamic> GetLL() {
+            using (SqlConnection con = new SqlConnection(GlobalClass.DataConnectionString)) {
+                return  con.Query<dynamic>("SELECT level,label FROM TBL_LOCATION_LABEL");
+            } }
         private string LevelLabel(int level)
         {
-            string label = "";
-            switch (level)
-            {
-                case 1:
-                    label = "Floor";
-                    break;
-                case 2:
-                    label = "Rack";
-                    break;
-                case 3:
-                    label = "Shelf";
-                    break;
-                case 4:
-                    label = "Cell";
-                    break;
+           // string label = "";
+            string label= LocationLevelLabel.FirstOrDefault(l => l.level == level).label;
+            //switch (level)
+            //{
+            //    case 1:
+            //        label = "Floor";
+            //        break;
+            //    case 2:
+            //        label = "Rack";
+            //        break;
+            //    case 3:
+            //        label = "Shelf";
+            //        break;
+            //    case 4:
+            //        label = "Cell";
+            //        break;
 
-            }
+            //}
             return label;
         }
 
@@ -196,9 +209,9 @@ namespace GTransfer.ViewModels
             LocationTreeMaker();
             ExecuteUndo(null);
         }
-        public override void NewMethod(object obj)
+        public override void ExecuteNew(object obj)
         {
-            if (selectedLocation == null) { MessageBox.Show("Please select the location in Tree to insert sub Location"); return; }
+            if (selectedLocation == null) { MessageBox.Show("Please select the location in Tree to insert sub Location");  return; }
             LocationObj = new Location();
             LocationObj.PropertyChanged += LocationObj_PropertyChanged;
             LocationObj.Parent = selectedLocation;
@@ -212,8 +225,10 @@ namespace GTransfer.ViewModels
             editMode = false;
             if (selectedLocation.Level == 0) { autoGenerateVisible = false; }
             else { autoGenerateVisible = true; }
-        }
+            SetAction(ButtonAction.New);
 
+        }
+     
         private void LocationObj_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "LocationCode")
