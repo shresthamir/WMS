@@ -71,5 +71,14 @@ namespace GTransfer
             la.Title = "Shipment Receive Log";
             LayDocPane.Children.Add(la);
         }
+
+        private void PickingListEntry_Click(object sender, RoutedEventArgs e)
+        {
+            LayoutAnchorable la = new LayoutAnchorable();
+            la.Content = new UserInterfaces.pickingList();
+            la.IsActive = true;
+            la.Title = "Picking List Entry";
+            LayDocPane.Children.Add(la);
+        }
     }
 }

@@ -109,13 +109,13 @@
                             <syncfusion:GridStyleInfo ReadOnly="True" />
                         </syncfusion:GridTreeColumn.StyleInfo>
                     </syncfusion:GridTreeColumn>
-                    <syncfusion:GridTreeColumn    PercentWidth="15" MappingName="PreviousLocation" HeaderText="Previous Location"  >
+                    <syncfusion:GridTreeColumn    PercentWidth="15" MappingName="PreviousLocation" HeaderText="Previous Default Location"  >
                         <syncfusion:GridTreeColumn.StyleInfo>
                             <syncfusion:GridStyleInfo ReadOnly="True" />
                         </syncfusion:GridTreeColumn.StyleInfo>
                     </syncfusion:GridTreeColumn>
 
-                    <syncfusion:GridTreeColumn    PercentWidth="15" MappingName="LocationId" HeaderText="Locations"  >
+                    <syncfusion:GridTreeColumn    PercentWidth="15" MappingName="LocationId" HeaderText="Default Locations"  >
                         <syncfusion:GridTreeColumn.StyleInfo>
                             <syncfusion:GridStyleInfo  x:Name="CatName" CellType ="ComboBox"  DropDownStyle="AutoComplete" ImageWidth="250"  ItemsSource="{StaticResource LocationList}" DisplayMember="LocationName" ValueMember="LocationId"   ShowDataValidationTooltip="True" />
                         </syncfusion:GridTreeColumn.StyleInfo>
