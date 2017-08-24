@@ -170,7 +170,7 @@ namespace GTransfer.ViewModels
             {
                 using (SqlConnection conn = new SqlConnection(GlobalClass.DataConnectionString))
                 {
-                    var strSql = string.Format("SELECT MI.MCODE,MI.PARENT,MI.DESCA,MI.MENUCODE,MI.MCAT,MI.MGROUP,MI.TYPE,MI.DISMODE,MI.DISRATE, MI.RATE_A, MI.BASEUNIT, MI.DISAMOUNT,IVL.Id LocationVsItemId,L.LocationName PreviousLocation FROM MENUITEM MI LEFT JOIN TBL_ITEM_DEFAULT_LOCATION IVL ON MI.MCODE=IVL.MCODE LEFT JOIN TBL_LOCATIONS L ON IVL.LID=L.LocationId WHERE MGROUP = '{0}' OR TYPE = 'G'", SelectedMGroup.MCODE);
+                    var strSql = string.Format("SELECT MI.MCODE,MI.PARENT,MI.DESCA,MI.MENUCODE,MI.MCAT,MI.MGROUP,MI.TYPE,MI.DISMODE,MI.DISRATE, MI.RATE_A, MI.BASEUNIT, MI.DISAMOUNT,IVL.Id LocationVsItemId,L.LocationName PreviousLocation FROM MENUITEM MI LEFT JOIN TBL_ITEM_DEFAULT_LOCATION IVL ON MI.MCODE=IVL.MCODE LEFT JOIN TBL_LOCATIONS L ON IVL.LID=L.LocationId WHERE MGROUP = '{0}'", SelectedMGroup.MCODE);
                     DataSource = conn.Query<Product>(strSql);
                 }
                 if (IsTreeFormat == true)

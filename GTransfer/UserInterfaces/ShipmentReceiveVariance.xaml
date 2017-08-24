@@ -36,6 +36,8 @@
                     <ColumnDefinition Width="200"/>
                     <ColumnDefinition Width="400"/>
                     <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="170"/>
+                    <ColumnDefinition Width="80"/>
                 </Grid.ColumnDefinitions>
 
                 <!--<Grid  x:Name="VoucherGrid" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Stretch"  >
@@ -109,7 +111,8 @@
                         <RadioButton IsChecked="{Binding ShowNonVariant}" Content="Show Non-variant only" Margin="10 0 0 0"/>
                     </StackPanel>
                 </GroupBox>
-                <Button Style="{StaticResource NewButton}" Content="Generate Purchase Invoice" Command="{Binding GeneratePICommand}" Grid.Column="2" Width="170" HorizontalAlignment="Right"></Button>
+                <Button Style="{StaticResource NewButton}" Content="Generate Purchase Invoice" Command="{Binding GeneratePICommand}" Grid.Column="3" Width="170" HorizontalAlignment="Right"></Button>
+                <Button Style="{StaticResource NewButton}" Content="Clear" Command="{Binding UndoCommand}" Grid.Column="4" Width="70" HorizontalAlignment="Right"></Button>
             </Grid>
         </Border>
         <!--<Border Grid.Row="1" Style="{StaticResource PlainBackground}">

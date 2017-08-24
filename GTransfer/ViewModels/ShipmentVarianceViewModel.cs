@@ -19,10 +19,14 @@ namespace GTransfer.ViewModels
         private TrnMain _TMain;
         private ObservableCollection<TrnProd> _ProdList;
         private string _SupplierName;
+        private bool NewShipment = false;
 
         public TrnMain TMain { get { return _TMain; } set { _TMain = value; OnPropertyChanged("TMain"); } }
         public RelayCommand OrderReferenceCommand { get { return new RelayCommand(ExecuteOrderReferenceCommand); } }
-        public RelayCommand GeneratePICommand { get { return new RelayCommand(GeneratePI); } }
+        public RelayCommand GeneratePICommand { get { return new RelayCommand(GeneratePI, CanGeneratePI); } }
+
+
+
         public ObservableCollection<TrnProd> ProdList { get { return _ProdList; } set { _ProdList = value; OnPropertyChanged("ProdList"); } }
         public string SupplierName { get { return _SupplierName; } set { _SupplierName = value; OnPropertyChanged("SupplierName"); } }
         public bool ShowAll { get { return displayMode == 1; } set { if (value) SetDisplayMode(1); } }
@@ -70,7 +74,28 @@ namespace GTransfer.ViewModels
                 VoucherName = "Purchase Invoice",
                 VoucherPrefix = "PI"
             };
+            if (ProdList != null)
+                ProdList.Clear();
+            TMain.PropertyChanged += TMain_PropertyChanged;
+            NewShipment = false;
             return false;
+        }
+
+        private void TMain_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "REFORDBILL")
+            {
+                TMain = new TrnMain
+                {
+                    VoucherName = "Purchase Invoice",
+                    VoucherPrefix = "PI",
+                    REFORDBILL = TMain.REFORDBILL
+                };
+                if (ProdList != null)
+                    ProdList.Clear();
+                TMain.PropertyChanged += TMain_PropertyChanged;
+                _action = ButtonAction.Init;
+            }
         }
 
         private void ExecuteOrderReferenceCommand(object obj)
@@ -81,8 +106,9 @@ namespace GTransfer.ViewModels
             {
                 using (SqlConnection con = new SqlConnection(GlobalClass.DataConnectionString))
                 {
+                    NewShipment = con.ExecuteScalar<int>("SELECT COUNT(*) FROM RMD_TRNMAIN WHERE REFORDBILL = '" + TMain.REFORDBILL + "'") == 0;
                     var orderTran = con.Query<TrnMain>(@"SELECT TRNAC, ACNAME PARAC FROM RMD_TRNMAIN T JOIN RMD_ACLIST A ON T.TRNAC = A.ACID
-                                    WHERE LEFT(VCHRNO, 2) = 'PO' AND VCHRNO = '" + TMain.REFORDBILL + "' AND DIVISION = '" + GlobalClass.DIVISION + "'").FirstOrDefault();
+                                    WHERE LEFT(VCHRNO, 2) IN ('PO', 'OR') AND VCHRNO = '" + TMain.REFORDBILL + "' AND DIVISION = '" + GlobalClass.DIVISION + "'").FirstOrDefault();
                     if (orderTran == null)
                     {
                         MessageBox.Show("Invalid order no.", "GRN", MessageBoxButton.OK, MessageBoxImage.Exclamation);
@@ -123,6 +149,7 @@ namespace GTransfer.ViewModels
                     TMain.VATAMNT = _AllProdList.Sum(x => x.VAT);
                     TMain.NETAMNT = _AllProdList.Sum(x => x.NETAMOUNT);
                     SetDisplayMode(displayMode);
+                    _action = ButtonAction.Loaded;
                 }
             }
             catch (Exception Ex)
@@ -145,9 +172,9 @@ namespace GTransfer.ViewModels
                     TRNTIME = DateTime.Now.ToString("hh:mm tt"),
                     TRNUSER = GlobalClass.CurrentUser.UNAME,
                     REFORDBILL = TMain.REFORDBILL,
-                    TRNAC = TMain.TRNAC,
-                    PARAC = TMain.TRNAC,
-                    TRNMODE = "Credit",
+                    TRNAC = "AT01002",
+                    PARAC = TMain.PARAC,
+                    TRNMODE = "Cash",
                     TOTAMNT = TMain.TOTAMNT,
                     TAXABLE = TMain.TAXABLE,
                     VATAMNT = TMain.VATAMNT,
@@ -163,25 +190,32 @@ namespace GTransfer.ViewModels
                     {
                         main.VCHRNO = conn.ExecuteScalar<string>(
 @"IF EXISTS (SELECT * FROM RMD_SEQUENCES WHERE VNAME = @VNAME AND DIV = @DIV)
-	SELECT 'GR' + CAST(CurNo AS VARCHAR) FROM RMD_SEQUENCES WHERE VNAME = @VNAME AND DIV = @DIV
+	SELECT 'PI' + CAST(CurNo AS VARCHAR) FROM RMD_SEQUENCES WHERE VNAME = @VNAME AND DIV = @DIV
 ELSE 
 	INSERT INTO RMD_SEQUENCES(VNAME, AUTO, Start, CurNo, DIV, DIVISION, VoucherType, VoucherName)
-	OUTPUT 'GR' + CAST(inserted.CurNo AS VARCHAR)
-	VALUES (@VNAME, 1, 1, 1, @DIV, @DIV, 'GR', 'Goods Received Voucher')", new { VNAME = "GoodsReceived", DIV = GlobalClass.DIVISION }, tran);
+	OUTPUT 'PI' + CAST(inserted.CurNo AS VARCHAR)
+	VALUES (@VNAME, 1, 1, 1, @DIV, @DIV, 'PI', 'Goods Received Voucher')", new { VNAME = "Purchase", DIV = GlobalClass.DIVISION }, tran);
 
 
                         conn.Execute(
-@"INSERT INTO RMD_TRNMAIN(VCHRNO, DIVISION, TRNDATE, BSDATE, TRNTIME, TRNUSER, REFORDBILL, TRNAC, PARAC, TOTAMNT, TAXABLE, NONTAXABLE, DCAMNT, VATAMNT, NETAMNT, TRNMODE)
-VALUES(@VCHRNO, @DIVISION, @TRNDATE, @BSDATE, @TRNTIME, @TRNUSER, @REFORDBILL, @TRNAC, @PARAC, @TOTAMNT, @TAXABLE, @NONTAXABLE, @DCAMNT, @VATAMNT, @NETAMNT, @TRNMODE)", main, tran);
+@"INSERT INTO RMD_TRNMAIN(VCHRNO, DIVISION, CHALANNO, TRNDATE, BSDATE, TRNTIME, TRNUSER, REFORDBILL, TRNAC, PARAC, TOTAMNT, TAXABLE, NONTAXABLE, DCAMNT, VATAMNT, NETAMNT, TRNMODE, CHEQUENO, REMARKS, EditUser, SHIFT, CHEQUEDATE)
+VALUES(@VCHRNO, @DIVISION, @VCHRNO, @TRNDATE, @BSDATE, @TRNTIME, @TRNUSER, @REFORDBILL, @TRNAC, @PARAC, @TOTAMNT, @TAXABLE, @NONTAXABLE, @DCAMNT, @VATAMNT, @NETAMNT, @TRNMODE, '', '', '', '', @TRNDATE)", main, tran);
 
                         conn.Execute(
-@"INSERT INTO RMD_TRNPROD (VCHRNO, DIVISION, MCODE, UNIT, Quantity, RealQty, RATE, AMOUNT, DISCOUNT, VAT, REALRATE, REALQTY_IN, WAREHOUSE, TAXABLE, NONTAXABLE, SNO)
-VALUES ('" + main.VCHRNO + "', '" + GlobalClass.DIVISION + "', @MCODE, @UNIT, @Quantity, @RealQty, @RATE, @AMOUNT, @DISCOUNT, @VAT, @REALRATE, @REALQTY_IN, @WAREHOUSE, @TAXABLE, @NONTAXABLE, @SNO)", ProdList, tran);
+@"INSERT INTO RMD_TRNPROD (VCHRNO, DIVISION, MCODE, UNIT, Quantity, RealQty, RATE, AMOUNT, DISCOUNT, VAT, REALRATE, REALQTY_IN, WAREHOUSE, TAXABLE, NONTAXABLE, SNO, IDIS)
+VALUES ('" + main.VCHRNO + "', '" + GlobalClass.DIVISION + "', @MCODE, @UNIT, @Quantity, @RealQty, @RATE, @AMOUNT, @DISCOUNT, @VAT, @REALRATE, @REALQTY_IN, @WAREHOUSE, @TAXABLE, @NONTAXABLE, @SNO, 0)", ProdList, tran);
 
-                        conn.Execute("UPDATE RMD_SEQUENCES SET CURNO = CURNO + 1 WHERE VNAME = @VNAME AND DIV = @DIV", new { VNAME = "GoodsReceived", DIV = GlobalClass.DIVISION }, tran);
+                        conn.Execute(
+@"INSERT INTO RMD_TRNPROD_DETAIL (VCHRNO, DIVISION, PhiscalID, MCODE, UNIT, Warehouse, LocationId, InQty, OutQty, SNO)
+SELECT M.VCHRNO, M.DIVISION, M.PhiscalID, L.MCODE, L.Unit, P.WAREHOUSE, L.LocationId,L.Quantity , 0, P.SNO  FROM [tblStockInVerificationLog] L
+JOIN RMD_TRNMAIN M ON L.OrderNo = M.REFORDBILL
+JOIN RMD_TRNPROD P ON M.VCHRNO = P.VCHRNO AND M.DIVISION = P.DIVISION AND M.PhiscalID = P.PhiscalID AND L.MCODE = P.MCODE AND L.Unit = P.UNIT
+WHERE L.OrderNo = @REFORDBILL", main, tran);
+
+                        conn.Execute("UPDATE RMD_SEQUENCES SET CURNO = CURNO + 1 WHERE VNAME = @VNAME AND DIV = @DIV", new { VNAME = "Purchase", DIV = GlobalClass.DIVISION }, tran);
                         tran.Commit();
                         MessageBox.Show("Voucher successfully generated");
-
+                        ExecuteUndo(null);
                     }
                 }
             }
@@ -191,6 +225,11 @@ VALUES ('" + main.VCHRNO + "', '" + GlobalClass.DIVISION + "', @MCODE, @UNIT, @Q
                     Ex = Ex.InnerException;
                 MessageBox.Show(Ex.Message, "Shipment Receive Variance", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        private bool CanGeneratePI(object obj)
+        {
+            return _action == ButtonAction.Loaded && NewShipment;
         }
     }
 
