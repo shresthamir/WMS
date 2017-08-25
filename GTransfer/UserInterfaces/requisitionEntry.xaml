@@ -63,10 +63,21 @@
             </Border>
             <Border Style="{StaticResource PlainBackground}" Grid.Column="1">
                 <StackPanel>
+                    <DockPanel Margin="5 5">
+                        <Label Content="Barcode :" Width="60"></Label>
+                        <TextBox    Text="{Binding Requisition_DetailObj.Bcode,UpdateSourceTrigger=PropertyChanged}">
+                            <TextBox.InputBindings>
+                                <KeyBinding Key="Enter" Command="{Binding BarcodeChangeCommand}" />
+                            </TextBox.InputBindings>
+                        </TextBox>
+                    </DockPanel>
                     <DockPanel Margin="5 0">
                         <Label Content="Item :" Width="60" ></Label>
-                        <myCombobox:ExendedComboBoxDatagrid Tag="" KeyboardNavigation.TabNavigation="{Binding ItemCodeFocus}" HorizontalAlignment="Stretch"  
-                                                               Style="{DynamicResource VirtualizationKey}"  ItemsSource="{Binding ItemList}"   WaterMarkDescription="NAME" WaterMarkID="ITEMCODE"
+                        <ComboBox IsEditable="True" Width="150"  Style="{DynamicResource VirtualizationKey}" ItemsSource="{Binding ItemList}" DisplayMemberPath="MENUCODE" SelectedValue="{Binding SelectedItemMcode}" SelectedValuePath="MCODE">
+                        </ComboBox>
+                        <ComboBox IsEditable="True" Style="{DynamicResource VirtualizationKey}" ItemsSource="{Binding ItemList}" DisplayMemberPath="DESCA" SelectedValue="{Binding SelectedItemMcode}" SelectedValuePath="MCODE"/>
+                        <!--<myCombobox:ExendedComboBoxDatagrid   HorizontalAlignment="Stretch"  Style="{DynamicResource VirtualizationKey}"
+                                                            ItemsSource="{Binding ItemList}"   WaterMarkDescription="NAME" WaterMarkID="ITEMCODE"
                                                                DisplayMemberPath="DESCA"  SelectedValue="{Binding SelectedItemMcode}" SelectedValuePath="MCODE"
                                                                 
                                                                IdMemberPath="MENUCODE"     IsEditable="True">
@@ -78,10 +89,10 @@
                                
 
                             </myCombobox:ExendedComboBoxDatagrid.Columns>
-                            <myCombobox:ExendedComboBoxDatagrid.InputBindings>
+                            --><!--<myCombobox:ExendedComboBoxDatagrid.InputBindings>
                                 <KeyBinding Key="Enter" Command="{Binding ItemCodeFocusLostEvent}"/>
-                            </myCombobox:ExendedComboBoxDatagrid.InputBindings>
-                        </myCombobox:ExendedComboBoxDatagrid>
+                            </myCombobox:ExendedComboBoxDatagrid.InputBindings>--><!--
+                        </myCombobox:ExendedComboBoxDatagrid>-->
                     </DockPanel>
                     <StackPanel Orientation="Horizontal" >
                         <Label Content="Units:" Width="60" ></Label>
@@ -106,11 +117,12 @@
                   
                   IsEnabled="{Binding  EntryPanelEnabled}"  Grid.RowSpan="2" IsReadOnly="True"  >
                 <DataGrid.Columns >
-                    <!--<DataGridTextColumn  Header="Sn" Width="30" Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow}, Converter={RowSn:RowToIndexConverter}}" />-->
-                    <DataGridTextColumn  Header="Item Code" Width="150" Binding="{Binding Item.MENUCODE}"/>
+                    <DataGridTextColumn Header="SN" Width="40"  Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow}, Converter={StaticResource RowToIndex}}" />
+                    <DataGridTextColumn Header="Barcode" Width="120" Binding="{Binding Bcode}"/>
+                    <DataGridTextColumn  Header="Item Code" Width="120" Binding="{Binding Item.MENUCODE}"/>
                     <DataGridTextColumn  Header="Product Description" Width="*" Binding="{Binding  Item.DESCA}"/>
-                    <DataGridTextColumn  Header="Unit"  Width="150" Binding="{Binding Unit}" />
-                    <DataGridTextColumn  Header="Quantity"  Width="150" Binding="{Binding Quantity}" />
+                    <DataGridTextColumn  Header="Unit"  Width="120" Binding="{Binding Unit}" />
+                    <DataGridTextColumn  Header="Quantity"  Width="120" Binding="{Binding Quantity}" />
                   
                 </DataGrid.Columns>
             </DataGrid>

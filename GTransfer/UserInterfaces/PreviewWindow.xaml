@@ -377,12 +377,12 @@
                     <StackPanel Margin="10,5"
                             HorizontalAlignment="Center"
                             Orientation="Horizontal">
-                        <Button Height="38"
+                        <!--<Button Height="38"
                             Margin="10,3"
                             Command="{Binding QuickPrintCommand}"
                             Content="Quick Print"
                             Style="{StaticResource QuickPrintBtnStyle}"
-                            ToolTip="Quick Print" />
+                            ToolTip="Quick Print" />-->
                         <Button Height="38"
                             Margin="10,3"
                             Command="{Binding PrintCommand}"
@@ -656,7 +656,7 @@
                             </StackPanel>
                         </StackPanel>
                     </StackPanel>
-                    <CheckBox Grid.Row="1" Margin="22 5" Content="Persist Preferences" Checked="OnPersistChanged"/>
+                    <!--<CheckBox Grid.Row="1" Margin="22 5" Content="Persist Preferences" Checked="OnPersistChanged"/>-->
                 </Grid>
             </Border>
 

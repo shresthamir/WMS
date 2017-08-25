@@ -34,7 +34,9 @@ namespace GTransfer.Models
         private decimal _ApprovedQty;
         private string _Unit;
         private Product _Item;
+        private string _Bcode;
 
+        public string Bcode { get { return _Bcode; }set { _Bcode = value; OnPropertyChanged("Bcode"); } }
         public Product Item { get { return _Item; } set { _Item = value; OnPropertyChanged("Item"); } }
         public int ReqId { get { return _ReqId; } set { _ReqId = value; OnPropertyChanged("ReqId"); } }
         public string Mcode { get { return _Mcode; } set { _Mcode = value; OnPropertyChanged("Mcode"); } }

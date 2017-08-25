@@ -10,6 +10,14 @@
         xmlns:system="clr-namespace:System;assembly=mscorlib" 
              mc:Ignorable="d" 
              d:DesignHeight="1000" d:DesignWidth="700">
+    <UserControl.Resources>
+        <DataTemplate x:Key="PrintHeaderTemplate">
+            <StackPanel >
+                
+                <TextBlock FontSize="12" HorizontalAlignment="Center" Height="30" Text="Testingdddddddddddddddd" />
+            </StackPanel>
+        </DataTemplate>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
 
@@ -21,15 +29,17 @@
             <Grid>
         <StackPanel Orientation="Horizontal" IsEnabled="{Binding EntryPanelEnabled,Converter={StaticResource ReverseBool}}" >
             <Label Content="Requisition Id:" Width="100"></Label>
-            <TextBox Width="100" Text="{Binding RequisitionObj.ReqId,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource HideZero}}"  >
+            <TextBox Width="100" Text="{Binding ReqId,UpdateSourceTrigger=PropertyChanged,Converter={StaticResource HideZero}}"  >
                 <TextBox.InputBindings>
-                    <KeyBinding Key="Enter" Command="{Binding LoadDataCommand}" />
+                    <KeyBinding Key="Enter" Command="{Binding LoadpickingListCommand}" />
                 </TextBox.InputBindings>
             </TextBox>
-        </StackPanel>
+                    <Button Style="{StaticResource RoundCornerButton}" Content="Generate" Height="28" Width="100" Margin="15 0" Command="{Binding GeneratePickingListCommand}"/>
+                </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-        <Button  Width="90" Height="28" Style="{StaticResource RoundCornerButton}" Command="{Binding RLoadCommand}" Content="Load"/>
-                <Button  Width="90" Height="28" Style="{StaticResource RoundCornerButton}" Command="{Binding RLoadCommand}" Content="Cancel"/>
+                    <Button  Width="90" Height="28" Style="{StaticResource RoundCornerButton}" Command="{Binding SavePickingCommand}" CommandParameter="{Binding ElementName=Report}" Content="Save" Visibility="{Binding IsloadMode,Converter={StaticResource ReverseBoolToVisibility}}"/>
+                    <Button  Width="90" Height="28" Style="{StaticResource RoundCornerButton}" Command="{Binding PrintPreviewCommand}" CommandParameter="{Binding ElementName=Report}" Content="Print" Visibility="{Binding IsloadMode,Converter={StaticResource BoolToVisibility}}"/>
+                    <Button  Width="90" Height="28" Style="{StaticResource RoundCornerButton}" Command="{Binding CancelCommand}" Content="Cancel"/>
                 </StackPanel>
             </Grid>
         </Border>
@@ -41,8 +51,8 @@
                            NavigationMode="Cell"      
                                                    
                            AutoGenerateColumns="False"
-                           ItemsSource="{Binding DView}"  
-                           ColumnSizer="Star"
+                           ItemsSource="{Binding PickingList}"  
+                          ColumnSizer="Star"
                            SelectionUnit="Cell"                              
                            AllowGrouping="False"    
                            ShowGroupDropArea="True">
@@ -54,13 +64,24 @@
                             </ResourceDictionary.MergedDictionaries>
                         </ResourceDictionary>
                     </sf:SfDataGrid.Resources>
+                    <!--<sf:SfDataGrid.PrintSettings>
+                    <sf:PrintSettings  
+                                                
+                                                
+                                               
+                                                PrintPageHeaderTemplate="{StaticResource PrintHeaderTemplate}">                        
+                    </sf:PrintSettings>
+                </sf:SfDataGrid.PrintSettings>-->
                     <sf:SfDataGrid.Columns>
-                        <sf:GridTextColumn MappingName="Sno" Width="50" HeaderText="Sn."></sf:GridTextColumn>
-                        <sf:GridTextColumn AllowEditing="True" MappingName="Item" HeaderText="Item"></sf:GridTextColumn>
-                        <sf:GridTextColumn AllowEditing="True" MappingName="Location" HeaderText="Location"/>
-                        <sf:GridTextColumn AllowEditing="False" MappingName="RequestQty" HeaderText="Request Qty"></sf:GridTextColumn>
-                        <sf:GridCheckBoxColumn AllowEditing="True"  MappingName="ApprovedQty" HeaderText="Approved Qty"/>
-                     
+                        <!--<sf:GridTextColumn AllowEditing="False"  MappingName="Sno" Width="50" HeaderText="Sn."></sf:GridTextColumn>-->
+                        <sf:GridTextColumn AllowEditing="False"  MappingName="Bcode" HeaderText="Barcode"></sf:GridTextColumn>
+                        <sf:GridTextColumn AllowEditing="False" MappingName="MENUCODE" HeaderText="Item Code"></sf:GridTextColumn>
+                        <sf:GridTextColumn AllowEditing="False"   MappingName="DESCA" HeaderText="Item Name"></sf:GridTextColumn>
+                        <sf:GridTextColumn AllowEditing="False"  MappingName="Unit" HeaderText="Unit"/>
+                        <!--<sf:GridTextColumn AllowEditing="False" MappingName="ReqQty" HeaderText="Request Qty"></sf:GridTextColumn>-->
+                        <sf:GridTextColumn AllowEditing="False"   MappingName="Quantity" HeaderText="Quantity"></sf:GridTextColumn>
+                        <sf:GridTextColumn AllowEditing="False" MappingName="LocationCode" HeaderText="Location"></sf:GridTextColumn>
+
                     </sf:SfDataGrid.Columns>
 
                 </sf:SfDataGrid>
@@ -84,7 +105,7 @@
 
           
             <!--<Button Grid.Column="10" Content="Preview" Command="{Binding PrintPreviewCommand}" CommandParameter="{Binding ElementName=Report}"/>-->
-            <Button Grid.Column="11" Content="Print" Command="{Binding PrintCommand}" CommandParameter="{Binding ElementName=Report}"/>
+            <!--<Button Grid.Column="11" Content="Print" Command="{Binding PrintCommand}" CommandParameter="{Binding ElementName=Report}"/>-->
 
         </Grid>
     </Grid>

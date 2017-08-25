@@ -24,7 +24,7 @@ namespace GTransfer.Library
         //public static string DataConnectionString = "SERVER = PRO-PC; DATABASE = DB_POSDBS; UID = sa; PWD = tebahal";
         public static string DataConnectionString;
         public static UserProfiles CurrentUser = new UserProfiles() { UNAME = "admin" };
-
+        public static string PhiscalId = "073/74";
         public static string DIVISION = "MMX";
         
         static GlobalClass()

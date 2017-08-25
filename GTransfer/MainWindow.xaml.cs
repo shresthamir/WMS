@@ -77,7 +77,16 @@ namespace GTransfer
             LayoutAnchorable la = new LayoutAnchorable();
             la.Content = new UserInterfaces.pickingList();
             la.IsActive = true;
-            la.Title = "Picking List Entry";
+            la.Title = "Picking List";
+            LayDocPane.Children.Add(la);
+        }
+
+        private void LoationTransferEntry_Click(object sender, RoutedEventArgs e)
+        {
+            LayoutAnchorable la = new LayoutAnchorable();
+            la.Content = new UserInterfaces.LocationTransfer();
+            la.IsActive = true;
+            la.Title = "Location Transfer";
             LayDocPane.Children.Add(la);
         }
     }

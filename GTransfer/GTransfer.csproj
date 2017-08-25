@@ -165,6 +165,9 @@
     <Compile Include="Models\UnitAndQty.cs" />
     <Compile Include="Models\UserProfiles.cs" />
     <Compile Include="Repository\Repositories.cs" />
+    <Compile Include="UserInterfaces\LocationTransfer.xaml.cs">
+      <DependentUpon>LocationTransfer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserInterfaces\pickingList.xaml.cs">
       <DependentUpon>pickingList.xaml</DependentUpon>
     </Compile>
@@ -186,15 +189,12 @@
     <Compile Include="UserInterfaces\requisitionEntry.xaml.cs">
       <DependentUpon>requisitionEntry.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\LocationTransferViewModel.cs" />
     <Compile Include="ViewModels\pickingListViewModel.cs" />
     <Compile Include="ViewModels\ShipmentVarianceViewModel.cs" />
     <Compile Include="ViewModels\ItemLocationMappingViewModel.cs" />
     <Compile Include="ViewModels\LocationEntryViewModel.cs" />
     <Compile Include="ViewModels\RequisitionEntryViewModel.cs" />
-    <Page Include="Controls\HeaderAndFooterDataTemplete.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Controls\ucActionBar.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -230,6 +230,10 @@
     <Page Include="Styles\ValueConverters.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserInterfaces\LocationTransfer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserInterfaces\pickingList.xaml">
       <SubType>Designer</SubType>
