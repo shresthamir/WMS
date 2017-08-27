@@ -116,7 +116,7 @@ namespace GTransfer.ViewModels
                     }
                     TMain.PARAC = orderTran.TRNAC;
                     SupplierName = orderTran.PARAC;
-                    string ProdListQry = @"SELECT B.MCODE, MI.MENUCODE, MI.DESCA ITEMDESC, ISNULL(OP.RATE, MI.PRATE_A) REALRATE,  ISNULL(OP.RATE, MI.PRATE_A) RATE, B.UNIT, LOC.Warehouse, ISNULL(OP.QUANTITY, 0) OrderQty, ISNULL(SUM(L.QUANTITY), 0) Quantity , ISNULL(SUM(L.QUANTITY), 0) REALQTY_IN, MI.RATE_A SRATE, MI.VAT ISVAT FROM
+                    string ProdListQry = @"SELECT B.MCODE, MI.MENUCODE, MI.DESCA ITEMDESC, ISNULL(OP.RATE, MI.PRATE_A) REALRATE,  ISNULL(OP.RATE, MI.PRATE_A) RATE, B.UNIT, LOC.Warehouse, ISNULL(OP.QUANTITY, 0) OrderQty, ISNULL(SUM(L.QUANTITY), 0) Quantity , ISNULL(SUM(L.REALQTY_IN), 0) REALQTY_IN, MI.RATE_A SRATE, MI.VAT ISVAT FROM
                                             (
                                                 SELECT DISTINCT * FROM
 	                                            (

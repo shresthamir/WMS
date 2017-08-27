@@ -173,7 +173,7 @@
                     <DataGridTextColumn  Header="Warehouse"  Width="120" Binding="{Binding WAREHOUSE}" />
                     <DataGridTextColumn  Header="Unit"  Width="60" Binding="{Binding UNIT}"/>
                     <DataGridTextColumn  Header="Order Qty"  Width="70" Binding="{Binding OrderQty,StringFormat=#0.00}" />
-                    <DataGridTextColumn  Header="Received Qty"  Width="80" Binding="{Binding Quantity,StringFormat=#0.00}" />
+                    <DataGridTextColumn  Header="Received Qty"  Width="80" Binding="{Binding REALQTY_IN,StringFormat=#0.00}" />
                     <DataGridTextColumn  Header="Variance Qty"  Width="80" Binding="{Binding VarianceQty,StringFormat=#0.00}" />
                     
                     <DataGridTextColumn  Header="Rate"  Width="70" Binding="{Binding RATE,StringFormat=#0.00}" />
