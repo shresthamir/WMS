@@ -156,6 +156,7 @@
     <Compile Include="Models\DataTables\TMenuitem.cs" />
     <Compile Include="Models\Division.cs" />
     <Compile Include="Models\Location.cs" />
+    <Compile Include="Models\PickingList.cs" />
     <Compile Include="Models\Product.cs" />
     <Compile Include="Models\Requisition.cs" />
     <Compile Include="Models\TTrnMain.cs" />
@@ -164,6 +165,15 @@
     <Compile Include="Models\UnitAndQty.cs" />
     <Compile Include="Models\UserProfiles.cs" />
     <Compile Include="Repository\Repositories.cs" />
+    <Compile Include="UserInterfaces\LocationTransfer.xaml.cs">
+      <DependentUpon>LocationTransfer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserInterfaces\pickingList.xaml.cs">
+      <DependentUpon>pickingList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserInterfaces\PreviewWindow.xaml.cs">
+      <DependentUpon>PreviewWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserInterfaces\ShipmentReceiveLog.xaml.cs">
       <DependentUpon>ShipmentReceiveLog.xaml</DependentUpon>
     </Compile>
@@ -179,6 +189,8 @@
     <Compile Include="UserInterfaces\requisitionEntry.xaml.cs">
       <DependentUpon>requisitionEntry.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\LocationTransferViewModel.cs" />
+    <Compile Include="ViewModels\pickingListViewModel.cs" />
     <Compile Include="ViewModels\ShipmentVarianceViewModel.cs" />
     <Compile Include="ViewModels\ItemLocationMappingViewModel.cs" />
     <Compile Include="ViewModels\LocationEntryViewModel.cs" />
@@ -216,6 +228,18 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Styles\ValueConverters.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserInterfaces\LocationTransfer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserInterfaces\pickingList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserInterfaces\PreviewWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

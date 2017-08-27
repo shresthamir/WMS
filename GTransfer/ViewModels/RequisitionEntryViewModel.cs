@@ -38,17 +38,41 @@ namespace GTransfer.ViewModels
                 if (_SelectedItemMcode == value) return;
                 _SelectedItemMcode = value;
                 if (!string.IsNullOrEmpty(_SelectedItemMcode)) {
-                    if (Requisition_DetailObj == null) Requisition_DetailObj = new Requisition_Detail();
-                    Requisition_DetailObj.Mcode = _SelectedItemMcode;
-                    Requisition_DetailObj.Item = new Product(_SelectedItemMcode);
-                    Requisition_DetailObj.Unit = Requisition_DetailObj.Item.BASEUNIT;
+                    changeItemEvent();
                 }
                 OnPropertyChanged("SelectedItemMcode"); } }
 
+        private void changeItemEvent(bool IsbarcodeChangeEvent = false) {
+            if (Requisition_DetailObj == null) Requisition_DetailObj = new Requisition_Detail();
+            Requisition_DetailObj.Mcode = _SelectedItemMcode;
+            Requisition_DetailObj.Item = new Product(_SelectedItemMcode);
+            Requisition_DetailObj.Unit = Requisition_DetailObj.Item.BASEUNIT;
+            if (IsbarcodeChangeEvent == false)
+            {
+                Requisition_DetailObj.Bcode = Requisition_DetailObj.Item.BARCODE;
+            }
+        }
 
         public RelayCommand AddCommand { get { return new RelayCommand(ExecuteAdd); } }
         public RelayCommand GridDoubleClickEvent { get { return new RelayCommand(ExecuteGridDoubleClickEvent); } }
         public RelayCommand ExcelImportEvent { get { return new RelayCommand(ExecuteExcelImportEvent); } }
+        public RelayCommand BarcodeChangeCommand { get { return new RelayCommand(ExecuteBarcodeChangeCommand); } }
+
+        private void ExecuteBarcodeChangeCommand(object obj)
+        {try {
+                if (!string.IsNullOrEmpty(Requisition_DetailObj.Bcode)) {
+                    using (SqlConnection con = new SqlConnection(GlobalClass.DataConnectionString)) {
+                       var result= con.Query("SELECT A.BCODE,A.MCODE,A.UNIT,A.ISSUENO,A.EDATE,A.BCODEID,A.SUPCODE,A.BATCHNO,A.EXPIRY,A.REMARKS,A.INVNO,A.DIV,A.FYEAR,A.SRATE,B.DESCA FROM BARCODE A inner join Menuitem B on A.mcode=B.mcode WHERE A.BCODE='"+Requisition_DetailObj.Bcode+"'").FirstOrDefault();
+                        if (result == null) { MessageBox.Show("Invalid Barcode");return; }
+                        SelectedItemMcode = result.MCODE;
+                        changeItemEvent(true);
+                    }
+                }
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
+
+            
+        }
 
         public RequisitionEntryViewModel()
         {try
@@ -132,6 +156,7 @@ namespace GTransfer.ViewModels
         public override void NewMethod(object obj)
         {
             RequisitionObj = new Requisition() { Requisition_Details = new ObservableCollection<Requisition_Detail>(),ReqId=GetNewReqId(),TDate=DateTime.Today,Exp_DeliveryDate=DateTime.Today };
+            Requisition_DetailObj = new Requisition_Detail();
 
         }
         public override void SaveMethod(object obj)
