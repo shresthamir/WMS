@@ -24,9 +24,19 @@ namespace GTransfer.Library
         //public static string DataConnectionString = "SERVER = PRO-PC; DATABASE = DB_POSDBS; UID = sa; PWD = tebahal";
         public static string DataConnectionString;
         public static UserProfiles CurrentUser = new UserProfiles() { UNAME = "admin" };
+        private static FiscalYear _CurFiscalYear;
+        public static FiscalYear CurFiscalYear { get { return _CurFiscalYear; } set { _CurFiscalYear = value; } }
         public static string PhiscalId = "073/74";
         public static string DIVISION = "MMX";
-        
+        public static Company company = new Company
+        {
+            INITIAL = "016",
+            NAME = "CIRCLEK (M) SDN SHD (1023315-V)",
+            ADDRESS = "KG LINDUNGAN PJS 6/2A",
+            TELA = "03-78729199",
+            VAT = "001628790784"
+        };
+
         static GlobalClass()
         {
             SqlConnectionStringBuilder sbr = new SqlConnectionStringBuilder();
