@@ -177,6 +177,9 @@
     <Compile Include="UserInterfaces\ShipmentReceiveLog.xaml.cs">
       <DependentUpon>ShipmentReceiveLog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserInterfaces\StockIssueVariance.xaml.cs">
+      <DependentUpon>StockIssueVariance.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserInterfaces\ShipmentReceiveVariance.xaml.cs">
       <DependentUpon>ShipmentReceiveVariance.xaml</DependentUpon>
     </Compile>
@@ -191,6 +194,7 @@
     </Compile>
     <Compile Include="ViewModels\LocationTransferViewModel.cs" />
     <Compile Include="ViewModels\pickingListViewModel.cs" />
+    <Compile Include="ViewModels\StockIssueVarianceViewModel.cs" />
     <Compile Include="ViewModels\ShipmentVarianceViewModel.cs" />
     <Compile Include="ViewModels\ItemLocationMappingViewModel.cs" />
     <Compile Include="ViewModels\LocationEntryViewModel.cs" />
@@ -244,6 +248,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UserInterfaces\ShipmentReceiveLog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserInterfaces\StockIssueVariance.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

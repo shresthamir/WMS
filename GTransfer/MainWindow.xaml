@@ -25,6 +25,7 @@
                 <MenuItem Name="Utilities" Header="Utilities">
                     <MenuItem Name="SRL" Header="Shipment Receive Log" Click="SRL_Click"/>
                     <MenuItem Name="GRN" Header="Shipment Receive Variance" Click="GRN_Click"/>
+                    <MenuItem Name="BT" Header="Stock Issue Variance" Click="BT_Click"/>
                 </MenuItem>
             </Menu>
         </Border>
