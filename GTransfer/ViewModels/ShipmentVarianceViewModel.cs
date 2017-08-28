@@ -116,26 +116,25 @@ namespace GTransfer.ViewModels
                     }
                     TMain.PARAC = orderTran.TRNAC;
                     SupplierName = orderTran.PARAC;
-                    string ProdListQry = @"SELECT B.MCODE, MI.MENUCODE, MI.DESCA ITEMDESC, ISNULL(OP.RATE, MI.PRATE_A) REALRATE,  ISNULL(OP.RATE, MI.PRATE_A) RATE, B.UNIT, LOC.Warehouse, ISNULL(OP.QUANTITY, 0) OrderQty, ISNULL(SUM(L.QUANTITY), 0) Quantity , ISNULL(SUM(L.REALQTY_IN), 0) REALQTY_IN, MI.RATE_A SRATE, MI.VAT ISVAT FROM
+                    string ProdListQry = @"SELECT B.MCODE, MI.MENUCODE, MI.DESCA ITEMDESC, ISNULL(OP.RATE, MI.PRATE_A) REALRATE,  ISNULL(OP.RATE, MI.PRATE_A) RATE, B.UNIT, LOC.Warehouse, ISNULL(OP.QUANTITY, 0) OrderQty, ISNULL(SUM(L.REALQTY_IN), 0) Quantity , ISNULL(SUM(L.REALQTY_IN), 0) REALQTY_IN, MI.RATE_A SRATE, MI.VAT ISVAT FROM
                                             (
                                                 SELECT DISTINCT * FROM
 	                                            (
-                                                    SELECT MCODE, UNIT FROM RMD_ORDERPROD WHERE VCHRNO = @OrderNo
+                                                    SELECT VCHRNO OrderNo, MCODE, UNIT FROM RMD_ORDERPROD WHERE VCHRNO = @OrderNo
                                                     UNION ALL
-                                                    SELECT MCODE, UNIT FROM tblStockInVerificationLog WHERE OrderNo = @OrderNo
+                                                    SELECT OrderNo, MCODE, UNIT FROM tblStockInVerificationLog WHERE OrderNo = @OrderNo
 
                                                 ) A
                                             ) B 
                                             JOIN MENUITEM MI ON MI.MCODE = B.MCODE
-                                            LEFT JOIN (SELECT * FROM RMD_ORDERPROD WHERE VCHRNO = @OrderNo) OP ON OP.MCODE = B.MCODE AND OP.UNIT = B.UNIT
-                                            LEFT JOIN tblStockInVerificationLog L ON L.MCODE = B.MCODE AND L.UNIT = B.UNIT
-                                            JOIN TBL_LOCATIONS LOC ON l.LocationId = LOC.LocationId
+                                            LEFT JOIN RMD_ORDERPROD OP ON OP.VCHRNO = B.OrderNo AND OP.MCODE = B.MCODE AND OP.UNIT = B.UNIT
+                                            LEFT JOIN tblStockInVerificationLog L ON L.OrderNo = B.OrderNo AND L.MCODE = B.MCODE AND L.UNIT = B.UNIT
+                                            LEFT JOIN TBL_LOCATIONS LOC ON l.LocationId = LOC.LocationId                                            
                                             GROUP BY B.MCODE, B.UNIT, OP.QUANTITY, OP.RATE, LOC.Warehouse, MI.MENUCODE, MI.DESCA, MI.PRATE_A, MI.RATE_A, MI.VAT";
                     _AllProdList = con.Query<TrnProd>(ProdListQry, new { OrderNo = TMain.REFORDBILL });
                     int sno = 1;
                     foreach (TrnProd tpod in _AllProdList)
                     {
-                        tpod.REALQTY_IN = tpod.Quantity;
                         tpod.AMOUNT = tpod.Quantity * tpod.REALRATE;
                         tpod.TAXABLE = tpod.AMOUNT - tpod.NONTAXABLE - tpod.DISCOUNT;
                         if (tpod.ISVAT == 1)
@@ -203,11 +202,11 @@ VALUES(@VCHRNO, @DIVISION, @VCHRNO, @TRNDATE, @BSDATE, @TRNTIME, @TRNUSER, @REFO
 
                         conn.Execute(
 @"INSERT INTO RMD_TRNPROD (VCHRNO, DIVISION, MCODE, UNIT, Quantity, RealQty, RATE, AMOUNT, DISCOUNT, VAT, REALRATE, REALQTY_IN, WAREHOUSE, TAXABLE, NONTAXABLE, SNO, IDIS)
-VALUES ('" + main.VCHRNO + "', '" + GlobalClass.DIVISION + "', @MCODE, @UNIT, @Quantity, @RealQty, @RATE, @AMOUNT, @DISCOUNT, @VAT, @REALRATE, @REALQTY_IN, @WAREHOUSE, @TAXABLE, @NONTAXABLE, @SNO, 0)", ProdList, tran);
+VALUES ('" + main.VCHRNO + "', '" + GlobalClass.DIVISION + "', @MCODE, @UNIT, @Quantity, @RealQty, @RATE, @AMOUNT, @DISCOUNT, @VAT, @REALRATE, @REALQTY_IN, @WAREHOUSE, @TAXABLE, @NONTAXABLE, @SNO, 0)", _AllProdList.Where(x => x.REALQTY_IN > 0), tran);
 
                         conn.Execute(
 @"INSERT INTO RMD_TRNPROD_DETAIL (VCHRNO, DIVISION, PhiscalID, MCODE, UNIT, Warehouse, LocationId, InQty, OutQty, SNO)
-SELECT M.VCHRNO, M.DIVISION, M.PhiscalID, L.MCODE, L.Unit, P.WAREHOUSE, L.LocationId,L.Quantity , 0, P.SNO  FROM [tblStockInVerificationLog] L
+SELECT M.VCHRNO, M.DIVISION, M.PhiscalID, L.MCODE, L.Unit, P.WAREHOUSE, L.LocationId,L.RealQty_In , 0, P.SNO  FROM [tblStockInVerificationLog] L
 JOIN RMD_TRNMAIN M ON L.OrderNo = M.REFORDBILL
 JOIN RMD_TRNPROD P ON M.VCHRNO = P.VCHRNO AND M.DIVISION = P.DIVISION AND M.PhiscalID = P.PhiscalID AND L.MCODE = P.MCODE AND L.Unit = P.UNIT
 WHERE L.OrderNo = @REFORDBILL", main, tran);
@@ -250,9 +249,10 @@ WHERE L.OrderNo = @REFORDBILL", main, tran);
             {
                 using (SqlConnection con = new SqlConnection(GlobalClass.DataConnectionString))
                 {
-                    string strQry = @"SELECT 0 SNO, MI.MENUCODE, MI.DESCA, L.Unit, L.Quantity, LOC.Warehouse, LOC.LocationName, LOC.Path, L.UserId, L.DeviceId, L.TrnDate, L.TrnTime, L.SyncDate   FROM tblStockInVerificationLog L 
+                    string strQry = @"SELECT 0 SNO, MI.MENUCODE, MI.DESCA, L.Unit, L.RealQty_In, LOC.Warehouse, LOC.LocationName, LOC.Path, L.UserId, D.DeviceName, L.TrnDate, L.TrnTime, L.SyncDate   FROM tblStockInVerificationLog L 
                                             JOIN MENUITEM MI ON L.MCODE = MI.MCODE
                                             JOIN TBL_LOCATIONS LOC ON L.LocationId = LOC.LocationId
+                                            JOIN tblDevices D ON L.DeviceId= D.DeviceId
                                             WHERE OrderNo = '" + PONumber + "'";
                     SRLog = new ObservableCollection<dynamic>(con.Query(strQry));
                 }
