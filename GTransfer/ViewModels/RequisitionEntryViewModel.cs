@@ -25,32 +25,39 @@ namespace GTransfer.ViewModels
         private ObservableCollection<Product> _ItemList;
         private string _SelectedItemMcode;
 
-       
+
         public ObservableCollection<Division> divisionList { get { return _divisionList; } set { _divisionList = value; OnPropertyChanged("divisionList"); } }
         public ObservableCollection<Unit> UnitList { get { return _UnitList; } set { _UnitList = value; OnPropertyChanged("UnitList"); } }
         public ObservableCollection<Product> ItemList { get { return _ItemList; } set { _ItemList = value; OnPropertyChanged("ItemList"); } }
         public Requisition RequisitionObj { get { return _RequisitionObj; } set { _RequisitionObj = value; OnPropertyChanged("RequisitionObj"); } }
         public Requisition_Detail Requisition_DetailObj { get { return _Requisition_DetailObj; } set { _Requisition_DetailObj = value; OnPropertyChanged("Requisition_DetailObj"); } }
         public Requisition_Detail selectedReqDetails { get { return _selectedReqDetails; } set { _selectedReqDetails = value; OnPropertyChanged("selectedReqDetails"); } }
-        public string SelectedItemMcode {
+        public string SelectedItemMcode
+        {
             get { return _SelectedItemMcode; }
-            set {
+            set
+            {
                 if (_SelectedItemMcode == value) return;
                 _SelectedItemMcode = value;
-                if (!string.IsNullOrEmpty(_SelectedItemMcode)) {
+                if (!string.IsNullOrEmpty(_SelectedItemMcode))
+                {
                     changeItemEvent();
                 }
-                OnPropertyChanged("SelectedItemMcode"); } }
+                OnPropertyChanged("SelectedItemMcode");
+            }
+        }
 
-        private void changeItemEvent(bool IsbarcodeChangeEvent = false) {
-            if (Requisition_DetailObj == null) Requisition_DetailObj = new Requisition_Detail();
+        private void changeItemEvent(bool IsbarcodeChangeEvent = false)
+        {
+            if (Requisition_DetailObj == null)
+                Requisition_DetailObj = new Requisition_Detail();
             Requisition_DetailObj.Mcode = _SelectedItemMcode;
             Requisition_DetailObj.Item = new Product(_SelectedItemMcode);
             Requisition_DetailObj.Unit = Requisition_DetailObj.Item.BASEUNIT;
-            if (IsbarcodeChangeEvent == false)
-            {
-                Requisition_DetailObj.Bcode = Requisition_DetailObj.Item.BARCODE;
-            }
+            //if (IsbarcodeChangeEvent == false)
+            //{
+            //    Requisition_DetailObj.Bcode = Requisition_DetailObj.Item.BARCODE;
+            //}
         }
 
         public RelayCommand AddCommand { get { return new RelayCommand(ExecuteAdd); } }
@@ -59,11 +66,15 @@ namespace GTransfer.ViewModels
         public RelayCommand BarcodeChangeCommand { get { return new RelayCommand(ExecuteBarcodeChangeCommand); } }
 
         private void ExecuteBarcodeChangeCommand(object obj)
-        {try {
-                if (!string.IsNullOrEmpty(Requisition_DetailObj.Bcode)) {
-                    using (SqlConnection con = new SqlConnection(GlobalClass.DataConnectionString)) {
-                       var result= con.Query("SELECT A.BCODE,A.MCODE,A.UNIT,A.ISSUENO,A.EDATE,A.BCODEID,A.SUPCODE,A.BATCHNO,A.EXPIRY,A.REMARKS,A.INVNO,A.DIV,A.FYEAR,A.SRATE,B.DESCA FROM BARCODE A inner join Menuitem B on A.mcode=B.mcode WHERE A.BCODE='"+Requisition_DetailObj.Bcode+"'").FirstOrDefault();
-                        if (result == null) { MessageBox.Show("Invalid Barcode");return; }
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(Requisition_DetailObj.Bcode))
+                {
+                    using (SqlConnection con = new SqlConnection(GlobalClass.DataConnectionString))
+                    {
+                        var result = con.Query("SELECT A.BCODE,A.MCODE,A.UNIT,A.ISSUENO,A.EDATE,A.BCODEID,A.SUPCODE,A.BATCHNO,A.EXPIRY,A.REMARKS,A.INVNO,A.DIV,A.FYEAR,A.SRATE,B.DESCA FROM BARCODE A inner join Menuitem B on A.mcode=B.mcode WHERE A.BCODE='" + Requisition_DetailObj.Bcode + "'").FirstOrDefault();
+                        if (result == null) { MessageBox.Show("Invalid Barcode"); return; }
                         SelectedItemMcode = result.MCODE;
                         changeItemEvent(true);
                     }
@@ -71,11 +82,12 @@ namespace GTransfer.ViewModels
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
 
-            
+
         }
 
         public RequisitionEntryViewModel()
-        {try
+        {
+            try
             {
                 EditVisible = true;
                 DeleteVisible = true;
@@ -85,18 +97,19 @@ namespace GTransfer.ViewModels
                 ItemList = new ObservableCollection<Product>(GetItemList());
                 RequisitionObj = new Requisition() { Requisition_Details = new ObservableCollection<Requisition_Detail>() };
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 MessageBox.Show(ex.Message);
             }
         }
         private void ExecuteAdd(object obj)
         {
             if (Requisition_DetailObj.Item == null) { return; }
-            if (Requisition_DetailObj.Quantity <= 0) { MessageBox.Show("Please provide valid Quantity");return; }
+            if (Requisition_DetailObj.Quantity <= 0) { MessageBox.Show("Please provide valid Quantity"); return; }
             if (RequisitionObj.Requisition_Details.Any((item) => item.Mcode == Requisition_DetailObj.Mcode))
             {
-                    MessageBox.Show("Item  is already in the Table below", "Duplicate Data", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
+                MessageBox.Show("Item  is already in the Table below", "Duplicate Data", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
             }
 
             RequisitionObj.Requisition_Details.Add(Requisition_DetailObj);
@@ -105,12 +118,12 @@ namespace GTransfer.ViewModels
         }
         private void ExecuteGridDoubleClickEvent(object obj)
         {
-           var RD = GParse.CopyPropertyValues(selectedReqDetails, new Requisition_Detail()) as Requisition_Detail;
+            var RD = GParse.CopyPropertyValues(selectedReqDetails, new Requisition_Detail()) as Requisition_Detail;
             SelectedItemMcode = RD.Mcode;
             Requisition_DetailObj.Unit = RD.Unit;
             Requisition_DetailObj.Quantity = RD.Quantity;
             RequisitionObj.Requisition_Details.Remove(selectedReqDetails);
-             }
+        }
         public override bool UndoMethod(object obj)
         {
             RequisitionObj = new Requisition() { Requisition_Details = new ObservableCollection<Requisition_Detail>() };
@@ -129,7 +142,7 @@ namespace GTransfer.ViewModels
                 Conn.Execute("DELETE FROM TBL_REQUISITION WHERE ReqId=" + RequisitionObj.ReqId + "");
             }
             MessageBox.Show("Requisition is Deleted Successfully...");
-     
+
             ExecuteUndo(null);
         }
         public override void LoadMethod(object obj)
@@ -138,24 +151,26 @@ namespace GTransfer.ViewModels
             using (SqlConnection Conn = new SqlConnection(GlobalClass.DataConnectionString))
             {
                 Conn.Open();
-               var RQ=  Conn.Query<Requisition>("SELECT * FROM TBL_REQUISITION WHERE ReqId=" + RequisitionObj.ReqId + "");
-                if (RQ != null) {
+                var RQ = Conn.Query<Requisition>("SELECT * FROM TBL_REQUISITION WHERE ReqId=" + RequisitionObj.ReqId + "");
+                if (RQ != null)
+                {
                     var RQD = Conn.Query<Requisition_Detail>("SELECT * FROM TBL_REQUISITION_DETAILS WHERE ReqId=" + RequisitionObj.ReqId + "");
                     RequisitionObj = RQ.FirstOrDefault();
                     RequisitionObj.Requisition_Details = new ObservableCollection<Requisition_Detail>(RQD);
-                    foreach (var r in RequisitionObj.Requisition_Details) {
+                    foreach (var r in RequisitionObj.Requisition_Details)
+                    {
                         r.Item = ItemList.FirstOrDefault(x => x.MCODE == r.Mcode);
                     }
                     SetAction(ButtonAction.Selected);
                 }
 
-               
+
             }
 
         }
         public override void NewMethod(object obj)
         {
-            RequisitionObj = new Requisition() { Requisition_Details = new ObservableCollection<Requisition_Detail>(),ReqId=GetNewReqId(),TDate=DateTime.Today,Exp_DeliveryDate=DateTime.Today };
+            RequisitionObj = new Requisition() { Requisition_Details = new ObservableCollection<Requisition_Detail>(), ReqId = GetNewReqId(), TDate = DateTime.Today, Exp_DeliveryDate = DateTime.Today };
             Requisition_DetailObj = new Requisition_Detail();
 
         }
@@ -165,7 +180,8 @@ namespace GTransfer.ViewModels
                 return;
             if (RequisitionObj == null || RequisitionObj.Requisition_Details == null || RequisitionObj.Requisition_Details.Count <= 0) return;
             if (string.IsNullOrEmpty(RequisitionObj.Division)) { MessageBox.Show("Please select a Division"); return; }
-            try {
+            try
+            {
                 if (_action == ButtonAction.New)
                 {
                     RequisitionObj.ReqId = GetNewReqId();
@@ -183,15 +199,16 @@ namespace GTransfer.ViewModels
                         try
                         {
                             Conn.Execute("INSERT INTO TBL_REQUISITION(ReqId, Division, TDate, TUser, Exp_DeliveryDate, IsApproved) VALUES(@ReqId,@Division,@TDate,@TUser,@Exp_DeliveryDate, @IsApproved)", RequisitionObj, tran);
-                            Conn.Execute("INSERT INTO TBL_REQUISITION_DETAILS(ReqId, Mcode, Quantity, ApprovedQty, Unit) VALUES(@ReqId,@Mcode,@Quantity,@ApprovedQty,@Unit)", RequisitionObj.Requisition_Details, tran);
+                            Conn.Execute("INSERT INTO TBL_REQUISITION_DETAILS(ReqId, Mcode, Quantity, ApprovedQty, Unit, BCode) VALUES(@ReqId,@Mcode,@Quantity,@ApprovedQty,@Unit,@Bcode)", RequisitionObj.Requisition_Details, tran);
                             tran.Commit();
                             MessageBox.Show("Requisition is Saved Sucessfully...");
                         }
-                        catch(Exception ex) { tran.Rollback();MessageBox.Show(ex.Message);return; }
+                        catch (Exception ex) { tran.Rollback(); MessageBox.Show(ex.Message); return; }
 
                     }
                 }
-                else if (_action == ButtonAction.Edit) {
+                else if (_action == ButtonAction.Edit)
+                {
                     RequisitionObj.TUser = GlobalClass.CurrentUser.UNAME;
                     foreach (var rd in RequisitionObj.Requisition_Details)
                     {
@@ -206,23 +223,25 @@ namespace GTransfer.ViewModels
                         try
                         {
                             Conn.Execute("UPDATE TBL_REQUISITION SET Division=@Division, TDate=@TDate, TUser=@TUser, Exp_DeliveryDate=@Exp_DeliveryDate, IsApproved=@IsApproved WHERE ReqId=@ReqId", RequisitionObj, tran);
-                            Conn.Execute("DELETE FROM TBL_REQUISITION_DETAILS WHERE ReqId=" + RequisitionObj.ReqId + "",null,tran);
+                            Conn.Execute("DELETE FROM TBL_REQUISITION_DETAILS WHERE ReqId=" + RequisitionObj.ReqId + "", null, tran);
                             Conn.Execute("INSERT INTO TBL_REQUISITION_DETAILS(ReqId, Mcode, Quantity, ApprovedQty, Unit) VALUES(@ReqId,@Mcode,@Quantity,@ApprovedQty,@Unit)", RequisitionObj.Requisition_Details, tran);
                             tran.Commit();
                             MessageBox.Show("Requisition is Updated Sucessfully...");
                         }
-                        catch(Exception ex) { tran.Rollback();MessageBox.Show(ex.Message);return; }
+                        catch (Exception ex) { tran.Rollback(); MessageBox.Show(ex.Message); return; }
 
                     }
                 }
                 ExecuteUndo(null);
-                } catch (Exception ex) { MessageBox.Show(ex.Message); }
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
         }
-        private int GetNewReqId() {
+        private int GetNewReqId()
+        {
             using (SqlConnection Conn = new SqlConnection(GlobalClass.DataConnectionString))
             {
-                              
-                 return Convert.ToInt32(Conn.ExecuteScalar("SELECT ISNULL(MAX(ReqId),0)+1 FROM TBL_REQUISITION"));
+
+                return Convert.ToInt32(Conn.ExecuteScalar("SELECT ISNULL(MAX(ReqId),0)+1 FROM TBL_REQUISITION"));
             }
         }
 
@@ -249,9 +268,10 @@ namespace GTransfer.ViewModels
         }
 
         private void ExecuteExcelImportEvent(object obj)
-        {try
+        {
+            try
             {
-                if (_action != ButtonAction.New) { MessageBox.Show("Please create new Id By Clicking New And Then Import the file...");return; }
+                if (_action != ButtonAction.New) { MessageBox.Show("Please create new Id By Clicking New And Then Import the file..."); return; }
                 convertDataTableToObsCollection();
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
@@ -317,7 +337,7 @@ namespace GTransfer.ViewModels
                 return dt;
             }
             else { return null; }
-            
+
         }
         private void convertDataTableToObsCollection()
         {
@@ -325,17 +345,18 @@ namespace GTransfer.ViewModels
             if (_dataTable == null) return;
             DataColumnCollection columns = _dataTable.Columns;
             if (columns.Contains("BARCODE") || columns.Contains("MENUCODE"))
-            {      
-                }
+            {
+            }
             else
             {
-                MessageBox.Show("Invalid Excel File.Must contain MENUCODE Or BARCODE Column And QUANTITY Column");return;
+                MessageBox.Show("Invalid Excel File.Must contain MENUCODE Or BARCODE Column And QUANTITY Column"); return;
             }
             if (columns.Contains("QUANTITY")) { }
             else { MessageBox.Show("Invalid Excel File.Must contain QUANTITY Column"); return; }
-            var productList = new ObservableCollection<Requisition_Detail>(_dataTable.AsEnumerable().Select(i => {
+            var productList = new ObservableCollection<Requisition_Detail>(_dataTable.AsEnumerable().Select(i =>
+            {
                 var RD = new Requisition_Detail();
-                Product P=new Product();
+                Product P = new Product();
                 if (columns.Contains("BARCODE"))
                 {
                     P = ItemList.FirstOrDefault(item => item.BARCODE == i["BARCODE"].ToString());
@@ -350,7 +371,7 @@ namespace GTransfer.ViewModels
                 else if (columns.Contains("MENUCODE"))
                 {
                     P = ItemList.FirstOrDefault(item => item.MENUCODE == i["MENUCODE"].ToString());
-                }               
+                }
                 var Q = Convert.ToDecimal(i["QUANTITY"]);
                 if (P == null || Q <= 0) { return new Requisition_Detail(); }
                 RD.Item = P;
@@ -360,8 +381,8 @@ namespace GTransfer.ViewModels
                 RD.Quantity = Q;
                 return RD;
             }));
-            if (productList != null) { this.RequisitionObj.Requisition_Details =new ObservableCollection<Requisition_Detail>(productList.Where(item=>item.Item!=null)); }
-       
+            if (productList != null) { this.RequisitionObj.Requisition_Details = new ObservableCollection<Requisition_Detail>(productList.Where(item => item.Item != null)); }
+
         }
         #endregion
     }

@@ -51,9 +51,11 @@ namespace GTransfer.ViewModels
                 using (SqlConnection con = new SqlConnection(GlobalClass.DataConnectionString))
                 {
                     con.Open();
-
-                 var check= con.ExecuteScalar("SELECT ReqId from tblPickingList where ReqId="+ReqId);
-                    if (check != null) { MessageBox.Show("Picking List already generated");return; }
+                    if(con.ExecuteScalar<int>("SELECT COUNT(*) FROM tblPickingList WHERE ReqId = " + ReqId)!=0)
+                    {
+                        MessageBox.Show("Picking List already generated");
+                        return;
+                    }
                     var result = con.Query<PickingList>(@"SELECT RD.Bcode, RD.MCODE, MI.DESCA, MI.MENUCODE, RD.UNIT, RD.ApprovedQty ReqQty, L.LocationCode, ISNULL(LB.Balance,0) Balance,L.LocationId  FROM TBL_REQUISITION_DETAILS RD 
                                                           JOIN MENUITEM MI ON RD.MCODE = MI.MCODE
                                                           LEFT JOIN vwLocationStockBalance LB ON LB.MCODE = RD.MCODE AND LB.UNIT = RD.UNIT

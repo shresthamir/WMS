@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="GTransfer.UserInterfaces.ShipmentVariance"
+﻿<UserControl x:Class="GTransfer.UserInterfaces.StockIssueVariance"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -111,7 +111,7 @@
                         <RadioButton IsChecked="{Binding ShowNonVariant}" Content="Show Non-variant only" Margin="10 0 0 0"/>
                     </StackPanel>
                 </GroupBox>
-                <Button Style="{StaticResource NewButton}" Content="Generate Purchase Invoice" Command="{Binding GeneratePICommand}" Grid.Column="3" Width="170" HorizontalAlignment="Right"></Button>
+                <Button Style="{StaticResource NewButton}" Content="Transfer Stock" Command="{Binding GeneratePICommand}" Grid.Column="3" Width="170" HorizontalAlignment="Right"></Button>
                 <Button Style="{StaticResource NewButton}" Content="Clear" Command="{Binding UndoCommand}" Grid.Column="4" Width="70" HorizontalAlignment="Right"></Button>
             </Grid>
         </Border>
@@ -157,12 +157,6 @@
         </Border>-->
 
         <Grid Grid.Row="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"></ColumnDefinition>
-                <ColumnDefinition Width="220"/>
-            </Grid.ColumnDefinitions>
-
-
             <DataGrid Name="dataGrid" IsReadOnly="True"  KeyboardNavigation.TabNavigation="None"  EnableRowVirtualization="False"  
                   ItemsSource="{Binding ProdList, Mode=TwoWay}" SelectedItem="{Binding selectedTrnProd, Mode=TwoWay}"  BorderThickness="1" BorderBrush="Black" AutoGenerateColumns="False"   Margin="2" 
                            CanUserResizeRows="False" LoadingRow="dGrid_LoadingRow">
@@ -170,59 +164,16 @@
                     <DataGridTextColumn Header="SN" Width="40"  Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow}, Converter={StaticResource RowToIndex}}" />
                     <DataGridTextColumn  Header="Item code" Width="80" Binding="{Binding MENUCODE}" />
                     <DataGridTextColumn  Header="Item Description" Width="*" Binding="{Binding ITEMDESC}"/>
-                    <DataGridTextColumn  Header="Warehouse"  Width="120" Binding="{Binding WAREHOUSE}" />
+                    <DataGridTextColumn  Header="Location"  Width="120" Binding="{Binding BATCH}" />
                     <DataGridTextColumn  Header="Unit"  Width="60" Binding="{Binding UNIT}"/>
                     <DataGridTextColumn  Header="Order Qty"  Width="70" Binding="{Binding OrderQty,StringFormat=#0.00}" />
-                    <DataGridTextColumn  Header="Received Qty"  Width="80" Binding="{Binding REALQTY_IN,StringFormat=#0.00}" />
-                    <DataGridTextColumn  Header="Variance Qty"  Width="80" Binding="{Binding VarianceQty,StringFormat=#0.00}" />
-                    
-                    <DataGridTextColumn  Header="Rate"  Width="70" Binding="{Binding RATE,StringFormat=#0.00}" />
-                    <DataGridTextColumn  Header="Amount"  Width="100" Binding="{Binding AMOUNT,StringFormat=#0.00}" />
-                    <!--<DataGridTextColumn  Header="VAT"  Width="100" Binding="{Binding VAT,StringFormat=#0.00}" />
-                    <DataGridTextColumn  Header="Total"  Width="110"  Binding="{Binding NETAMOUNT,StringFormat=#0.00}"/>-->
+                    <DataGridTextColumn  Header="Picked Qty"  Width="80" Binding="{Binding Quantity,StringFormat=#0.00}" />
+                    <DataGridTextColumn  Header="Pick Variance Qty"  Width="80" Binding="{Binding VarianceQty,StringFormat=#0.00}" />
+                    <DataGridTextColumn  Header="Packed Qty"  Width="80" Binding="{Binding REALQTY_IN,StringFormat=#0.00}" />
+                    <DataGridTextColumn  Header="Pack Variance Qty"  Width="80" Binding="{Binding AltQty,StringFormat=#0.00}" />                    
                 </DataGrid.Columns>
             </DataGrid>
 
-            <GroupBox Header="Total Balance" Grid.Column="1"  BorderBrush="Black" FontSize="11" >
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <StackPanel  KeyboardNavigation.TabNavigation="None" >
-                        <StackPanel Orientation="Horizontal" >
-                            <Label Width="85" Content="Sub Total :" Background="Azure"   Padding="3" ToolTip="Gross Amount - Discount" />
-                            <TextBox Height="25"  Width="100" Padding="0 6 0 0"   Text="{Binding TMain.TOTAMNT,StringFormat=#0.00}" Background="Azure" BorderBrush="Black" IsReadOnly="True"/>
-                        </StackPanel>
-
-                        <StackPanel Orientation="Horizontal"  >
-                            <Label Width="85" Content="Gross Amount:" Background="Azure"   Padding="3" ToolTip="Rate * Quantity"/>
-                            <TextBox Height="25" Width="100" Padding="0 6 0 0" Text="{Binding TMain.TOTAMNT,StringFormat=#0.00}" Background="Azure" BorderBrush="Black" IsReadOnly="True"/>
-                        </StackPanel>
-
-                        <StackPanel Orientation="Horizontal" >
-                            <Label Width="85" Content="Taxable Amt:" Background="Azure"   Padding="3" />
-                            <TextBox Height="25"  Width="100" Padding="0 6 0 0"   Text="{Binding TMain.TAXABLE,StringFormat=#0.00}" Background="Azure" BorderBrush="Black" IsReadOnly="True"/>
-                        </StackPanel>
-
-                        <StackPanel Orientation="Horizontal"  >
-                            <Label Width="85" Content="NonTaxableAmt:" Background="Azure"  Padding="3" />
-                            <TextBox Height="25"  Width="100" Padding="0 6 0 0"  IsReadOnly="True" Text="{Binding TMain.NONTAXABLE,StringFormat=#0.00}" Background="Azure" BorderBrush="Black" />
-                        </StackPanel>
-
-                        <StackPanel Orientation="Horizontal"  >
-                            <Label Width="85" Content="VAT:" Background="Azure"  Padding="3" ToolTip="{Binding tooltipsforVat}"/>
-                            <TextBox ToolTip="" Height="25"  Width="100" Padding="0 6 0 0"  Text="{Binding  TMain.VATAMNT,StringFormat=#0.00}" Background="Azure" BorderBrush="Black" IsReadOnly="True"/>
-                        </StackPanel>
-
-                        <StackPanel Orientation="Horizontal"  >
-                            <Label Width="85" Content="Rounding Adj:" Background="Azure" Padding="3" />
-                            <TextBox Height="25"  Width="100" Padding="0 6 0 0"   Text="{Binding TMain.ROUNDOFF,UpdateSourceTrigger=PropertyChanged}" Background="Azure" BorderBrush="Black"/>
-                        </StackPanel>
-
-                        <StackPanel Orientation="Horizontal" >
-                            <Label Width="85"  Content="Net Amount:" Background="Azure"   Padding="3" ToolTip="TAXABLE + NONTAXABLE + SERVICETAX + VAT" />
-                            <TextBox Height="25" Width="100" Padding="0 6 0 0"  Text="{Binding  TrnMainBaseModelObj.NETAMNT,StringFormat=#0.00,UpdateSourceTrigger=PropertyChanged}" Background="Azure" BorderBrush="Black"/>
-                        </StackPanel>
-                    </StackPanel>
-                </ScrollViewer>
-            </GroupBox>
         </Grid>
     </Grid>
 </UserControl>

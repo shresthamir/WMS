@@ -89,5 +89,14 @@ namespace GTransfer
             la.Title = "Location Transfer";
             LayDocPane.Children.Add(la);
         }
+
+        private void BT_Click(object sender, RoutedEventArgs e)
+        {
+            LayoutAnchorable la = new LayoutAnchorable();
+            la.Content = new UserInterfaces.StockIssueVariance();
+            la.IsActive = true;
+            la.Title = "Stock Issue Variance";
+            LayDocPane.Children.Add(la);
+        }
     }
 }

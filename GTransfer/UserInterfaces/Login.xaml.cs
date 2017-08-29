@@ -123,7 +123,7 @@ namespace GTransfer.UserInterfaces
                         }
 
                         var m = new MainWindow();
-                        m.Title = "WMS -" + GlobalClass.company.NAME;
+                        m.Title = "Warehouse Management System - " + GlobalClass.company.NAME;
                         m.Show();
                         this.Close();
                       // ActivityLog.CreateLogTables();

@@ -114,14 +114,13 @@
                 <DataGridTextColumn  Header="Item code" Width="80" Binding="{Binding MENUCODE}" />
                 <DataGridTextColumn  Header="Item Description" Width="*" Binding="{Binding DESCA}"/>
                 
-                <DataGridTextColumn  Header="Unit"  Width="60" Binding="{Binding UNIT}"/>
-                <DataGridTextColumn  Header="Qty"  Width="70" Binding="{Binding Quantity,StringFormat=#0.00}" />
+                <DataGridTextColumn  Header="Unit"  Width="60" Binding="{Binding Unit}"/>
+                <DataGridTextColumn  Header="Qty"  Width="70" Binding="{Binding RealQty_In,StringFormat=#0.00}" />
                 <DataGridTextColumn  Header="Warehouse"  Width="120" Binding="{Binding Warehouse}" />
-                <DataGridTextColumn  Header="Location"  Width="120" Binding="{Binding LocationName}" />
-                <DataGridTextColumn  Header="Path"  Width="*" Binding="{Binding Path}" />
+                <DataGridTextColumn  Header="Location"  Width="120" Binding="{Binding LocationName}" />               
 
                 <DataGridTextColumn  Header="User"  Width="80" Binding="{Binding UserId}" />
-                <DataGridTextColumn  Header="Device"  Width="80" Binding="{Binding DeviceId}" />
+                <DataGridTextColumn  Header="Device"  Width="150" Binding="{Binding DeviceName}" />
             </DataGrid.Columns>
         </DataGrid>
 
