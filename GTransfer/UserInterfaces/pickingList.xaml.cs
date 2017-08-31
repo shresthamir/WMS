@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Syncfusion.UI.Xaml.Grid.Cells;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,7 +25,6 @@ namespace GTransfer.UserInterfaces
         {
             InitializeComponent();
             this.DataContext = new ViewModels.pickingListViewModel();
-            
         }
     }
 }

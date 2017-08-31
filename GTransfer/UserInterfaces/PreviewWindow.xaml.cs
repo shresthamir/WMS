@@ -59,6 +59,7 @@ namespace GTransfer.UserInterfaces
         void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             printDataContext = e.NewValue as PrintPreviewAreaControl;
+            printDataContext.PrintOrientation =PrintOrientation.Landscape;
             try
             {
                 //using (SqlConnection conn = new SqlConnection(GlobalClass.DataConnectionString))
