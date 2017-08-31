@@ -38,6 +38,8 @@ CREATE TABLE [dbo].[tblStockInVerificationLog](
 	[DeviceId] [varchar](200) NULL,
 	[SyncDate] [datetime] NOT NULL,
 	[BCODE] VARCHAR(100) NOT NULL,
+	[PackageNo] VARCHAR(50) NULL,
+	[Status] BIT NULL,
  CONSTRAINT [PK_tblStockInVerificationLog] PRIMARY KEY CLUSTERED 
 (
 	[LogId] ASC
@@ -45,13 +47,15 @@ CREATE TABLE [dbo].[tblStockInVerificationLog](
 ) ON [PRIMARY]
 ALTER TABLE [tblStockInVerificationLog] ADD CONSTRAINT FK_ShipmentInLog_Location FOREIGN KEY (LocationId) REFERENCES TBL_LOCATIONS (LocationId)
 ALTER TABLE [tblStockInVerificationLog] ADD CONSTRAINT FK_ShipmentInLog_MCODE FOREIGN KEY (MCODE) REFERENCES MENUITEM (MCODE)
-alter table tblStockInVerificationLog Alter Column DeviceId VARCHAR(200)
-alter table tblStockInVerificationLog ADD BCODE VARCHAR(100)
 ALTER TABLE tblStockInVerificationLog ADD CONSTRAINT FK_ShipmentInLog_Devices FOREIGN KEY (DeviceId) REFERENCES tblDevices (DeviceId)
-ALTER TABLE tblStockInVerificationLog ADD RealQty_In NUMERIC (18,12) NOT NULL
-ALTER TABLE tblStockInVerificationLog ADD PackageNo VARCHAR(50) NULL
-UPDATE tblStockInVerificationLog set Quantity = 0
-ALTER TABLE tblStockInVerificationLog ALTER COLUMN RealQty_In NUMERIC (18,12) NOT NULL
+
+--alter table tblStockInVerificationLog ADD [Status] BIT
+--alter table tblStockInVerificationLog Alter Column DeviceId VARCHAR(200)
+--alter table tblStockInVerificationLog ADD BCODE VARCHAR(100)
+--ALTER TABLE tblStockInVerificationLog ADD RealQty_In NUMERIC (18,12) NOT NULL
+--ALTER TABLE tblStockInVerificationLog ADD PackageNo VARCHAR(50) NULL
+----UPDATE tblStockInVerificationLog set Quantity = 0
+----ALTER TABLE tblStockInVerificationLog ALTER COLUMN RealQty_In NUMERIC (18,12) NOT NULL
 
 CREATE TABLE RMD_TRNPROD_DETAIL
 (
@@ -92,6 +96,7 @@ CREATE TABLE [dbo].[TBL_REQUISITION](
 ) ON [PRIMARY]
 ALTER TABLE TBL_REQUISITION ADD CONSTRAINT PK_TBL_REQUISITION PRIMARY KEY (ReqId)
 
+
 CREATE TABLE [dbo].[TBL_REQUISITION_DETAILS](
 	[ReqId] [int] NULL,
 	[Mcode] [varchar](20) NULL,
@@ -100,7 +105,7 @@ CREATE TABLE [dbo].[TBL_REQUISITION_DETAILS](
 	[ApprovedQty] [int] NULL,
 	[Unit] [varchar](20) NULL
 ) ON [PRIMARY]
-
+ALTER TABLE TBL_REQUISITION_DETAILS ADD BCODE VARCHAR(100)
 
 CREATE TABLE TBL_LOCATION_LABEL
 (
@@ -125,7 +130,7 @@ CREATE TABLE tblPickingList
 	[Quantity] [int] NOT NULL,
 	[Status] TINYINT
 )
-ALTER TABLE tblPickingList ADD BCODE VARCHAR(100)
+--ALTER TABLE tblPickingList ADD BCODE VARCHAR(100)
 
 CREATE VIEW vwLocationStockBalance AS
 SELECT MCODE, UNIT, LocationId, SUM(InQty-OutQty) Balance FROM

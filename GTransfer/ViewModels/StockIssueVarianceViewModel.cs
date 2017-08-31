@@ -114,7 +114,7 @@ namespace GTransfer.ViewModels
                         return;
                     string ProdListQry = @"SELECT PL.MCODE, PL.BCODE BC, MI.MENUCODE, MI.DESCA ITEMDESC, PL.UNIT, L.LocationCode BATCH, PL.Quantity OrderQty, 
 ISNULL(PICK.PickedQuantity, 0) Quantity, Quantity - ISNULL(PICK.PickedQuantity, 0) VarianceQty, 
-ISNULL(PACK.PackedQuantity, 0) REQLQTY_IN, Quantity - ISNULL(PACK.PackedQuantity, 0) AltQty FROM tblPickingList PL
+ISNULL(PACK.PackedQuantity, 0) REALQTY_IN, Quantity - ISNULL(PACK.PackedQuantity, 0) AltQty FROM tblPickingList PL
 JOIN MENUITEM MI ON MI.MCODE = PL.Mcode
 JOIN TBL_LOCATIONS L ON PL.LocationId = L.LocationId
 LEFT JOIN
