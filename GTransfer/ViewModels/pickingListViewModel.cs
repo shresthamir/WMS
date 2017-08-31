@@ -22,7 +22,19 @@ namespace GTransfer.ViewModels
         private ObservableCollection<PickingList> _PickingList;
         private bool _IsloadMode;
         private int _ReqId;
-
+        private ObservableCollection<CategoryVsDevice> _CategoryVsDeviceList;
+        private ObservableCollection<dynamic> _DeviceList;
+        public ObservableCollection<dynamic> DeviceList
+        {
+            get
+            {
+                using (SqlConnection con = new SqlConnection(GlobalClass.DataConnectionString))
+                {
+                    return new ObservableCollection<dynamic>(con.Query("SELECT DeviceId,DeviceName FROM tblDevices"));
+                }
+            }
+            set { value = _DeviceList; OnPropertyChanged("DeviceList"); }
+        }
 
         public RelayCommand PrintPreviewCommand { get { return new RelayCommand(ExecutePrintCommand); } }
         public RelayCommand LoadpickingListCommand { get { return new RelayCommand(ExecuteLoadpickingListCommand); } }
@@ -30,14 +42,18 @@ namespace GTransfer.ViewModels
         public RelayCommand CancelCommand { get { return new RelayCommand(ExecuteCancelCommand); } }
         public RelayCommand GeneratePickingListCommand { get { return new RelayCommand(ExecuteGeneratePickingListCommand); } }
         public RelayCommand PrintCommand { get { return new RelayCommand(Print); } }
+        public RelayCommand AssignCommand { get { return new RelayCommand(ExecuteAssignCommand); } }
 
-       
-        public bool IsloadMode { get { return _IsloadMode; }set { _IsloadMode = value;OnPropertyChanged("IsloadMode"); } }
-        public int ReqId { get { return _ReqId; } set { _ReqId = value; PickingList = null;  OnPropertyChanged("ReqId"); } }
 
-        public ObservableCollection<PickingList> PickingList { get{return _PickingList; } set{_PickingList = value; OnPropertyChanged("PickingList"); } }
 
-        public pickingListViewModel() {
+        public ObservableCollection<CategoryVsDevice> CategoryVsDeviceList { get { return _CategoryVsDeviceList; } set { _CategoryVsDeviceList = value; OnPropertyChanged("CategoryVsDeviceList"); } }
+        public bool IsloadMode { get { return _IsloadMode; } set { _IsloadMode = value; OnPropertyChanged("IsloadMode"); } }
+        public int ReqId { get { return _ReqId; } set { _ReqId = value; PickingList = null; OnPropertyChanged("ReqId"); } }
+
+        public ObservableCollection<PickingList> PickingList { get { return _PickingList; } set { _PickingList = value; OnPropertyChanged("PickingList"); } }
+
+        public pickingListViewModel()
+        {
             IsloadMode = false;
         }
 
@@ -47,21 +63,22 @@ namespace GTransfer.ViewModels
             try
             {
                 if (ReqId <= 0) { return; }
+
                 using (SqlConnection con = new SqlConnection(GlobalClass.DataConnectionString))
                 {
                     con.Open();
-                    if(con.ExecuteScalar<int>("SELECT COUNT(*) FROM tblPickingList WHERE ReqId = " + ReqId)!=0)
+                    if (con.ExecuteScalar<int>("SELECT COUNT(*) FROM tblPickingList WHERE ReqId = " + ReqId) != 0)
                     {
                         MessageBox.Show("Picking List already generated");
                         return;
                     }
-                    var result = con.Query<PickingList>(@"SELECT RD.Bcode, RD.MCODE, MI.DESCA, MI.MENUCODE, RD.UNIT, RD.ApprovedQty ReqQty, L.LocationCode, ISNULL(LB.Balance,0) Balance,L.LocationId  FROM TBL_REQUISITION_DETAILS RD 
+                    var result = con.Query<PickingList>(@"SELECT RD.Bcode, RD.MCODE, MI.DESCA, MI.MENUCODE, RD.UNIT, RD.ApprovedQty ReqQty, L.LocationCode, ISNULL(LB.Balance,0) Balance,L.LocationId,MI.MCAT  FROM TBL_REQUISITION_DETAILS RD 
                                                           JOIN MENUITEM MI ON RD.MCODE = MI.MCODE
                                                           LEFT JOIN vwLocationStockBalance LB ON LB.MCODE = RD.MCODE AND LB.UNIT = RD.UNIT
                                                           LEFT JOIN TBL_LOCATIONS L ON LB.LocationId = L.LocationId
                                                           WHERE RD.ReqId = " + ReqId + @"
                                                           ORDER BY LocationCode, MCODE, UNIT");
-                    if (result == null || result.Count()<=0) { MessageBox.Show("Sorry No Picking List Found For Given Id"); }
+                    if (result == null || result.Count() <= 0) { MessageBox.Show("Sorry No Picking List Found For Given Id"); }
                     else
                     {
                         // PickingList = new ObservableCollection<Models.PickingList>();
@@ -95,6 +112,11 @@ namespace GTransfer.ViewModels
                             }
                         }
                         PickingList = new ObservableCollection<Models.PickingList>(tempValidList.Where(x => x.Quantity > 0));
+                        CategoryVsDeviceList = new ObservableCollection<CategoryVsDevice>();
+                        foreach (var item in PickingList.Select(i => i.MCAT).Distinct().ToList())
+                        {
+                            CategoryVsDeviceList.Add(new CategoryVsDevice() { MCAT = item });
+                        }
                         if (PickingList.Count() <= 0) { MessageBox.Show("Sorry error occure.Either item doesn't contain valid location or location stock is empty"); }
                         IsloadMode = false;
                         //foreach (var i in tempInValidList)
@@ -113,12 +135,33 @@ namespace GTransfer.ViewModels
 
         private void ExecuteLoadpickingListCommand(object obj)
         {
-            try {
-                using (SqlConnection con = new SqlConnection(GlobalClass.DataConnectionString)) {
-                    PickingList = new ObservableCollection<Models.PickingList>(con.Query<PickingList>("select tp.ReqId,tp.Mcode,tp.Unit,tp.LocationId,tp.Quantity,tp.Bcode,mi.MENUCODE,mi.DESCA,tl.LocationCode from tblPickingList tp left join menuitem mi on tp.Mcode=mi.MCODE left join TBL_LOCATIONS tl on tl.LocationId=tp.LocationId where  ReqId=" + ReqId+ " and Status=0 order by tl.LocationCode"));
+            try
+            {
+                using (SqlConnection con = new SqlConnection(GlobalClass.DataConnectionString))
+                {
+                    PickingList = new ObservableCollection<Models.PickingList>(con.Query<PickingList>("select tp.ReqId,tp.Mcode,tp.Unit,tp.LocationId,tp.Quantity,tp.Bcode,mi.MENUCODE,mi.DESCA,tl.LocationCode,tp.DeviceId,td.DeviceName,mi.MCAT from tblPickingList tp left join menuitem mi on tp.Mcode=mi.MCODE left join TBL_LOCATIONS tl on tl.LocationId=tp.LocationId left join tblDevices td on tp.DeviceId=td.DeviceId where  ReqId=" + ReqId + " and Status=0 order by tl.LocationCode"));
                     IsloadMode = true;
                 }
-            } catch (Exception ex) { MessageBox.Show(ex.Message); }
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
+        }
+        private void ExecuteAssignCommand(object obj)
+        {
+            if (PickingList == null || CategoryVsDeviceList == null) return;
+            foreach (var i in PickingList)
+            {
+                foreach (var j in CategoryVsDeviceList)
+                {
+                    if (i.MCAT == j.MCAT)
+                    {
+                        if (j.Device != null)
+                        {
+                            i.DeviceId = j.Device.DeviceId;
+                            i.DeviceName = j.Device.DeviceName;
+                        }
+                    }
+                }
+            }
         }
 
         private void ExecuteSavePickingCommand(object obj)
@@ -126,25 +169,30 @@ namespace GTransfer.ViewModels
             try
             {
                 if (PickingList == null || PickingList.Count <= 0) { return; }
+                var pCheck = PickingList.Where(p => p.DeviceId == null || p.DeviceId == "").ToList();
+                if (pCheck == null || pCheck.Count() > 0) { MessageBox.Show("Please Assign a Device for items"); return; }
                 using (SqlConnection con = new SqlConnection(GlobalClass.DataConnectionString))
                 {
                     con.Open();
                     var saveList = new ObservableCollection<PickingList>();
-                    foreach (var i in PickingList) {
+                    foreach (var i in PickingList)
+                    {
                         if (!string.IsNullOrEmpty(i.LocationId))
                         {
                             saveList.Add(i);
                         }
                     }
                     if (saveList.Count <= 0) { MessageBox.Show("Nothing to Save.Please provide valid List"); return; }
-                    con.Execute("INSERT INTO tblPickingList (ReqId,Mcode,Unit,LocationId,Quantity,Status,Bcode) values(@ReqId,@Mcode,@Unit,@LocationId,@Quantity,@Status,@Bcode)", saveList);
-                    if (MessageBox.Show("Picking List Saved Successfully.Do U Want To Print", "Print Data", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes) {
+                    con.Execute("INSERT INTO tblPickingList (ReqId,Mcode,Unit,LocationId,Quantity,Status,Bcode,DeviceId) values(@ReqId,@Mcode,@Unit,@LocationId,@Quantity,@Status,@Bcode,@DeviceId)", saveList);
+                    if (MessageBox.Show("Picking List Saved Successfully.Do U Want To Print", "Print Data", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    {
                         ExecutePrintCommand(obj);
                     }
-                        privateUndo();
+                    privateUndo();
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 MessageBox.Show(ex.Message);
             }
         }
@@ -192,8 +240,8 @@ namespace GTransfer.ViewModels
         {
             sfgrid = grid;
 
-         //   grid.PrintSettings.PrintPageHeaderHeight = 70;
-           // grid.PrintSettings.PrintPageHeaderTemplate = Application.Current.Resources["PrintHeaderTemplate"] as DataTemplate;
+            //   grid.PrintSettings.PrintPageHeaderHeight = 70;
+            // grid.PrintSettings.PrintPageHeaderTemplate = Application.Current.Resources["PrintHeaderTemplate"] as DataTemplate;
             //grid.PrintSettings.PrintPageFooterHeight = Double.NaN;
             //grid.PrintSettings.PrintPageFooterTemplate = Application.Current.Resources["PrintFooterTemplate"] as DataTemplate;
 
@@ -221,7 +269,7 @@ namespace GTransfer.ViewModels
             //    }
             //}
             //else
-          //  return sfgrid.Columns.FirstOrDefault(x => x.MappingName == mappingName).Width;
+            //  return sfgrid.Columns.FirstOrDefault(x => x.MappingName == mappingName).Width;
 
         }
 
@@ -242,5 +290,12 @@ namespace GTransfer.ViewModels
             formattedText.SetFontFamily((FontFamily)new FontFamilyConverter().ConvertFromString("Segoe UI"));
             return formattedText;
         }
+    }
+    public class CategoryVsDevice : BaseModel
+    {
+        private string _MCAT;
+        private dynamic _Device;
+        public dynamic Device { get { return _Device; } set { _Device = value; OnPropertyChanged("Device"); } }
+        public string MCAT { get { return _MCAT; } set { _MCAT = value; OnPropertyChanged("MCAT"); } }
     }
 }
