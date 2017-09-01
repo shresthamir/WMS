@@ -106,7 +106,7 @@ namespace GTransfer.ViewModels
             {
                 using (SqlConnection con = new SqlConnection(GlobalClass.DataConnectionString))
                 {
-                    NewShipment = con.ExecuteScalar<int>("SELECT COUNT(*) FROM RMD_TRNMAIN WHERE REFORDBILL = '" + TMain.REFORDBILL + "'") == 0;
+                    NewShipment = con.ExecuteScalar<int>("SELECT COUNT(*) FROM tblStockInVerificationLog WHERE OrderNo = '" + TMain.REFORDBILL + "' AND ISNULL([Status], 0) = 0") > 0;
                     var orderTran = con.Query<TrnMain>(@"SELECT TRNAC, ACNAME PARAC FROM RMD_TRNMAIN T JOIN RMD_ACLIST A ON T.TRNAC = A.ACID
                                     WHERE LEFT(VCHRNO, 2) IN ('PO', 'OR') AND VCHRNO = '" + TMain.REFORDBILL + "' AND DIVISION = '" + GlobalClass.DIVISION + "'").FirstOrDefault();
                     if (orderTran == null)
@@ -116,31 +116,36 @@ namespace GTransfer.ViewModels
                     }
                     TMain.PARAC = orderTran.TRNAC;
                     SupplierName = orderTran.PARAC;
-                    string ProdListQry = @"SELECT B.MCODE, MI.MENUCODE, MI.DESCA ITEMDESC, ISNULL(OP.RATE, MI.PRATE_A) REALRATE,  ISNULL(OP.RATE, MI.PRATE_A) RATE, B.UNIT, LOC.Warehouse, ISNULL(OP.QUANTITY, 0) OrderQty, ISNULL(SUM(L.REALQTY_IN), 0) Quantity , ISNULL(SUM(L.REALQTY_IN), 0) REALQTY_IN, MI.RATE_A SRATE, MI.VAT ISVAT FROM
-                                            (
-                                                SELECT DISTINCT * FROM
-	                                            (
-                                                    SELECT VCHRNO OrderNo, MCODE, UNIT FROM RMD_ORDERPROD WHERE VCHRNO = @OrderNo
-                                                    UNION ALL
-                                                    SELECT OrderNo, MCODE, UNIT FROM tblStockInVerificationLog WHERE OrderNo = @OrderNo
+                    string ProdListQry = @"SELECT B.MCODE, MI.MENUCODE, MI.DESCA ITEMDESC, ISNULL(OP.RATE, MI.PRATE_A) REALRATE, ISNULL(OP.RATE, MI.PRATE_A) RATE, 
+B.UNIT, LOC.Warehouse, ISNULL(OP.QUANTITY, 0) OrderQty, ISNULL(SUM(PL.REALQTY_IN), 0) AltQty, 
+ISNULL(SUM(L.REALQTY_IN), 0) Quantity, ISNULL(SUM(L.REALQTY_IN), 0) REALQTY_IN, 
+ISNULL(SUM(PL.REALQTY_IN), 0) + ISNULL(SUM(L.REALQTY_IN), 0) ALTQTY_IN, MI.RATE_A SRATE, MI.VAT ISVAT, MAX(SyncDate) MFGDATE FROM
+(
+    SELECT DISTINCT * FROM
+    (
+        SELECT VCHRNO OrderNo, MCODE, UNIT FROM RMD_ORDERPROD WHERE VCHRNO = @OrderNo
+        UNION ALL
+        SELECT OrderNo, MCODE, UNIT FROM tblStockInVerificationLog WHERE OrderNo = @OrderNo
 
-                                                ) A
-                                            ) B 
-                                            JOIN MENUITEM MI ON MI.MCODE = B.MCODE
-                                            LEFT JOIN RMD_ORDERPROD OP ON OP.VCHRNO = B.OrderNo AND OP.MCODE = B.MCODE AND OP.UNIT = B.UNIT
-                                            LEFT JOIN tblStockInVerificationLog L ON L.OrderNo = B.OrderNo AND L.MCODE = B.MCODE AND L.UNIT = B.UNIT
-                                            LEFT JOIN TBL_LOCATIONS LOC ON l.LocationId = LOC.LocationId                                            
-                                            GROUP BY B.MCODE, B.UNIT, OP.QUANTITY, OP.RATE, LOC.Warehouse, MI.MENUCODE, MI.DESCA, MI.PRATE_A, MI.RATE_A, MI.VAT";
+    ) A
+) B 
+JOIN MENUITEM MI ON MI.MCODE = B.MCODE
+LEFT JOIN RMD_ORDERPROD OP ON OP.VCHRNO = B.OrderNo AND OP.MCODE = B.MCODE AND OP.UNIT = B.UNIT
+LEFT JOIN (SELECT * FROM tblStockInVerificationLog WHERE ISNULL([STATUS], 0) = 1) PL ON PL.OrderNo = B.OrderNo AND PL.MCODE = B.MCODE AND PL.UNIT = B.UNIT
+LEFT JOIN (SELECT * FROM tblStockInVerificationLog WHERE ISNULL([STATUS], 0) = 0) L ON L.OrderNo = B.OrderNo AND L.MCODE = B.MCODE AND L.UNIT = B.UNIT
+LEFT JOIN TBL_LOCATIONS LOC ON l.LocationId = LOC.LocationId                                            
+GROUP BY B.MCODE, B.UNIT, OP.QUANTITY, OP.RATE, LOC.Warehouse, MI.MENUCODE, MI.DESCA, MI.PRATE_A, MI.RATE_A, MI.VAT";
                     _AllProdList = con.Query<TrnProd>(ProdListQry, new { OrderNo = TMain.REFORDBILL });
                     int sno = 1;
                     foreach (TrnProd tpod in _AllProdList)
                     {
+                        
                         tpod.AMOUNT = tpod.Quantity * tpod.REALRATE;
                         tpod.TAXABLE = tpod.AMOUNT - tpod.NONTAXABLE - tpod.DISCOUNT;
                         if (tpod.ISVAT == 1)
                             tpod.VAT = tpod.TAXABLE * Settings.VatRate;
                         tpod.NETAMOUNT = tpod.TAXABLE + tpod.VAT;
-                        tpod.VarianceQty = tpod.Quantity - tpod.OrderQty;
+                        tpod.VarianceQty = tpod.ALTQTY_IN - tpod.OrderQty;
                         tpod.SNO = sno++;
                     }
                     TMain.TOTAMNT = _AllProdList.Sum(x => x.AMOUNT);
@@ -200,6 +205,12 @@ ELSE
 @"INSERT INTO RMD_TRNMAIN(VCHRNO, DIVISION, CHALANNO, TRNDATE, BSDATE, TRNTIME, TRNUSER, REFORDBILL, TRNAC, PARAC, TOTAMNT, TAXABLE, NONTAXABLE, DCAMNT, VATAMNT, NETAMNT, TRNMODE, CHEQUENO, REMARKS, EditUser, SHIFT, CHEQUEDATE)
 VALUES(@VCHRNO, @DIVISION, @VCHRNO, @TRNDATE, @BSDATE, @TRNTIME, @TRNUSER, @REFORDBILL, @TRNAC, @PARAC, @TOTAMNT, @TAXABLE, @NONTAXABLE, @DCAMNT, @VATAMNT, @NETAMNT, @TRNMODE, '', '', '', '', @TRNDATE)", main, tran);
 
+                        foreach(TrnProd tpod in _AllProdList)
+                        {
+                            tpod.AltQty = 0;
+                            tpod.ALTQTY_IN = 0;
+                        }
+
                         conn.Execute(
 @"INSERT INTO RMD_TRNPROD (VCHRNO, DIVISION, MCODE, UNIT, Quantity, RealQty, RATE, AMOUNT, DISCOUNT, VAT, REALRATE, REALQTY_IN, WAREHOUSE, TAXABLE, NONTAXABLE, SNO, IDIS)
 VALUES ('" + main.VCHRNO + "', '" + GlobalClass.DIVISION + "', @MCODE, @UNIT, @Quantity, @RealQty, @RATE, @AMOUNT, @DISCOUNT, @VAT, @REALRATE, @REALQTY_IN, @WAREHOUSE, @TAXABLE, @NONTAXABLE, @SNO, 0)", _AllProdList.Where(x => x.REALQTY_IN > 0), tran);
@@ -210,6 +221,8 @@ SELECT M.VCHRNO, M.DIVISION, M.PhiscalID, L.MCODE, L.Unit, P.WAREHOUSE, L.Locati
 JOIN RMD_TRNMAIN M ON L.OrderNo = M.REFORDBILL
 JOIN RMD_TRNPROD P ON M.VCHRNO = P.VCHRNO AND M.DIVISION = P.DIVISION AND M.PhiscalID = P.PhiscalID AND L.MCODE = P.MCODE AND L.Unit = P.UNIT
 WHERE L.OrderNo = @REFORDBILL", main, tran);
+
+                        conn.Execute("UPDATE tblStockInVerificationLog WHERE OrderNo = @OrderNo AND SyncDate <= @SyncDate", new { OrderNo = main.REFORDBILL, SyncDate = _AllProdList.First().MFGDATE }, tran);
 
                         conn.Execute("UPDATE RMD_SEQUENCES SET CURNO = CURNO + 1 WHERE VNAME = @VNAME AND DIV = @DIV", new { VNAME = "Purchase", DIV = GlobalClass.DIVISION }, tran);
                         tran.Commit();
