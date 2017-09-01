@@ -359,7 +359,24 @@ namespace GTransfer.ViewModels
                 Product P = new Product();
                 if (columns.Contains("BARCODE"))
                 {
-                    P = ItemList.FirstOrDefault(item => item.BARCODE == i["BARCODE"].ToString());
+                    using (SqlConnection con=new SqlConnection(GlobalClass.DataConnectionString))
+                    {
+                        if (string.IsNullOrEmpty(i["BARCODE"].ToString())) { P = null; }
+                        else
+                        {
+                            var bitem = con.Query("SELECT A.BCODE,A.MCODE,A.UNIT,A.ISSUENO,A.EDATE,A.BCODEID,A.SUPCODE,A.BATCHNO,A.EXPIRY,A.REMARKS,A.INVNO,A.DIV,A.FYEAR,A.SRATE,B.DESCA,B.MENUCODE FROM BARCODE A inner join Menuitem B on A.mcode=B.mcode WHERE A.BCODE='" + i["BARCODE"].ToString() + "'").FirstOrDefault();
+                            if (bitem == null) { P = null; }
+                            else
+                            {
+                                P.BARCODE = bitem.BCODE;
+                                P.BASEUNIT = bitem.UNIT;
+                                P.MCODE = bitem.MCODE;
+                                P.MENUCODE = bitem.MENUCODE;
+                                P.DESCA = bitem.DESCA;
+                            }
+                        }
+                    }
+                       // P = ItemList.FirstOrDefault(item => item.BARCODE == i["BARCODE"].ToString());
                     if (P == null)
                     {
                         if (columns.Contains("MENUCODE"))
@@ -375,6 +392,7 @@ namespace GTransfer.ViewModels
                 var Q = Convert.ToDecimal(i["QUANTITY"]);
                 if (P == null || Q <= 0) { return new Requisition_Detail(); }
                 RD.Item = P;
+                RD.Bcode = P.BARCODE;
                 RD.Mcode = P.MCODE;
                 RD.Unit = P.BASEUNIT;
                 RD.ApprovedQty = Q;
