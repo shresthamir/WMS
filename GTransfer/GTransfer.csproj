@@ -169,6 +169,14 @@
     <Compile Include="Models\TTrnTran.cs" />
     <Compile Include="Models\UnitAndQty.cs" />
     <Compile Include="Models\UserProfiles.cs" />
+    <Compile Include="Reports\ItemStockWiseLocationReport.xaml.cs">
+      <DependentUpon>ItemStockWiseLocationReport.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ItemWiseLocationReportVM.cs" />
+    <Compile Include="Reports\LocationWiseItemReport.xaml.cs">
+      <DependentUpon>LocationWiseItemReport.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\LocationWiseItemReportVM.cs" />
     <Compile Include="Repository\Repositories.cs" />
     <Compile Include="UserInterfaces\LocationTransfer.xaml.cs">
       <DependentUpon>LocationTransfer.xaml</DependentUpon>
@@ -223,6 +231,14 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Reports\ItemStockWiseLocationReport.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Reports\LocationWiseItemReport.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Styles\buttonStyle.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -333,6 +349,7 @@
     <Resource Include="Images\PayBill.png" />
     <Resource Include="Images\Search.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
