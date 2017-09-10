@@ -119,7 +119,7 @@ namespace GTransfer.ViewModels
                     string ProdListQry = @"SELECT B.MCODE, MI.MENUCODE, MI.DESCA ITEMDESC, ISNULL(OP.RATE, MI.PRATE_A) REALRATE, ISNULL(OP.RATE, MI.PRATE_A) RATE, 
 B.UNIT, LOC.Warehouse, ISNULL(OP.QUANTITY, 0) OrderQty, ISNULL(SUM(PL.REALQTY_IN), 0) AltQty, 
 ISNULL(SUM(L.REALQTY_IN), 0) Quantity, ISNULL(SUM(L.REALQTY_IN), 0) REALQTY_IN, 
-ISNULL(SUM(PL.REALQTY_IN), 0) + ISNULL(SUM(L.REALQTY_IN), 0) ALTQTY_IN, MI.RATE_A SRATE, MI.VAT ISVAT, MAX(SyncDate) MFGDATE FROM
+ISNULL(SUM(PL.REALQTY_IN), 0) + ISNULL(SUM(L.REALQTY_IN), 0) ALTQTY_IN, MI.RATE_A SRATE, MI.VAT ISVAT, MAX(L.SyncDate) MFGDATE FROM
 (
     SELECT DISTINCT * FROM
     (
@@ -222,7 +222,7 @@ JOIN RMD_TRNMAIN M ON L.OrderNo = M.REFORDBILL
 JOIN RMD_TRNPROD P ON M.VCHRNO = P.VCHRNO AND M.DIVISION = P.DIVISION AND M.PhiscalID = P.PhiscalID AND L.MCODE = P.MCODE AND L.Unit = P.UNIT
 WHERE L.OrderNo = @REFORDBILL", main, tran);
 
-                        conn.Execute("UPDATE tblStockInVerificationLog WHERE OrderNo = @OrderNo AND SyncDate <= @SyncDate", new { OrderNo = main.REFORDBILL, SyncDate = _AllProdList.First().MFGDATE }, tran);
+                        conn.Execute("UPDATE tblStockInVerificationLog SET [Status] = 1 WHERE OrderNo = @OrderNo AND SyncDate <= @SyncDate", new { OrderNo = main.REFORDBILL, SyncDate = _AllProdList.First().MFGDATE }, tran);
 
                         conn.Execute("UPDATE RMD_SEQUENCES SET CURNO = CURNO + 1 WHERE VNAME = @VNAME AND DIV = @DIV", new { VNAME = "Purchase", DIV = GlobalClass.DIVISION }, tran);
                         tran.Commit();

@@ -376,6 +376,7 @@ namespace GTransfer.ViewModels
                 if (P == null || Q <= 0) { return new Requisition_Detail(); }
                 RD.Item = P;
                 RD.Mcode = P.MCODE;
+                RD.Bcode = P.BARCODE;
                 RD.Unit = P.BASEUNIT;
                 RD.ApprovedQty = Q;
                 RD.Quantity = Q;

@@ -130,7 +130,7 @@ CREATE TABLE tblPickingList
 	[Quantity] [int] NOT NULL,
 	[Status] TINYINT
 )
---ALTER TABLE tblPickingList ADD BCODE VARCHAR(100)
+ALTER TABLE tblPickingList ADD DeviceId VARCHAR(200)
 
 CREATE VIEW vwLocationStockBalance AS
 SELECT MCODE, UNIT, LocationId, SUM(InQty-OutQty) Balance FROM
@@ -147,5 +147,7 @@ LEFT JOIN TBL_LOCATIONS L ON LB.LocationId = L.LocationId
 WHERE RD.ReqId = 1
 ORDER BY LocationCode,  MCODE, UNIT
 
+
+SELECT * FROM TBL_REQUISITION_DETAILS
 
 
