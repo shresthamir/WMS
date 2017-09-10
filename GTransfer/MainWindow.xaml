@@ -27,6 +27,10 @@
                     <MenuItem Name="GRN" Header="Shipment Receive Variance" Click="GRN_Click"/>
                     <MenuItem Name="BT" Header="Stock Issue Variance" Click="BT_Click"/>
                 </MenuItem>
+                <MenuItem Name="Report" Header="Reports">
+                    <MenuItem Name="locationWiseItem" Header="Location Wise Item Report" Click="locationWiseItem_Click"/>
+                    <MenuItem Name="ItemWiseLocation" Header="Item Wise Location Report" Click="ItemWiseLocation_Click"/>
+                </MenuItem>
             </Menu>
         </Border>
         <Grid Grid.Row="1">

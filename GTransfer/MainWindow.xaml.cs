@@ -98,5 +98,23 @@ namespace GTransfer
             la.Title = "Stock Issue Variance";
             LayDocPane.Children.Add(la);
         }
+
+        private void locationWiseItem_Click(object sender, RoutedEventArgs e)
+        {
+            LayoutAnchorable la = new LayoutAnchorable();
+            la.Content = new Reports.LocationWiseItemReport();
+            la.IsActive = true;
+            la.Title = "LocationWise Item Report";
+            LayDocPane.Children.Add(la);
+        }
+
+        private void ItemWiseLocation_Click(object sender, RoutedEventArgs e)
+        {
+            LayoutAnchorable la = new LayoutAnchorable();
+            la.Content = new Reports.ItemStockWiseLocationReport();
+            la.IsActive = true;
+            la.Title = "ItemWise Location Report";
+            LayDocPane.Children.Add(la);
+        }
     }
 }
