@@ -116,5 +116,23 @@ namespace GTransfer
             la.Title = "ItemWise Location Report";
             LayDocPane.Children.Add(la);
         }
+
+        private void goodsReceivedDetail_Click(object sender, RoutedEventArgs e)
+        {
+            LayoutAnchorable la = new LayoutAnchorable();
+            la.Content = new Reports.GoodsReceivedReport();
+            la.IsActive = true;
+            la.Title = "Goods Received Detail";
+            LayDocPane.Children.Add(la);
+        }
+
+        private void packingList_Click(object sender, RoutedEventArgs e)
+        {
+            LayoutAnchorable la = new LayoutAnchorable();
+            la.Content = new Reports.PackagingList();
+            la.IsActive = true;
+            la.Title = "Packing List";
+            LayDocPane.Children.Add(la);
+        }
     }
 }

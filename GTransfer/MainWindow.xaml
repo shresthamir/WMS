@@ -28,6 +28,8 @@
                     <MenuItem Name="BT" Header="Stock Issue Variance" Click="BT_Click"/>
                 </MenuItem>
                 <MenuItem Name="Report" Header="Reports">
+                    <MenuItem Name="goodsReceivedDetail" Header="Goods Received Details" Click="goodsReceivedDetail_Click"/>
+                    <MenuItem Name="packingList" Header="Packing List" Click="packingList_Click"/>
                     <MenuItem Name="locationWiseItem" Header="Location Wise Item Report" Click="locationWiseItem_Click"/>
                     <MenuItem Name="ItemWiseLocation" Header="Item Wise Location Report" Click="ItemWiseLocation_Click"/>
                 </MenuItem>

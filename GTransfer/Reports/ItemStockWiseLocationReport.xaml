@@ -8,7 +8,7 @@
               xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"      
               xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="768" d:DesignWidth="1366">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="80"/>

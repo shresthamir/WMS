@@ -72,8 +72,9 @@ namespace GTransfer.ViewModels
                         MessageBox.Show("Picking List already generated");
                         return;
                     }
-                    var result = con.Query<PickingList>(@"SELECT RD.Bcode, RD.MCODE, MI.DESCA, MI.MENUCODE, RD.UNIT, RD.ApprovedQty ReqQty, L.LocationCode, ISNULL(LB.Balance,0) Balance,L.LocationId,ISNULL(MI.MCAT, 'N/A') MCAT  FROM TBL_REQUISITION_DETAILS RD 
+                    var result = con.Query<PickingList>(@"SELECT RD.Bcode, RD.MCODE, MI.DESCA, MI.MENUCODE, RD.UNIT, RD.ApprovedQty ReqQty, L.LocationCode, ISNULL(LB.Balance,0) Balance,L.LocationId,ISNULL(MG.DESCA, 'N/A') MCAT  FROM TBL_REQUISITION_DETAILS RD 
                                                           JOIN MENUITEM MI ON RD.MCODE = MI.MCODE
+                                                          JOIN MENUITEM MG ON MI.MGROUP = MG.MCODE
                                                           LEFT JOIN vwLocationStockBalance LB ON LB.MCODE = RD.MCODE AND LB.UNIT = RD.UNIT
                                                           LEFT JOIN TBL_LOCATIONS L ON LB.LocationId = L.LocationId
                                                           WHERE RD.ReqId = " + ReqId + @"
@@ -182,7 +183,11 @@ namespace GTransfer.ViewModels
                             saveList.Add(i);
                         }
                     }
-                    if (saveList.Count <= 0) { MessageBox.Show("Nothing to Save.Please provide valid List"); return; }
+                    if (saveList.Count <= 0)
+                    {
+                        MessageBox.Show("Nothing to Save.Please provide valid List");
+                        return;
+                    }
                     con.Execute("INSERT INTO tblPickingList (ReqId,Mcode,Unit,LocationId,Quantity,Status,Bcode,DeviceId) values(@ReqId,@Mcode,@Unit,@LocationId,@Quantity,@Status,@Bcode,@DeviceId)", saveList);
                     if (MessageBox.Show("Picking List Saved Successfully.Do U Want To Print", "Print Data", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
