@@ -15,8 +15,8 @@ namespace GTransfer.Reports
     {
         private DateTime _FDate;
         private DateTime _TDate;
-        private ObservableCollection<dynamic> _ReportDataList;
-        public ObservableCollection<dynamic> ReportDataList { get { return _ReportDataList; } set { _ReportDataList = value; OnPropertyChanged("ReportDataList"); } }
+        private ObservableCollection<GoodsReceivedDetailModel> _ReportDataList;
+        public ObservableCollection<GoodsReceivedDetailModel> ReportDataList { get { return _ReportDataList; } set { _ReportDataList = value; OnPropertyChanged("ReportDataList"); } }
 
         public DateTime FDate { get { return _FDate; } set { _FDate = value; OnPropertyChanged("FDate"); } }
         public DateTime TDate { get { return _TDate; } set { _TDate = value; OnPropertyChanged("TDate"); } }
@@ -30,18 +30,30 @@ namespace GTransfer.Reports
         {
             using (SqlConnection con = new SqlConnection(GlobalClass.DataConnectionString))
             {
-                var result = con.Query(@"SELECT M.REFORDBILL, M.VCHRNO, CONVERT(VARCHAR, M.TRNDATE, 101) Date, I.MENUCODE, I.DESCA, PD.UNIT, PD.WAREHOUSE, L.LocationCode, PD.InQty FROM RMD_TRNMAIN M 
+                var result = con.Query<GoodsReceivedDetailModel>(@"SELECT CAST(RIGHT(M.VCHRNO,LEN(M.VCHRNO)-2) AS INT) VNUM, M.REFORDBILL, M.VCHRNO, CONVERT(VARCHAR, M.TRNDATE, 101) Date, I.MENUCODE, I.DESCA, PD.UNIT, PD.WAREHOUSE, L.LocationCode, PD.InQty FROM RMD_TRNMAIN M 
 JOIN RMD_TRNPROD_DETAIL PD ON M.VCHRNO = PD.VCHRNO AND M.DIVISION = PD.DIVISION AND M.PhiscalID = PD.PhiscalID
 JOIN MENUITEM I ON PD.MCODE = I.MCODE
 JOIN TBL_LOCATIONS L ON PD.LocationId = L.LocationId
 WHERE LEFT(M.VCHRNO,2) IN ('PI') AND M.TRNDATE BETWEEN @FDate AND @TDate
-ORDER BY TRNDATE, DESCA, WAREHOUSE, LocationCode", this);
+ORDER BY VNUM, WAREHOUSE, LocationCode", this);
                 if (result != null)
                 {
-                    ReportDataList = new ObservableCollection<dynamic>(result);
+                    ReportDataList = new ObservableCollection<GoodsReceivedDetailModel>(result);
                 }
             }
+        }
+    }
 
-        }       
+    class GoodsReceivedDetailModel
+    {
+        public string REFORDBILL { get; set; }
+        public string VCHRNO { get; set; }
+        public string Date { get; set; }
+        public string MENUCODE { get; set; }
+        public string DESCA { get; set; }
+        public string UNIT { get; set; }
+        public string WAREHOUSE { get; set; }
+        public string LocationCode { get; set; }
+        public decimal InQty { get; set; }
     }
 }

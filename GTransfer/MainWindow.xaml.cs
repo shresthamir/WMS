@@ -134,5 +134,14 @@ namespace GTransfer
             la.Title = "Packing List";
             LayDocPane.Children.Add(la);
         }
+
+        private void stockMovementReport_Click(object sender, RoutedEventArgs e)
+        {
+            LayoutAnchorable la = new LayoutAnchorable();
+            la.Content = new Reports.StockMovementReport();
+            la.IsActive = true;
+            la.Title = "Stock Movement Report";
+            LayDocPane.Children.Add(la);
+        }
     }
 }

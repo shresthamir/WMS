@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:GTransfer.Reports"
              mc:Ignorable="d" 
              xmlns:sf="http://schemas.syncfusion.com/wpf"
-             d:DesignHeight="768" d:DesignWidth="1366">    
+             d:DesignHeight="768" d:DesignWidth="1366">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="60"/>
@@ -18,25 +18,26 @@
                 <DatePicker Width="120" Height="26" SelectedDate="{Binding FDate}"/>
 
                 <Label Margin="50 0 0 0" Content="To Date"/>
-                <DatePicker Width="120" Height="26" SelectedDate="{Binding FDate}"/>
+                <DatePicker Width="120" Height="26" SelectedDate="{Binding TDate}"/>
 
-                <Button Style="{StaticResource NewButton}" Command="{Binding LoadDataCommand}" Content="Load" Width="60" Height="30"> </Button>
+                <Button Style="{StaticResource NewButton}" Command="{Binding LoadDataCommand}" Content="Load" Width="60" Height="30"></Button>
             </StackPanel>
         </Border>
 
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
 
             <sf:SfDataGrid x:Name="Report" 
-                         AllowResizingColumns="True"
-                           NavigationMode="Cell"      
-                                                   
-                           AutoGenerateColumns="False"
-                           ItemsSource="{Binding ReportDataList}"  
-                          ColumnSizer="Star"
-                           SelectionUnit="Cell"  
-                          AllowEditing="False"
-                           AllowGrouping="False"    
-                           ShowGroupDropArea="True">
+                            AllowResizingColumns="True"
+                            NavigationMode="Cell"      
+                            AutoExpandGroups="True"
+                            GroupCaptionTextFormat=" {ColumnName} : {Key} - {ItemsCount} Items"             
+                            AutoGenerateColumns="False"
+                            ItemsSource="{Binding ReportDataList}"  
+                            ColumnSizer="Star"
+                            SelectionUnit="Cell"  
+                            AllowEditing="False"
+                            AllowGrouping="False"    
+                            ShowGroupDropArea="True">
 
                 <sf:SfDataGrid.Resources>
                     <ResourceDictionary>
@@ -50,6 +51,9 @@
                                                 PrintPageHeaderTemplate="{StaticResource PrintHeaderTemplate}">                        
                     </sf:PrintSettings>
                 </sf:SfDataGrid.PrintSettings>-->
+                <sf:SfDataGrid.GroupColumnDescriptions>
+                    <sf:GroupColumnDescription ColumnName="VCHRNO" />
+                </sf:SfDataGrid.GroupColumnDescriptions>
                 <sf:SfDataGrid.Columns>
                     <sf:GridTextColumn AllowEditing="False"  MappingName="VCHRNO" Width="50" HeaderText="PI No"></sf:GridTextColumn>
                     <sf:GridTextColumn AllowEditing="False"  MappingName="Date" Width="80" HeaderText="Date"></sf:GridTextColumn>
@@ -58,7 +62,7 @@
                     <sf:GridTextColumn AllowEditing="False"   MappingName="DESCA" HeaderText="Item Name"></sf:GridTextColumn>
                     <sf:GridTextColumn AllowEditing="False"  MappingName="UNIT" HeaderText="Unit"></sf:GridTextColumn>
                     <sf:GridTextColumn AllowEditing="False" MappingName="WAREHOUSE" HeaderText="Warehouse"></sf:GridTextColumn>
-                    <sf:GridTextColumn AllowEditing="False" MappingName="LocationCode" HeaderText="Location"></sf:GridTextColumn>                    
+                    <sf:GridTextColumn AllowEditing="False" MappingName="LocationCode" HeaderText="Location"></sf:GridTextColumn>
                     <sf:GridTextColumn AllowEditing="False" MappingName="InQty" HeaderText="Quantity"></sf:GridTextColumn>
 
 

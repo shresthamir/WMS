@@ -1,0 +1,102 @@
+﻿<UserControl x:Class="GTransfer.Reports.StockMovementReport"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:GTransfer.Reports"
+             mc:Ignorable="d" 
+             xmlns:sf="http://schemas.syncfusion.com/wpf"
+             d:DesignHeight="768" d:DesignWidth="1366">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="150"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Border Style="{StaticResource PlainBackground}">
+            <StackPanel>
+                <StackPanel Margin="20 10 0 0" Orientation="Horizontal">
+                    <RadioButton Width="100" x:Name="rbItem" GroupName="Selection" Content="Item Wise" IsChecked="{Binding ItemWise}"/>
+                    <RadioButton Width="150" x:Name="rbMGroup" GroupName="Selection" Content="Main Group Wise" IsChecked="{Binding MGroupWise}"/>
+                    <RadioButton Width="100" x:Name="rbGroup" GroupName="Selection" Content="Group Wise" IsChecked="{Binding GroupWise}"/>
+                </StackPanel>
+                <StackPanel Visibility="{Binding ElementName=rbItem, Path=IsChecked, Converter={StaticResource BoolToVisibility}}">
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Barcode :" ></Label>
+                        <TextBox Height="25" Width="200"  Text="{Binding Barcode,UpdateSourceTrigger=PropertyChanged}">
+                            <TextBox.InputBindings>
+                                <KeyBinding Key="Enter" Command="{Binding BarcodeChangeCommand}" />
+                            </TextBox.InputBindings>
+                        </TextBox>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content='Item :'></Label>
+                        <ComboBox Width="80" Height="25" Style="{DynamicResource VirtualizationKey}" ItemsSource="{Binding ItemList}" IsEditable="True" DisplayMemberPath="MENUCODE" SelectedItem="{Binding SelectedItem}"></ComboBox>
+                        <ComboBox Width="120" Height="25" Style="{DynamicResource VirtualizationKey}" ItemsSource="{Binding ItemList}" IsEditable="True" DisplayMemberPath="DESCA" SelectedItem="{Binding SelectedItem}"></ComboBox>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Visibility="{Binding ElementName=rbMGroup, Path=IsChecked, Converter={StaticResource BoolToVisibility}}">
+                    <Label Content="Main Group"/>
+                    <ComboBox Width="200" ItemsSource="{Binding MGroupList}" DisplayMemberPath="DESCA" SelectedItem="{Binding SelectedItem}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Visibility="{Binding ElementName=rbGroup, Path=IsChecked, Converter={StaticResource BoolToVisibility}}">
+                    <Label Content="Group"/>
+                    <ComboBox Width="200" ItemsSource="{Binding GroupList}" DisplayMemberPath="DESCA" SelectedItem="{Binding SelectedItem}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="From Date"/>
+                    <DatePicker Width="120" Height="26" SelectedDate="{Binding FDate}"/>
+
+                    <Label Margin="50 0 0 0" Content="To Date"/>
+                    <DatePicker Width="120" Height="26" SelectedDate="{Binding TDate}"/>
+
+                    <Button Style="{StaticResource NewButton}" Command="{Binding LoadDataCommand}" Content="Load" Width="60" Height="30"></Button>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+
+            <sf:SfDataGrid x:Name="Report" 
+                            AllowResizingColumns="True"
+                            NavigationMode="Cell"                                  
+                            AutoGenerateColumns="False"
+                            ItemsSource="{Binding ReportDataList}"  
+                            ColumnSizer="Star"
+                            SelectionUnit="Cell"  
+                            AllowEditing="False"
+                            AllowGrouping="False"    
+                            ShowGroupDropArea="True">
+
+                <sf:SfDataGrid.Resources>
+                    <ResourceDictionary>
+                        <ResourceDictionary.MergedDictionaries>
+                            <ResourceDictionary Source="/Syncfusion.SfGrid.WPF;component/Styles/Styles.xaml" />
+                        </ResourceDictionary.MergedDictionaries>
+                    </ResourceDictionary>
+                </sf:SfDataGrid.Resources>
+                <!--<sf:SfDataGrid.PrintSettings>
+                    <sf:PrintSettings          
+                                                PrintPageHeaderTemplate="{StaticResource PrintHeaderTemplate}">                        
+                    </sf:PrintSettings>
+                </sf:SfDataGrid.PrintSettings>-->
+
+                <sf:SfDataGrid.Columns>
+                    <sf:GridTextColumn AllowEditing="False"  MappingName="VCHRNO" Width="50" HeaderText="Vchr No"></sf:GridTextColumn>
+                    <sf:GridTextColumn AllowEditing="False"  MappingName="Date" Width="75" HeaderText="Date"></sf:GridTextColumn>
+                    <sf:GridTextColumn AllowEditing="False"  MappingName="BSDATE" Width="75" HeaderText="Miti"></sf:GridTextColumn>
+                    <sf:GridTextColumn AllowEditing="False"  MappingName="Particulars" Width="200" HeaderText="Particulars"></sf:GridTextColumn>
+                    <sf:GridTextColumn AllowEditing="False"  MappingName="MENUCODE" Width="80" HeaderText="Item Code"></sf:GridTextColumn>
+                    <sf:GridTextColumn AllowEditing="False"  MappingName="DESCA"  HeaderText="Item Name"></sf:GridTextColumn>
+                    <sf:GridTextColumn AllowEditing="False"  MappingName="UNIT" Width="80" HeaderText="Unit"></sf:GridTextColumn>
+                    <!--<sf:GridTextColumn AllowEditing="False" MappingName="WAREHOUSE" HeaderText="Warehouse"></sf:GridTextColumn>-->
+                    <sf:GridTextColumn AllowEditing="False" MappingName="LocationCode" Width="100" HeaderText="Location"></sf:GridTextColumn>
+                    <sf:GridTextColumn AllowEditing="False" DisplayBinding="{Binding InQty, Converter={StaticResource HideZero}}" Width="80" HeaderText="In Qty"></sf:GridTextColumn>
+                    <sf:GridTextColumn AllowEditing="False" DisplayBinding="{Binding OutQty, Converter={StaticResource HideZero}}" Width="80" HeaderText="Out Qty"></sf:GridTextColumn>
+                    <sf:GridTextColumn AllowEditing="False" DisplayBinding="{Binding Balance, Converter={StaticResource HideZero}}" Width="80" MappingName="Balance" HeaderText="Balance"></sf:GridTextColumn>
+
+                </sf:SfDataGrid.Columns>
+
+            </sf:SfDataGrid>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

@@ -140,7 +140,14 @@ namespace GTransfer.ViewModels
             {
                 using (SqlConnection con = new SqlConnection(GlobalClass.DataConnectionString))
                 {
-                    PickingList = new ObservableCollection<Models.PickingList>(con.Query<PickingList>("select tp.ReqId,tp.Mcode,tp.Unit,tp.LocationId,tp.Quantity,tp.Bcode,mi.MENUCODE,mi.DESCA,tl.LocationCode,tp.DeviceId,td.DeviceName,mi.MCAT from tblPickingList tp left join menuitem mi on tp.Mcode=mi.MCODE left join TBL_LOCATIONS tl on tl.LocationId=tp.LocationId left join tblDevices td on tp.DeviceId=td.DeviceId where  ReqId=" + ReqId + " and Status=0 order by tl.LocationCode"));
+                    var pList = con.Query<PickingList>(@"SELECT TP.ReqId, TP.Mcode, TP.Unit, TP.LocationId, TP.Quantity, TP.Bcode, MI.MENUCODE, MI.DESCA, 
+TL.LocationCode, TP.DeviceId, TD.DeviceName, MG.DESCA MCAT FROM tblPickingList TP 
+LEFT JOIN MenuItem MI ON TP.Mcode = MI.MCODE 
+LEFT JOIN MenuItem MG ON MI.MGROUP = MG.MCODE
+LEFT JOIN TBL_LOCATIONS TL ON TL.LocationId = TP.LocationId 
+LEFT JOIN tblDevices TD ON TP.DeviceId = TD.DeviceId 
+WHERE  ReqId=" + ReqId + " and [Status] = 0 ORDER BY TL.LocationCode");
+                    PickingList = new ObservableCollection<Models.PickingList>(pList);
                     IsloadMode = true;
                 }
             }

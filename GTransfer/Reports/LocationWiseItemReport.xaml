@@ -32,7 +32,7 @@
                 <StackPanel Orientation="Horizontal">
                 <Label Content='Item :' Width="80"></Label>
                     <ComboBox Width="120" Height="25" Style="{DynamicResource VirtualizationKey}" ItemsSource="{Binding ItemList}" IsEditable="True" DisplayMemberPath="MENUCODE" SelectedValuePath="MCODE" SelectedValue="{Binding selectedItem}"></ComboBox>
-                    <ComboBox Width="550" Height="25" Style="{DynamicResource VirtualizationKey}" ItemsSource="{Binding ItemList}" IsEditable="True" DisplayMemberPath="DESCA" SelectedValuePath="MCODE" SelectedValue="{Binding selectedItem}"></ComboBox>
+                    <ComboBox Width="550" Height="25" Style="{DynamicResource VirtualizationKey}" ItemsSource="{Binding ItemList}" IsEditable="True" DisplayMemberPath="DESCA" SelectedValuePath="MCODE" SelectedValue="{Binding selectedItem}" ></ComboBox>
                     <Button Style="{StaticResource NewButton}"  Margin=" 10 0" Content="Load" Width="60" Height="30" Command="{Binding LoadReportCommand}"  />
                 </StackPanel>
             </StackPanel>

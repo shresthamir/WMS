@@ -15,8 +15,8 @@ namespace GTransfer.Reports
     {
         private DateTime _FDate;
         private DateTime _TDate;
-        private ObservableCollection<dynamic> _ReportDataList;
-        public ObservableCollection<dynamic> ReportDataList { get { return _ReportDataList; } set { _ReportDataList = value; OnPropertyChanged("ReportDataList"); } }
+        private ObservableCollection<PackaginListModel> _ReportDataList;
+        public ObservableCollection<PackaginListModel> ReportDataList { get { return _ReportDataList; } set { _ReportDataList = value; OnPropertyChanged("ReportDataList"); } }
 
         public DateTime FDate { get { return _FDate; } set { _FDate = value; OnPropertyChanged("FDate"); } }
         public DateTime TDate { get { return _TDate; } set { _TDate = value; OnPropertyChanged("TDate"); } }
@@ -30,17 +30,28 @@ namespace GTransfer.Reports
         {
             using (SqlConnection con = new SqlConnection(GlobalClass.DataConnectionString))
             {
-                var result = con.Query(@"SELECT M.VCHRNO, CONVERT(VARCHAR,M.TRNDATE, 101) Date, ISNULL(P.GENERIC,'') PackageNo, I.MENUCODE, I.DESCA, P.UNIT, P.RealQty FROM RMD_TRNMAIN M 
+                var result = con.Query<PackaginListModel>(@"SELECT CAST(RIGHT(M.VCHRNO,LEN(M.VCHRNO)-2) AS INT) VNUM, M.VCHRNO, CONVERT(VARCHAR,M.TRNDATE, 101) Date, ISNULL(P.GENERIC,'') PackageNo, I.MENUCODE, I.DESCA, P.UNIT, P.RealQty FROM RMD_TRNMAIN M 
 JOIN RMD_TRNPROD P ON M.VCHRNO = P.VCHRNO AND M.DIVISION = P.DIVISION AND M.PhiscalID = P.PhiscalID
 JOIN MENUITEM I ON P.MCODE = I.MCODE
 WHERE LEFT(M.VCHRNO,2) IN ('TO') AND M.TRNDATE BETWEEN @FDate AND @TDate
-ORDER BY TRNDATE, VCHRNO, PackageNo, DESCA", this);
+ORDER BY VNUM, PackageNo, DESCA", this);
                 if (result != null)
                 {
-                    ReportDataList = new ObservableCollection<dynamic>(result);
+                    ReportDataList = new ObservableCollection<PackaginListModel>(result);
                 }
             }
 
         }       
+    }
+
+    class PackaginListModel
+    {
+        public string VCHRNO { get; set; }
+        public string Date { get; set; }
+        public string PackageNo { get; set; }
+        public string MENUCODE { get; set; }
+        public string DESCA { get; set; }
+        public string UNIT { get; set; }
+        public decimal RealQty { get; set; }
     }
 }

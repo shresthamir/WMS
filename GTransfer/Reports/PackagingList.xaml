@@ -18,7 +18,7 @@
                 <DatePicker Width="120" Height="26" SelectedDate="{Binding FDate}"/>
 
                 <Label Margin="50 0 0 0" Content="To Date"/>
-                <DatePicker Width="120" Height="26" SelectedDate="{Binding FDate}"/>
+                <DatePicker Width="120" Height="26" SelectedDate="{Binding TDate}"/>
 
                 <Button Style="{StaticResource NewButton}" Command="{Binding LoadDataCommand}" Content="Load" Width="60" Height="30"> </Button>
             </StackPanel>
@@ -29,7 +29,9 @@
             <sf:SfDataGrid x:Name="Report" 
                          AllowResizingColumns="True"
                            NavigationMode="Cell"      
-                                                   
+                           ShowColumnWhenGrouped="False"
+                           AutoExpandGroups="True"
+                           GroupCaptionTextFormat=" {ColumnName} : {Key} - {ItemsCount} Items"   
                            AutoGenerateColumns="False"
                            ItemsSource="{Binding ReportDataList}"  
                           ColumnSizer="Star"
@@ -50,6 +52,10 @@
                                                 PrintPageHeaderTemplate="{StaticResource PrintHeaderTemplate}">                        
                     </sf:PrintSettings>
                 </sf:SfDataGrid.PrintSettings>-->
+                <sf:SfDataGrid.GroupColumnDescriptions>
+                    <sf:GroupColumnDescription ColumnName="VCHRNO" />
+                    <sf:GroupColumnDescription ColumnName="PackageNo" />
+                </sf:SfDataGrid.GroupColumnDescriptions>
                 <sf:SfDataGrid.Columns>
                     <sf:GridTextColumn AllowEditing="False"  MappingName="VCHRNO" Width="100" HeaderText="Voucher No"></sf:GridTextColumn>
                     <sf:GridTextColumn AllowEditing="False"  MappingName="Date" Width="80" HeaderText="Date"></sf:GridTextColumn>
