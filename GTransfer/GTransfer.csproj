@@ -169,6 +169,10 @@
     <Compile Include="Models\TTrnTran.cs" />
     <Compile Include="Models\UnitAndQty.cs" />
     <Compile Include="Models\UserProfiles.cs" />
+    <Compile Include="Reports\GoodsReceivedSummaryVM.cs" />
+    <Compile Include="Reports\GoodsReceivedSummaryReport.xaml.cs">
+      <DependentUpon>GoodsReceivedSummaryReport.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Reports\StockMovementReportVM.cs" />
     <Compile Include="Reports\StockMovementReport.xaml.cs">
       <DependentUpon>StockMovementReport.xaml</DependentUpon>
@@ -243,6 +247,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Reports\GoodsReceivedSummaryReport.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Reports\StockMovementReport.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

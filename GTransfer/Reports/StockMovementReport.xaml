@@ -49,6 +49,8 @@
                     <Label Margin="50 0 0 0" Content="To Date"/>
                     <DatePicker Width="120" Height="26" SelectedDate="{Binding TDate}"/>
 
+                    <CheckBox x:Name="chkLocationWise" IsChecked="{Binding LocationWise}" Content="Location Wise" VerticalAlignment="Center" Margin="20 0"/>
+
                     <Button Style="{StaticResource NewButton}" Command="{Binding LoadDataCommand}" Content="Load" Width="60" Height="30"></Button>
                 </StackPanel>
             </StackPanel>
@@ -81,7 +83,7 @@
                 </sf:SfDataGrid.PrintSettings>-->
 
                 <sf:SfDataGrid.Columns>
-                    <sf:GridTextColumn AllowEditing="False"  MappingName="VCHRNO" Width="50" HeaderText="Vchr No"></sf:GridTextColumn>
+                    <sf:GridTextColumn AllowEditing="False"  MappingName="VCHRNO" Width="80" HeaderText="Vchr No"></sf:GridTextColumn>
                     <sf:GridTextColumn AllowEditing="False"  MappingName="Date" Width="75" HeaderText="Date"></sf:GridTextColumn>
                     <sf:GridTextColumn AllowEditing="False"  MappingName="BSDATE" Width="75" HeaderText="Miti"></sf:GridTextColumn>
                     <sf:GridTextColumn AllowEditing="False"  MappingName="Particulars" Width="200" HeaderText="Particulars"></sf:GridTextColumn>
@@ -89,10 +91,10 @@
                     <sf:GridTextColumn AllowEditing="False"  MappingName="DESCA"  HeaderText="Item Name"></sf:GridTextColumn>
                     <sf:GridTextColumn AllowEditing="False"  MappingName="UNIT" Width="80" HeaderText="Unit"></sf:GridTextColumn>
                     <!--<sf:GridTextColumn AllowEditing="False" MappingName="WAREHOUSE" HeaderText="Warehouse"></sf:GridTextColumn>-->
-                    <sf:GridTextColumn AllowEditing="False" MappingName="LocationCode" Width="100" HeaderText="Location"></sf:GridTextColumn>
-                    <sf:GridTextColumn AllowEditing="False" DisplayBinding="{Binding InQty, Converter={StaticResource HideZero}}" Width="80" HeaderText="In Qty"></sf:GridTextColumn>
-                    <sf:GridTextColumn AllowEditing="False" DisplayBinding="{Binding OutQty, Converter={StaticResource HideZero}}" Width="80" HeaderText="Out Qty"></sf:GridTextColumn>
-                    <sf:GridTextColumn AllowEditing="False" DisplayBinding="{Binding Balance, Converter={StaticResource HideZero}}" Width="80" MappingName="Balance" HeaderText="Balance"></sf:GridTextColumn>
+                    <sf:GridTextColumn AllowEditing="False" MappingName="LocationCode" Width="100" HeaderText="Location" IsHidden="{Binding ElementName=chkLocationWise, Path=IsChecked, Converter={StaticResource ReverseBool}}"/>
+                    <sf:GridTextColumn AllowEditing="False" DisplayBinding="{Binding InQty, Converter={StaticResource HideZero}, ConverterParameter='NO_DECIMAL'}" Width="80" HeaderText="In Qty" TextAlignment="Right"></sf:GridTextColumn>
+                    <sf:GridTextColumn AllowEditing="False" DisplayBinding="{Binding OutQty, Converter={StaticResource HideZero}, ConverterParameter='NO_DECIMAL'}" Width="80" HeaderText="Out Qty" TextAlignment="Right"></sf:GridTextColumn>
+                    <sf:GridTextColumn AllowEditing="False" DisplayBinding="{Binding Balance, Converter={StaticResource HideZero}, ConverterParameter='NO_DECIMAL'}" Width="80" HeaderText="Balance" TextAlignment="Right"></sf:GridTextColumn>
 
                 </sf:SfDataGrid.Columns>
 

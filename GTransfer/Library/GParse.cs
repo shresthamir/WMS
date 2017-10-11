@@ -47,6 +47,14 @@ namespace GTransfer
                 return 0;
         }
 
+        public static string ToString(object objString)
+        {
+            if (objString == null)
+                return string.Empty;
+            else
+                return objString.ToString();
+        }
+
         public static decimal ToDecimal(object objDouble)
         {
             decimal ReturnVal;

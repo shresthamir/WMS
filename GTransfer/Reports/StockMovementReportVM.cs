@@ -23,11 +23,12 @@ namespace GTransfer.Reports
         private Item _SelectedItem;
         private DateTime _FDate;
         private DateTime _TDate;
-
+        private bool _LocationWise;
 
         public DateTime FDate { get { return _FDate; } set { _FDate = value; OnPropertyChanged("FDate"); } }
         public DateTime TDate { get { return _TDate; } set { _TDate = value; OnPropertyChanged("TDate"); } }
 
+        public bool LocationWise { get { return _LocationWise; } set { _LocationWise = value; OnPropertyChanged("LocationWise"); } }
         public bool ItemWise { get { return _ItemWise; } set { _ItemWise = value; OnPropertyChanged("ItemWise"); } }
         public bool MGroupWise { get { return _MGroupWise; } set { _MGroupWise = value; OnPropertyChanged("MGroupWise"); } }
         public bool GroupWise { get { return _GroupWise; } set { _GroupWise = value; OnPropertyChanged("MGroupWise"); } }
@@ -38,6 +39,8 @@ namespace GTransfer.Reports
         public ObservableCollection<Item> GroupList { get { return _GroupList; } set { _GroupList = value; OnPropertyChanged("GroupList"); } }
 
         private ObservableCollection<StockMovementModel> _ReportDataList;
+
+
         public ObservableCollection<StockMovementModel> ReportDataList { get { return _ReportDataList; } set { _ReportDataList = value; OnPropertyChanged("ReportDataList"); } }
 
 
@@ -51,6 +54,7 @@ namespace GTransfer.Reports
 
         public override void LoadMethod(object obj)
         {
+            string strSql = string.Empty;
             string ItemSelctionClause = string.Empty;
             if (SelectedItem == null)
             {
@@ -64,7 +68,8 @@ namespace GTransfer.Reports
             else
                 ItemSelctionClause = "MI.PARENT  = '" + SelectedItem.MCODE + "'";
 
-            string strSql = @"SELECT '' VCHRNO, '' [Date], '' BSDATE, 'Opening Balance' Particulars, 
+            if (LocationWise)
+                strSql = @"SELECT '' VCHRNO, '' [Date], '' BSDATE, 'Opening Balance' Particulars, 
 MI.MENUCODE, MI.DESCA, D.UNIT, D.Warehouse, L.LocationCode, 0 InQty, 0 OutQty, SUM(D.InQty - D.OutQty) Balance   FROM RMD_TRNMAIN M 
 JOIN  RMD_TRNPROD_DETAIL D ON M.VCHRNO = D.VCHRNO AND M.DIVISION = D.DIVISION AND M.PhiscalID = D.PhiscalID
 JOIN MENUITEM MI ON D.MCODE = MI.MCODE
@@ -85,6 +90,26 @@ LEFT JOIN DIVISION B ON B.INITIAL = M.BILLTOADD
 WHERE " + ItemSelctionClause + @" AND M.TRNDATE BETWEEN @FDate AND @TDate
 ORDER BY  DESCA, LocationCode, [Date]";
 
+            else
+                strSql = @"SELECT '' VCHRNO, '' [Date], '' BSDATE, 'Opening Balance' Particulars, 
+MI.MENUCODE, MI.DESCA, D.UNIT, D.Warehouse, 0 InQty, 0 OutQty, SUM(D.InQty - D.OutQty) Balance   FROM RMD_TRNMAIN M 
+JOIN  RMD_TRNPROD_DETAIL D ON M.VCHRNO = D.VCHRNO AND M.DIVISION = D.DIVISION AND M.PhiscalID = D.PhiscalID
+JOIN MENUITEM MI ON D.MCODE = MI.MCODE
+WHERE " + ItemSelctionClause + @" AND M.TRNDATE < @FDate
+GROUP BY MI.MENUCODE, MI.DESCA, D.UNIT, D.Warehouse
+UNION ALL
+SELECT M.VCHRNO, CONVERT(VARCHAR, M.TRNDATE, 102) [Date], M.BSDATE, 
+CASE WHEN LEFT(M.VCHRNO,2) = 'PI' THEN 'Goods Received'
+WHEN LEFT(M.VCHRNO, 2) = 'TO' THEN 'Stock Issue To ' + B.NAME
+WHEN LEFT(M.VCHRNO, 2) = 'LT' THEN 'Location Transfer' END Particulars,
+MI.MENUCODE, MI.DESCA, D.UNIT, D.Warehouse, D.InQty, D.OutQty, 0 Balance--,row_number() OVER (ORDER BY trndate) AS row  
+FROM RMD_TRNMAIN M 
+JOIN  RMD_TRNPROD_DETAIL D ON M.VCHRNO = D.VCHRNO AND M.DIVISION = D.DIVISION AND M.PhiscalID = D.PhiscalID
+JOIN MENUITEM MI ON D.MCODE = MI.MCODE
+LEFT JOIN DIVISION B ON B.INITIAL = M.BILLTOADD
+WHERE " + ItemSelctionClause + @" AND M.TRNDATE BETWEEN @FDate AND @TDate
+ORDER BY  DESCA,  [Date]";
+
             using (SqlConnection con = new SqlConnection(GlobalClass.DataConnectionString))
             {
                 var result = con.Query<StockMovementModel>(strSql, this);
@@ -97,7 +122,7 @@ ORDER BY  DESCA, LocationCode, [Date]";
                     ReportDataList = new ObservableCollection<StockMovementModel>();
                     foreach (StockMovementModel m in result)
                     {
-                        if(location!=m.LocationCode || item != m.MENUCODE)
+                        if (location != m.LocationCode || item != m.MENUCODE)
                         {
                             ReportDataList.Add(new StockMovementModel());
                         }
@@ -105,7 +130,7 @@ ORDER BY  DESCA, LocationCode, [Date]";
                         {
                             balance = m.Balance;
                             location = m.LocationCode;
-                            
+
                         }
                         if (item != m.MENUCODE)
                         {
@@ -118,7 +143,7 @@ ORDER BY  DESCA, LocationCode, [Date]";
                         ReportDataList.Add(m);
 
                     }
-                    
+
                 }
             }
         }

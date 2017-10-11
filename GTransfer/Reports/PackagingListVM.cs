@@ -30,9 +30,10 @@ namespace GTransfer.Reports
         {
             using (SqlConnection con = new SqlConnection(GlobalClass.DataConnectionString))
             {
-                var result = con.Query<PackaginListModel>(@"SELECT CAST(RIGHT(M.VCHRNO,LEN(M.VCHRNO)-2) AS INT) VNUM, M.VCHRNO, CONVERT(VARCHAR,M.TRNDATE, 101) Date, ISNULL(P.GENERIC,'') PackageNo, I.MENUCODE, I.DESCA, P.UNIT, P.RealQty FROM RMD_TRNMAIN M 
+                var result = con.Query<PackaginListModel>(@"SELECT CAST(RIGHT(M.VCHRNO,LEN(M.VCHRNO)-2) AS INT) VNUM, M.VCHRNO, CONVERT(VARCHAR,M.TRNDATE, 101) Date, D.NAME, ISNULL(P.GENERIC,'') PackageNo, I.MENUCODE, I.DESCA, P.UNIT, P.RealQty FROM RMD_TRNMAIN M 
 JOIN RMD_TRNPROD P ON M.VCHRNO = P.VCHRNO AND M.DIVISION = P.DIVISION AND M.PhiscalID = P.PhiscalID
 JOIN MENUITEM I ON P.MCODE = I.MCODE
+JOIN DIVISION D ON M.BILLTOADD = D.INITIAL
 WHERE LEFT(M.VCHRNO,2) IN ('TO') AND M.TRNDATE BETWEEN @FDate AND @TDate
 ORDER BY VNUM, PackageNo, DESCA", this);
                 if (result != null)
@@ -47,6 +48,7 @@ ORDER BY VNUM, PackageNo, DESCA", this);
     class PackaginListModel
     {
         public string VCHRNO { get; set; }
+        public string NAME { get; set; }
         public string Date { get; set; }
         public string PackageNo { get; set; }
         public string MENUCODE { get; set; }

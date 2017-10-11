@@ -545,13 +545,14 @@ namespace GTransfer.Converters
                 return string.Empty;
             if (GParse.ToDecimal(value) == 0)
                 return string.Empty;
+            else if (GParse.ToString(parameter) == "NO_DECIMAL")
+                return GParse.ToDecimal(value).ToString("#0");
             else
                 return value;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-
             return GParse.ToDecimal(value);
         }
     }

@@ -9,18 +9,24 @@
              d:DesignHeight="768" d:DesignWidth="1366">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="60"/>
+            <RowDefinition Height="100"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Border Style="{StaticResource PlainBackground}">
-            <StackPanel Orientation="Horizontal">
-                <Label Content="From Date"/>
-                <DatePicker Width="120" Height="26" SelectedDate="{Binding FDate}"/>
+            <StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Shipment No"/>
+                    <TextBox Width="120" Text="{Binding ShipmentNo}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="From Date"/>
+                    <DatePicker Width="120" Height="26" SelectedDate="{Binding FDate}"/>
 
-                <Label Margin="50 0 0 0" Content="To Date"/>
-                <DatePicker Width="120" Height="26" SelectedDate="{Binding TDate}"/>
+                    <Label Margin="50 0 0 0" Content="To Date"/>
+                    <DatePicker Width="120" Height="26" SelectedDate="{Binding TDate}"/>
 
-                <Button Style="{StaticResource NewButton}" Command="{Binding LoadDataCommand}" Content="Load" Width="60" Height="30"></Button>
+                    <Button Style="{StaticResource NewButton}" Command="{Binding LoadDataCommand}" Content="Load" Width="60" Height="30"></Button>
+                </StackPanel>
             </StackPanel>
         </Border>
 
@@ -55,17 +61,14 @@
                     <sf:GroupColumnDescription ColumnName="VCHRNO" />
                 </sf:SfDataGrid.GroupColumnDescriptions>
                 <sf:SfDataGrid.Columns>
-                    <sf:GridTextColumn AllowEditing="False"  MappingName="VCHRNO" Width="50" HeaderText="PI No"></sf:GridTextColumn>
-                    <sf:GridTextColumn AllowEditing="False"  MappingName="Date" Width="80" HeaderText="Date"></sf:GridTextColumn>
-                    <sf:GridTextColumn AllowEditing="False"  MappingName="REFORDBILL" Width="100" HeaderText="Order Ref#"></sf:GridTextColumn>
-                    <sf:GridTextColumn AllowEditing="False" MappingName="MENUCODE" HeaderText="Item Code"></sf:GridTextColumn>
-                    <sf:GridTextColumn AllowEditing="False"   MappingName="DESCA" HeaderText="Item Name"></sf:GridTextColumn>
-                    <sf:GridTextColumn AllowEditing="False"  MappingName="UNIT" HeaderText="Unit"></sf:GridTextColumn>
-                    <sf:GridTextColumn AllowEditing="False" MappingName="WAREHOUSE" HeaderText="Warehouse"></sf:GridTextColumn>
-                    <sf:GridTextColumn AllowEditing="False" MappingName="LocationCode" HeaderText="Location"></sf:GridTextColumn>
-                    <sf:GridTextColumn AllowEditing="False" MappingName="InQty" HeaderText="Quantity"></sf:GridTextColumn>
-
-
+                    <sf:GridTextColumn AllowEditing="False" Width="70"  MappingName="VCHRNO" HeaderText="PI No"/>
+                    <sf:GridTextColumn AllowEditing="False" Width="80"  MappingName="Date" HeaderText="Date"/>
+                    <sf:GridTextColumn AllowEditing="False" Width="100" MappingName="REFORDBILL" HeaderText="Shipment No"/>
+                    <sf:GridTextColumn AllowEditing="False" Width="150" MappingName="MENUCODE" HeaderText="Item Code"/>
+                    <sf:GridTextColumn AllowEditing="False"             MappingName="DESCA" HeaderText="Item Name"/>
+                    <sf:GridTextColumn AllowEditing="False" Width="120" MappingName="UNIT" HeaderText="Unit"/>
+                    <sf:GridTextColumn AllowEditing="False" Width="120" MappingName="LocationCode" HeaderText="Location"/>
+                    <sf:GridTextColumn AllowEditing="False" Width="150" DisplayBinding="{Binding InQty, Converter={StaticResource HideZero}, ConverterParameter='NO_DECIMAL'}" HeaderText="Quantity" TextAlignment="Right"/>
                 </sf:SfDataGrid.Columns>
 
             </sf:SfDataGrid>
