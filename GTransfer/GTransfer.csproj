@@ -155,6 +155,7 @@
     <Compile Include="Library\PropertyAttributes.cs" />
     <Compile Include="Library\RelayCommand.cs" />
     <Compile Include="Library\Settings.cs" />
+    <Compile Include="Library\StyleSelectors.cs" />
     <Compile Include="Library\VisualClass.cs" />
     <Compile Include="Models\AlternateUnit.cs" />
     <Compile Include="Models\Company.cs" />
@@ -184,15 +185,15 @@
     <Compile Include="Reports\GoodsReceivedReport.xaml.cs">
       <DependentUpon>GoodsReceivedReport.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\ItemStockWiseLocationReport.xaml.cs">
-      <DependentUpon>ItemStockWiseLocationReport.xaml</DependentUpon>
+    <Compile Include="Reports\LocationWiseStockReport.xaml.cs">
+      <DependentUpon>LocationWiseStockReport.xaml</DependentUpon>
     </Compile>
     <Compile Include="Reports\GoodsReceivedDetailVM.cs" />
-    <Compile Include="Reports\ItemWiseLocationReportVM.cs" />
-    <Compile Include="Reports\LocationWiseItemReport.xaml.cs">
-      <DependentUpon>LocationWiseItemReport.xaml</DependentUpon>
+    <Compile Include="Reports\LocationWiseStockReportVM.cs" />
+    <Compile Include="Reports\ItemWiseStockReport.xaml.cs">
+      <DependentUpon>ItemWiseStockReport.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\LocationWiseItemReportVM.cs" />
+    <Compile Include="Reports\ItemWiseStockReportVM.cs" />
     <Compile Include="Repository\Repositories.cs" />
     <Compile Include="UserInterfaces\LocationTransfer.xaml.cs">
       <DependentUpon>LocationTransfer.xaml</DependentUpon>
@@ -263,11 +264,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Reports\ItemStockWiseLocationReport.xaml">
+    <Page Include="Reports\LocationWiseStockReport.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Reports\LocationWiseItemReport.xaml">
+    <Page Include="Reports\ItemWiseStockReport.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

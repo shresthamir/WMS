@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="GTransfer.Reports.ItemStockWiseLocationReport"
+﻿<UserControl x:Class="GTransfer.Reports.LocationWiseStockReport"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -34,7 +34,8 @@
             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
 
                 <sf:SfDataGrid x:Name="Report" 
-                         AllowResizingColumns="True"
+                            AllowResizingColumns="True"
+                            AutoExpandGroups="True"
                            NavigationMode="Cell"      
                                                    
                            AutoGenerateColumns="False"
@@ -52,6 +53,10 @@
                             </ResourceDictionary.MergedDictionaries>
                         </ResourceDictionary>
                     </sf:SfDataGrid.Resources>
+
+                    <sf:SfDataGrid.GroupColumnDescriptions>
+                        <sf:GroupColumnDescription ColumnName="LocationCode" />
+                    </sf:SfDataGrid.GroupColumnDescriptions>
                     <!--<sf:SfDataGrid.PrintSettings>
                     <sf:PrintSettings  
                                                 

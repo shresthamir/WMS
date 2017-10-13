@@ -5,6 +5,9 @@
         <ResourceDictionary Source="pack://application:,,,/Styles/buttonStyle.xaml"/>
         <ResourceDictionary Source="pack://application:,,,/Styles/ValueConverters.xaml"/>
         <ResourceDictionary Source="pack://application:,,,/Styles/TreeView.xaml"/>
+        
+        
+        
 
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

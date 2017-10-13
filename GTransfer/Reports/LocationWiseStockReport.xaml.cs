@@ -16,14 +16,14 @@ using System.Windows.Shapes;
 namespace GTransfer.Reports
 {
     /// <summary>
-    /// Interaction logic for LocationWiseItemReport.xaml
+    /// Interaction logic for ItemStockWiseLocationReport.xaml
     /// </summary>
-    public partial class LocationWiseItemReport : UserControl
+    public partial class LocationWiseStockReport : UserControl
     {
-        public LocationWiseItemReport()
+        public LocationWiseStockReport()
         {
             InitializeComponent();
-            this.DataContext = new Reports.LocationWiseItemReportVM();
+            this.DataContext = new Reports.LocationWiseStockReportVM();
         }
     }
 }

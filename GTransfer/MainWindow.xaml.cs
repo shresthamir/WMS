@@ -102,7 +102,7 @@ namespace GTransfer
         private void locationWiseItem_Click(object sender, RoutedEventArgs e)
         {
             LayoutAnchorable la = new LayoutAnchorable();
-            la.Content = new Reports.LocationWiseItemReport();
+            la.Content = new Reports.ItemWiseStockReport();
             la.IsActive = true;
             la.Title = "LocationWise Item Report";
             LayDocPane.Children.Add(la);
@@ -111,7 +111,7 @@ namespace GTransfer
         private void ItemWiseLocation_Click(object sender, RoutedEventArgs e)
         {
             LayoutAnchorable la = new LayoutAnchorable();
-            la.Content = new Reports.ItemStockWiseLocationReport();
+            la.Content = new Reports.LocationWiseStockReport();
             la.IsActive = true;
             la.Title = "ItemWise Location Report";
             LayDocPane.Children.Add(la);

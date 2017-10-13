@@ -11,7 +11,7 @@ using Dapper;
 
 namespace GTransfer.Reports
 {
-    class ItemWiseLocationReportVM:BaseViewModel
+    class LocationWiseStockReportVM : BaseViewModel
     {
        
         private string _selectedWarehouse;
@@ -23,14 +23,14 @@ namespace GTransfer.Reports
         private ObservableCollection<string> _warehouseList;
         public ObservableCollection<string> warehouseList { get { return _warehouseList; } set { _warehouseList = value; OnPropertyChanged("warehouseList"); } }
         public ObservableCollection<Location> LocationList { get { return _LocationList; } set { _LocationList = value; OnPropertyChanged("LocationList"); } }
-        private ObservableCollection<dynamic> _ReportDataList;
-        public ObservableCollection<dynamic> ReportDataList { get { return _ReportDataList; } set { _ReportDataList = value; OnPropertyChanged("ReportDataList"); } }
+        private ObservableCollection<ItemWiseStockModel> _ReportDataList;
+        public ObservableCollection<ItemWiseStockModel> ReportDataList { get { return _ReportDataList; } set { _ReportDataList = value; OnPropertyChanged("ReportDataList"); } }
 
         public RelayCommand LoadReportCommand { get { return new RelayCommand(ExecuteLoadReportCommand); } }
 
 
 
-        public ItemWiseLocationReportVM()
+        public LocationWiseStockReportVM()
         {
             GetWarehouseList();
         }
@@ -41,10 +41,10 @@ namespace GTransfer.Reports
 
             using (SqlConnection con = new SqlConnection(GlobalClass.DataConnectionString))
             {
-                var result = con.Query("SELECT sum(InQty-OutQty)Stock,TPD.MCODE,MI.MENUCODE,MI.DESCA,TPD.Warehouse,TPD.LocationId,TL.LocationCode FROM RMD_TRNPROD_DETAIL TPD INNER JOIN MENUITEM MI ON TPD.MCODE=MI.MCODE INNER JOIN TBL_LOCATIONS TL ON TPD.LocationId=TL.LocationId WHERE TPD.LocationId LIKE '" + selectedLocation + "' AND TPD.Warehouse like '" + selectedWarehouse + "' group by TPD.MCODE,TPD.Warehouse,TPD.LocationId,UNIT,MENUCODE,DESCA,TL.LocationCode");
+                var result = con.Query<ItemWiseStockModel>("SELECT sum(InQty-OutQty)Stock,TPD.MCODE,MI.MENUCODE,MI.DESCA,TPD.Warehouse,TPD.LocationId,TL.LocationCode FROM RMD_TRNPROD_DETAIL TPD INNER JOIN MENUITEM MI ON TPD.MCODE=MI.MCODE INNER JOIN TBL_LOCATIONS TL ON TPD.LocationId=TL.LocationId WHERE TPD.LocationId LIKE '" + selectedLocation + "' AND TPD.Warehouse like '" + selectedWarehouse + "' group by TPD.Warehouse,TPD.LocationId,TPD.MCODE,UNIT,MENUCODE,DESCA,TL.LocationCode");
                 if (result != null)
                 {
-                    ReportDataList = new ObservableCollection<dynamic>(result);
+                    ReportDataList = new ObservableCollection<ItemWiseStockModel>(result.Where(x=>x.Stock>0));
                 }
             }
 
@@ -64,5 +64,14 @@ namespace GTransfer.Reports
                 LocationList = new ObservableCollection<Location>(con.Query<Location>("SELECT * FROM TBL_LOCATIONS where Warehouse='" + selectedWarehouse + "'and  Level=" + Settings.LocationLevelLimit));
             }
         }
+    }
+
+    class ItemWiseStockModel
+    {
+        public double Stock { get; set; }
+        public string MENUCODE { get; set; }
+        public string DESCA { get; set; }
+        public string Warehouse { get; set; }
+        public string LocationCode { get; set; }
     }
 }

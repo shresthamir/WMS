@@ -81,14 +81,15 @@ SELECT M.VCHRNO, CONVERT(VARCHAR, M.TRNDATE, 102) [Date], M.BSDATE,
 CASE WHEN LEFT(M.VCHRNO,2) = 'PI' THEN 'Goods Received'
 WHEN LEFT(M.VCHRNO, 2) = 'TO' THEN 'Stock Issue To ' + B.NAME
 WHEN LEFT(M.VCHRNO, 2) = 'LT' THEN 'Location Transfer' END Particulars,
-MI.MENUCODE, MI.DESCA, D.UNIT, D.Warehouse, L.LocationCode, D.InQty, D.OutQty, 0 Balance--,row_number() OVER (ORDER BY trndate) AS row  
+MI.MENUCODE, MI.DESCA, D.UNIT, D.Warehouse, L.LocationCode, SUM(D.InQty) InQty, SUM(D.OutQty) OutQty, 0 Balance--,row_number() OVER (ORDER BY trndate) AS row  
 FROM RMD_TRNMAIN M 
 JOIN  RMD_TRNPROD_DETAIL D ON M.VCHRNO = D.VCHRNO AND M.DIVISION = D.DIVISION AND M.PhiscalID = D.PhiscalID
 JOIN MENUITEM MI ON D.MCODE = MI.MCODE
 JOIN TBL_LOCATIONS L ON D.LocationId = L.LocationId
 LEFT JOIN DIVISION B ON B.INITIAL = M.BILLTOADD
 WHERE " + ItemSelctionClause + @" AND M.TRNDATE BETWEEN @FDate AND @TDate
-ORDER BY  DESCA, LocationCode, [Date]";
+GROUP BY M.VCHRNO, TRNDATE, BSDATE, DESCA, MENUCODE, DESCA, UNIT, D.Warehouse, LocationCode, B.NAME
+ORDER BY  DESCA, LocationCode, [Date], OutQty";
 
             else
                 strSql = @"SELECT '' VCHRNO, '' [Date], '' BSDATE, 'Opening Balance' Particulars, 
@@ -102,13 +103,14 @@ SELECT M.VCHRNO, CONVERT(VARCHAR, M.TRNDATE, 102) [Date], M.BSDATE,
 CASE WHEN LEFT(M.VCHRNO,2) = 'PI' THEN 'Goods Received'
 WHEN LEFT(M.VCHRNO, 2) = 'TO' THEN 'Stock Issue To ' + B.NAME
 WHEN LEFT(M.VCHRNO, 2) = 'LT' THEN 'Location Transfer' END Particulars,
-MI.MENUCODE, MI.DESCA, D.UNIT, D.Warehouse, D.InQty, D.OutQty, 0 Balance--,row_number() OVER (ORDER BY trndate) AS row  
+MI.MENUCODE, MI.DESCA, D.UNIT, D.Warehouse, SUM(D.InQty) InQty, SUM(D.OutQty) OutQty, 0 Balance--,row_number() OVER (ORDER BY trndate) AS row  
 FROM RMD_TRNMAIN M 
 JOIN  RMD_TRNPROD_DETAIL D ON M.VCHRNO = D.VCHRNO AND M.DIVISION = D.DIVISION AND M.PhiscalID = D.PhiscalID
 JOIN MENUITEM MI ON D.MCODE = MI.MCODE
 LEFT JOIN DIVISION B ON B.INITIAL = M.BILLTOADD
 WHERE " + ItemSelctionClause + @" AND M.TRNDATE BETWEEN @FDate AND @TDate
-ORDER BY  DESCA,  [Date]";
+GROUP BY M.VCHRNO, TRNDATE, BSDATE, DESCA, MENUCODE, DESCA, UNIT, D.Warehouse, B.NAME
+ORDER BY  DESCA,  [Date], OutQty";
 
             using (SqlConnection con = new SqlConnection(GlobalClass.DataConnectionString))
             {
