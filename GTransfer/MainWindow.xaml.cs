@@ -143,5 +143,14 @@ namespace GTransfer
             la.Title = "Stock Movement Report";
             LayDocPane.Children.Add(la);
         }
+
+        private void goodsReceivedSummary_Click(object sender, RoutedEventArgs e)
+        {
+            LayoutAnchorable la = new LayoutAnchorable();
+            la.Content = new Reports.GoodsReceivedSummaryReport();
+            la.IsActive = true;
+            la.Title = "Goods Received Summary";
+            LayDocPane.Children.Add(la);
+        }
     }
 }

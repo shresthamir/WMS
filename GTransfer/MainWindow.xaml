@@ -29,6 +29,7 @@
                 </MenuItem>
                 <MenuItem Name="Report" Header="Reports">
                     <MenuItem Name="goodsReceivedDetail" Header="Goods Received Details" Click="goodsReceivedDetail_Click"/>
+                    <MenuItem Name="goodsReceivedSummary" Header="Goods Received Summary" Click="goodsReceivedSummary_Click"/>
                     <MenuItem Name="packingList" Header="Packing List" Click="packingList_Click"/>
                     <MenuItem Name="stockMovementReport" Header="Stock Movement Report" Click="stockMovementReport_Click"/>
                     <MenuItem Name="locationWiseItem" Header="Item Wise Stock Report" Click="locationWiseItem_Click"/>

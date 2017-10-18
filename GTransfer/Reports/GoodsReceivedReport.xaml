@@ -17,6 +17,8 @@
                 <StackPanel Orientation="Horizontal">
                     <Label Content="Shipment No"/>
                     <TextBox Width="120" Text="{Binding ShipmentNo}"/>
+
+                    <CheckBox x:Name="chkLocationWise" IsChecked="{Binding LocationWise}" Content="Location Wise" VerticalAlignment="Center" Margin="20 0"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <Label Content="From Date"/>
@@ -67,7 +69,7 @@
                     <sf:GridTextColumn AllowEditing="False" Width="150" MappingName="MENUCODE" HeaderText="Item Code"/>
                     <sf:GridTextColumn AllowEditing="False"             MappingName="DESCA" HeaderText="Item Name"/>
                     <sf:GridTextColumn AllowEditing="False" Width="120" MappingName="UNIT" HeaderText="Unit"/>
-                    <sf:GridTextColumn AllowEditing="False" Width="120" MappingName="LocationCode" HeaderText="Location"/>
+                    <sf:GridTextColumn AllowEditing="False" Width="120" MappingName="LocationCode" HeaderText="Location" IsHidden="{Binding ElementName=chkLocationWise, Path=IsChecked, Converter={StaticResource ReverseBool}}"/>
                     <sf:GridTextColumn AllowEditing="False" Width="150" DisplayBinding="{Binding InQty, Converter={StaticResource HideZero}, ConverterParameter='NO_DECIMAL'}" HeaderText="Quantity" TextAlignment="Right"/>
                 </sf:SfDataGrid.Columns>
 

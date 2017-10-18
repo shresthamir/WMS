@@ -9,18 +9,42 @@
              d:DesignHeight="768" d:DesignWidth="1366">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="60"/>
+            <RowDefinition Height="120"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Border Style="{StaticResource PlainBackground}">
-            <StackPanel Orientation="Horizontal">
-                <Label Content="From Date"/>
-                <DatePicker Width="120" Height="26" SelectedDate="{Binding FDate}"/>
+            <StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Grid VerticalAlignment="Center"  Margin="10 0 0 0" >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="30"/>
+                        </Grid.RowDefinitions>
+                        <Label HorizontalAlignment="Left" VerticalAlignment="Bottom" Content="Order Reference: #" Margin="0 0 0 -5"  />
+                        <TextBox Grid.Row="1" Tag="" HorizontalAlignment="Stretch"  Text="{Binding TMain.REFORDBILL,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" >
+                            <TextBox.InputBindings>
+                                <KeyBinding Key="Enter" Command="{Binding OrderReferenceCommand}"/>
+                            </TextBox.InputBindings>
+                        </TextBox>
 
-                <Label Margin="50 0 0 0" Content="To Date"/>
-                <DatePicker Width="120" Height="26" SelectedDate="{Binding TDate}"/>
+                    </Grid>
+                    <GroupBox Grid.Column="1"  Header="Filter Items" Margin="20 0 0 5">
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal">
+                            <RadioButton IsChecked="{Binding ShowAll}" Content="Show All" />
+                            <RadioButton IsChecked="{Binding ShowVariant}" Content="Show Variant only" Margin="10 0 0 0"/>
+                            <RadioButton IsChecked="{Binding ShowNonVariant}" Content="Show Non-variant only" Margin="10 0 0 0"/>
+                        </StackPanel>
+                    </GroupBox>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="From Date"/>
+                    <DatePicker Width="120" Height="26" SelectedDate="{Binding FDate}"/>
 
-                <Button Style="{StaticResource NewButton}" Command="{Binding LoadDataCommand}" Content="Load" Width="60" Height="30"></Button>
+                    <Label Margin="50 0 0 0" Content="To Date"/>
+                    <DatePicker Width="120" Height="26" SelectedDate="{Binding TDate}"/>
+
+                    <Button Style="{StaticResource NewButton}" Command="{Binding LoadDataCommand}" Content="Load" Width="60" Height="30"></Button>
+                </StackPanel>
             </StackPanel>
         </Border>
 
@@ -52,18 +76,17 @@
                     </sf:PrintSettings>
                 </sf:SfDataGrid.PrintSettings>-->
                 <sf:SfDataGrid.GroupColumnDescriptions>
-                    <sf:GroupColumnDescription ColumnName="VCHRNO" />
+                    <sf:GroupColumnDescription ColumnName="OrderNo" />
                 </sf:SfDataGrid.GroupColumnDescriptions>
                 <sf:SfDataGrid.Columns>
-                    <sf:GridTextColumn AllowEditing="False"  MappingName="VCHRNO" Width="50" HeaderText="PI No"></sf:GridTextColumn>
-                    <sf:GridTextColumn AllowEditing="False"  MappingName="Date" Width="80" HeaderText="Date"></sf:GridTextColumn>
-                    <sf:GridTextColumn AllowEditing="False"  MappingName="REFORDBILL" Width="100" HeaderText="Order Ref#"></sf:GridTextColumn>
-                    <sf:GridTextColumn AllowEditing="False" MappingName="MENUCODE" HeaderText="Item Code"></sf:GridTextColumn>
+                    <sf:GridTextColumn AllowEditing="False"  MappingName="OrderNo" Width="100" HeaderText="Shipment No"></sf:GridTextColumn>
+                    <sf:GridTextColumn AllowEditing="False"  MappingName="MENUCODE" Width="120" HeaderText="Item Cpde"></sf:GridTextColumn>
                     <sf:GridTextColumn AllowEditing="False"   MappingName="DESCA" HeaderText="Item Name"></sf:GridTextColumn>
                     <sf:GridTextColumn AllowEditing="False"  MappingName="UNIT" HeaderText="Unit"></sf:GridTextColumn>
-                    <sf:GridTextColumn AllowEditing="False" MappingName="WAREHOUSE" HeaderText="Warehouse"></sf:GridTextColumn>
-                    <sf:GridTextColumn AllowEditing="False" MappingName="LocationCode" HeaderText="Location"></sf:GridTextColumn>
-                    <sf:GridTextColumn AllowEditing="False" MappingName="InQty" HeaderText="Quantity"></sf:GridTextColumn>
+                    <sf:GridTextColumn AllowEditing="False" MappingName="Warehouse" HeaderText="Warehouse"></sf:GridTextColumn>
+                    <sf:GridTextColumn AllowEditing="False" MappingName="OrderQty" HeaderText="Order Qty"></sf:GridTextColumn>
+                    <sf:GridTextColumn AllowEditing="False" MappingName="ReceivedQty" HeaderText="Received Qty"></sf:GridTextColumn>
+                    <sf:GridTextColumn AllowEditing="False" MappingName="Variance" HeaderText="Variance Qty"></sf:GridTextColumn>
 
 
                 </sf:SfDataGrid.Columns>
