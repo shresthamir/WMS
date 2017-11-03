@@ -28,6 +28,7 @@ namespace GTransfer.Library
         public static FiscalYear CurFiscalYear { get { return _CurFiscalYear; } set { _CurFiscalYear = value; } }
         public static string PhiscalId = "073/74";
         public static string DIVISION = "MMX";
+        public static string Warehouse;
         public static Company company = new Company
         {
             INITIAL = "016",
@@ -40,12 +41,12 @@ namespace GTransfer.Library
         static GlobalClass()
         {
             SqlConnectionStringBuilder sbr = new SqlConnectionStringBuilder();
-            if(File.Exists(Path.Combine(Environment.SystemDirectory, "dbpath.dll")))
+            if (File.Exists(Path.Combine(Environment.SystemDirectory, "dbpath.dll")))
             {
                 string[] connProps = File.ReadAllLines(Path.Combine(Environment.SystemDirectory, "dbpath.dll"));
-                for(int i = 0; i<connProps.Count(); i++)
+                for (int i = 0; i < connProps.Count(); i++)
                 {
-                    switch(i)
+                    switch (i)
                     {
                         case 0:
                             sbr.UserID = connProps[i];
@@ -65,6 +66,8 @@ namespace GTransfer.Library
                     }
                 }
                 DataConnectionString = sbr.ConnectionString;
+                using (SqlConnection conn = new SqlConnection(DataConnectionString))
+                    Warehouse = conn.ExecuteScalar<string>("SELECT NAME FROM RMD_WAREHOUSE WHERE DIVISION = '" + DIVISION + "'");
             }
         }
 
@@ -237,7 +240,6 @@ namespace GTransfer.Library
 
         public static T FindVisualChild<T>(DependencyObject obj, string Name) where T : DependencyObject
         {
-
             for (int i = 0; i < VisualTreeHelper.GetChildrenCount(obj); i++)
             {
                 DependencyObject child = VisualTreeHelper.GetChild(obj, i);
@@ -285,7 +287,7 @@ namespace GTransfer.Library
         public static int GetBillSequences(IDbCommand Cmd, string VNAME, string VoucherType, string VoucherName, String Series, ref string Vno, ref String Chalanno, ref string Vnum)
         {
             string Div = DIVISION;
-            int Curno;           
+            int Curno;
             try
             {
                 Cmd.CommandText = "SELECT isnull(CURNO,0) CURNO FROM RMD_SEQUENCES WHERE VNAME = '" + VNAME + "' AND DIVISION LIKE  '" + Div + "'";
@@ -344,7 +346,7 @@ namespace GTransfer.Library
         public static string GetBSDate(DateTime Adate)
         {
             try
-            {               
+            {
                 using (SqlConnection Con = new SqlConnection(GlobalClass.DataConnectionString))
                 using (SqlCommand Cmd = Con.CreateCommand())
                 {

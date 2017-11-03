@@ -62,25 +62,25 @@ namespace GTransfer.Reports
         {
             using (SqlConnection con = new SqlConnection(GlobalClass.DataConnectionString))
             {
-                _ReportList = con.Query<GoodsReceivedSummaryModel>(@"SELECT B.OrderNo, B.MCODE, MI.MENUCODE, MI.DESCA, B.UNIT, TP.Warehouse, ISNULL(OP.QUANTITY, 0) OrderQty, ISNULL(SUM(TP.REALQTY_IN), 0) ReceivedQty, ISNULL(OP.QUANTITY, 0) - ISNULL(SUM(TP.REALQTY_IN), 0) Variance
+                _ReportList = con.Query<GoodsReceivedSummaryModel>(@"SELECT B.OrderNo, B.MCODE, MI.MENUCODE, MI.DESCA, B.UNIT, TP.Warehouse, ISNULL(OP.QUANTITY, 0) OrderQty, ISNULL(SUM(TP.REALQTY_IN), 0) ReceivedQty, ISNULL(SUM(TP.REALQTY_IN), 0) - ISNULL(OP.QUANTITY, 0) Variance
 FROM
 (
     SELECT DISTINCT * FROM
     (
-        SELECT VCHRNO OrderNo, MCODE, UNIT FROM RMD_ORDERPROD-- WHERE VCHRNO = 'OR5'
+        SELECT VCHRNO OrderNo, MCODE, UNIT FROM RMD_ORDERPROD" + (string.IsNullOrEmpty(ShipmentNo)?string.Empty:" WHERE VCHRNO = @ShipmentNo" ) + @"
         UNION ALL
         SELECT REFORDBILL, PD.MCODE, PD.UNIT FROM RMD_TRNMAIN M         
         JOIN RMD_TRNPROD PD ON M.VCHRNO = PD.VCHRNO AND M.DIVISION = PD.DIVISION 
         JOIN RMD_ORDERPROD OP ON M.REFORDBILL = OP.VCHRNO AND M.DIVISION = op.DIVISION
-        WHERE M.TRNDATE BETWEEN @FDate AND @TDate
-
+        WHERE " + (string.IsNullOrEmpty(ShipmentNo) ? string.Empty : " M.VCHRNO = @ShipmentNo AND") + @" M.TRNDATE BETWEEN @FDate AND @TDate
     ) A
 ) B 
 JOIN MENUITEM MI ON MI.MCODE = B.MCODE
 LEFT JOIN RMD_ORDERPROD OP ON OP.VCHRNO = B.OrderNo AND OP.MCODE = B.MCODE AND OP.UNIT = B.UNIT
-LEFT JOIN RMD_TRNMAIN TM ON B.OrderNo = TM.REFORDBILL
-LEFT JOIN RMD_TRNPROD TP ON TM.VCHRNO = TP.VCHRNO AND TM.DIVISION = TP.DIVISION AND TP.MCODE = B.MCODE
-GROUP BY B.OrderNo, B.MCODE, B.UNIT, OP.QUANTITY, TP.Warehouse, MI.MENUCODE, MI.DESCA", this);
+LEFT JOIN (RMD_TRNMAIN TM  JOIN RMD_TRNPROD TP ON TM.VCHRNO = TP.VCHRNO AND TM.DIVISION = TP.DIVISION)
+ON B.OrderNo = TM.REFORDBILL AND TP.MCODE = B.MCODE AND TP.UNIT = B.UNIT
+GROUP BY B.OrderNo, B.MCODE, B.UNIT, TP.Warehouse, OP.QUANTITY, MI.MENUCODE, MI.DESCA
+", this);
                 if (_ReportList != null)
                 {
                     SetDisplayMode(displayMode);

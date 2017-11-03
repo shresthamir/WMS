@@ -20,12 +20,10 @@
                             <RowDefinition Height="20"/>
                             <RowDefinition Height="30"/>
                         </Grid.RowDefinitions>
-                        <Label HorizontalAlignment="Left" VerticalAlignment="Bottom" Content="Order Reference: #" Margin="0 0 0 -5"  />
-                        <TextBox Grid.Row="1" Tag="" HorizontalAlignment="Stretch"  Text="{Binding TMain.REFORDBILL,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" >
-                            <TextBox.InputBindings>
-                                <KeyBinding Key="Enter" Command="{Binding OrderReferenceCommand}"/>
-                            </TextBox.InputBindings>
-                        </TextBox>
+                        <Label HorizontalAlignment="Left" VerticalAlignment="Bottom" Content="Shipment No: " Margin="0 0 0 -5"  />
+                        <TextBox Grid.Row="1" Tag="" HorizontalAlignment="Stretch"  Text="{Binding ShipmentNo,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+
+
 
                     </Grid>
                     <GroupBox Grid.Column="1"  Header="Filter Items" Margin="20 0 0 5">

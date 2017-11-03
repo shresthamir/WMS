@@ -72,14 +72,17 @@ namespace GTransfer.ViewModels
                         MessageBox.Show("Picking List already generated");
                         return;
                     }
-                    var result = con.Query<PickingList>(@"SELECT RD.Bcode, RD.MCODE, MI.DESCA, MI.MENUCODE, RD.UNIT, RD.ApprovedQty ReqQty, L.LocationCode, ISNULL(LB.Balance,0) Balance,L.LocationId,ISNULL(MG.DESCA, 'N/A') MCAT  FROM TBL_REQUISITION_DETAILS RD 
+                    var result = con.Query<PickingList>(@"SELECT RD.Bcode, RD.MCODE, MI.DESCA, MI.MENUCODE, RD.UNIT, RD.ApprovedQty ReqQty, L.LocationCode, ISNULL(LB.Balance,0) Balance,L.LocationId,ISNULL(MG.DESCA, 'N/A') MCAT, LB.Warehouse  FROM TBL_REQUISITION_DETAILS RD 
                                                           JOIN MENUITEM MI ON RD.MCODE = MI.MCODE
                                                           JOIN MENUITEM MG ON MI.MGROUP = MG.MCODE
                                                           LEFT JOIN vwLocationStockBalance LB ON LB.MCODE = RD.MCODE AND LB.UNIT = RD.UNIT
                                                           LEFT JOIN TBL_LOCATIONS L ON LB.LocationId = L.LocationId
-                                                          WHERE RD.ReqId = " + ReqId + @"
+                                                          WHERE RD.ReqId = " + ReqId + @" AND LB.WAREHOUSE = '" + GlobalClass.Warehouse + @"'
                                                           ORDER BY LocationCode, MCODE, UNIT");
-                    if (result == null || result.Count() <= 0) { MessageBox.Show("Sorry No Picking List Found For Given Id"); }
+                    if (result == null || result.Count() <= 0)
+                    {
+                        MessageBox.Show("Sorry No Picking List Found For Given Id");
+                    }
                     else
                     {
                         // PickingList = new ObservableCollection<Models.PickingList>();
@@ -195,7 +198,7 @@ WHERE  ReqId=" + ReqId + " and [Status] = 0 ORDER BY TL.LocationCode");
                         MessageBox.Show("Nothing to Save.Please provide valid List");
                         return;
                     }
-                    con.Execute("INSERT INTO tblPickingList (ReqId,Mcode,Unit,LocationId,Quantity,Status,Bcode,DeviceId) values(@ReqId,@Mcode,@Unit,@LocationId,@Quantity,@Status,@Bcode,@DeviceId)", saveList);
+                    con.Execute("INSERT INTO tblPickingList (ReqId,Mcode,Unit,LocationId,Quantity,Status,Bcode,DeviceId, Warehouse) values(@ReqId,@Mcode,@Unit,@LocationId,@Quantity,@Status,@Bcode,@DeviceId, @Warehouse)", saveList);
                     if (MessageBox.Show("Picking List Saved Successfully.Do U Want To Print", "Print Data", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
                         ExecutePrintCommand(obj);

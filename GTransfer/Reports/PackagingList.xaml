@@ -6,22 +6,52 @@
              xmlns:local="clr-namespace:GTransfer.Reports"
              mc:Ignorable="d" 
              xmlns:sf="http://schemas.syncfusion.com/wpf"
-             d:DesignHeight="768" d:DesignWidth="1366">    
+             d:DesignHeight="768" d:DesignWidth="1366">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="60"/>
+            <RowDefinition Height="130"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Border Style="{StaticResource PlainBackground}">
-            <StackPanel Orientation="Horizontal">
-                <Label Content="From Date"/>
-                <DatePicker Width="120" Height="26" SelectedDate="{Binding FDate}"/>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="35"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="250"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <GroupBox HorizontalAlignment="Left"  Header="Filter By">
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox x:Name="chkVoucher" Content="Voucher No" IsChecked="{Binding FilterVoucher}" />
+                        <CheckBox x:Name="chkStore" Margin="20 0 0 0" Content="Store"  IsChecked="{Binding FilterBranch}"/>
+                        <CheckBox x:Name="chkDate" Margin="20 0 0 0" Content="Date"  IsChecked="{Binding FilterDate}"/>
+                    </StackPanel>
+                </GroupBox>                
+                <StackPanel Grid.Column="1" Orientation="Horizontal" >
+                    <Label Content="Voucher No" Visibility="{Binding ElementName=chkVoucher, Path=IsChecked, Converter={StaticResource BoolToVisibility}}"/>
+                    <TextBox Width="120" Height="26" Text="{Binding SelectedVoucher}" Visibility="{Binding ElementName=chkVoucher, Path=IsChecked, Converter={StaticResource BoolToVisibility}}"/>
+                    <Label Margin="50 0 0 0" Content="Store" Visibility="{Binding ElementName=chkStore, Path=IsChecked, Converter={StaticResource BoolToVisibility}}"/>
+                    <ComboBox Width="180" ItemsSource="{Binding DivisionList}" DisplayMemberPath="NAME" SelectedValuePath="INITIAL" SelectedValue="{Binding SelectedBranch}" Visibility="{Binding ElementName=chkStore, Path=IsChecked, Converter={StaticResource BoolToVisibility}}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="1" Grid.ColumnSpan="3" Orientation="Horizontal" Visibility="{Binding ElementName=chkDate, Path=IsChecked, Converter={StaticResource BoolToVisibility}}">
+                    <Label Content="From Date"/>
+                    <DatePicker Width="120" Height="26" SelectedDate="{Binding FDate}"/>
 
-                <Label Margin="50 0 0 0" Content="To Date"/>
-                <DatePicker Width="120" Height="26" SelectedDate="{Binding TDate}"/>
+                    <Label Margin="50 0 0 0" Content="To Date"/>
+                    <DatePicker Width="120" Height="26" SelectedDate="{Binding TDate}"/>                    
+                </StackPanel>
 
-                <Button Style="{StaticResource NewButton}" Command="{Binding LoadDataCommand}" Content="Load" Width="60" Height="30"> </Button>
-            </StackPanel>
+                <Border Grid.Row="2" Style="{StaticResource PlainBackground}">
+                    <StackPanel Orientation="Horizontal">
+                        <RadioButton Content="Summary" IsChecked="{Binding SummaryReport}"/>
+                        <RadioButton Margin="50 0 0 0" Content="Details" IsChecked="{Binding SummaryReport, Converter={StaticResource ReverseBool}}"/>
+                    </StackPanel>
+                </Border>
+                <Button Grid.Row="2" Margin="0" Grid.Column="1" HorizontalAlignment="Left" Style="{StaticResource NewButton}" Command="{Binding LoadDataCommand}" Content="Load" Width="60" Height="30"></Button>
+            </Grid>
         </Border>
 
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
@@ -54,13 +84,13 @@
                 </sf:SfDataGrid.PrintSettings>-->
                 <sf:SfDataGrid.GroupColumnDescriptions>
                     <sf:GroupColumnDescription ColumnName="VCHRNO" />
-                    <sf:GroupColumnDescription ColumnName="PackageNo" />
+                    <sf:GroupColumnDescription  ColumnName="PackageNo" />
                 </sf:SfDataGrid.GroupColumnDescriptions>
                 <sf:SfDataGrid.Columns>
                     <sf:GridTextColumn AllowEditing="False"  MappingName="VCHRNO" Width="100" HeaderText="Voucher No"></sf:GridTextColumn>
                     <sf:GridTextColumn AllowEditing="False"  MappingName="Date" Width="100" HeaderText="Date"></sf:GridTextColumn>
                     <sf:GridTextColumn AllowEditing="False"  MappingName="NAME"  HeaderText="Store"></sf:GridTextColumn>
-                    <sf:GridTextColumn AllowEditing="False"  MappingName="PackageNo" Width="120" HeaderText="PackageNo"></sf:GridTextColumn>
+                    <sf:GridTextColumn AllowEditing="False"  MappingName="PackageNo" Width="120" HeaderText="PackageNo" IsHidden="{Binding SummaryReport}"></sf:GridTextColumn>
                     <sf:GridTextColumn AllowEditing="False" MappingName="MENUCODE" Width="120" HeaderText="Item Code"></sf:GridTextColumn>
                     <sf:GridTextColumn AllowEditing="False"   MappingName="DESCA" HeaderText="Item Name"></sf:GridTextColumn>
                     <sf:GridTextColumn AllowEditing="False"  MappingName="UNIT" Width="120" HeaderText="Unit"></sf:GridTextColumn>

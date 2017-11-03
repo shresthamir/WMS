@@ -24,6 +24,7 @@ namespace GTransfer.Models
         private string _MCAT;
         private string _DeviceId;
         private string _DeviceName;
+        private string _Warehouse;
 
         public string Bcode { get { return _Bcode; }set { _Bcode = value;OnPropertyChanged("Bcode"); } }
         public byte Status { get { return _Status; }set { _Status = value;OnPropertyChanged("Status"); } }
@@ -40,5 +41,6 @@ namespace GTransfer.Models
         public string MCAT { get { return _MCAT; }set { _MCAT = value;OnPropertyChanged("MCAT"); } }
         public string DeviceId { get { return _DeviceId; }set { _DeviceId = value;OnPropertyChanged("DeviceId"); } }
         public string DeviceName { get { return _DeviceName; } set { _DeviceName = value; OnPropertyChanged("DeviceName"); } }
+        public string Warehouse { get { return _Warehouse; } set { _Warehouse = value; OnPropertyChanged("Warehouse"); } }
     }
 }

@@ -259,6 +259,7 @@ namespace GTransfer.ViewModels
                 return con.Query<Unit>("SELECT UNITS FROM UNIT");
             }
         }
+
         private IEnumerable<Division> GetDivisionList()
         {
             using (SqlConnection con = new SqlConnection(GlobalClass.DataConnectionString))
