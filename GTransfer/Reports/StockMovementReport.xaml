@@ -13,47 +13,59 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Border Style="{StaticResource PlainBackground}">
-            <StackPanel>
-                <StackPanel Margin="20 10 0 0" Orientation="Horizontal">
-                    <RadioButton Width="100" x:Name="rbItem" GroupName="Selection" Content="Item Wise" IsChecked="{Binding ItemWise}"/>
-                    <RadioButton Width="150" x:Name="rbMGroup" GroupName="Selection" Content="Main Group Wise" IsChecked="{Binding MGroupWise}"/>
-                    <RadioButton Width="100" x:Name="rbGroup" GroupName="Selection" Content="Group Wise" IsChecked="{Binding GroupWise}"/>
-                </StackPanel>
-                <StackPanel Visibility="{Binding ElementName=rbItem, Path=IsChecked, Converter={StaticResource BoolToVisibility}}">
-                    <StackPanel Orientation="Horizontal">
-                        <Label Content="Barcode :" ></Label>
-                        <TextBox Height="25" Width="200"  Text="{Binding Barcode,UpdateSourceTrigger=PropertyChanged}">
-                            <TextBox.InputBindings>
-                                <KeyBinding Key="Enter" Command="{Binding BarcodeChangeCommand}" />
-                            </TextBox.InputBindings>
-                        </TextBox>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="280"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <StackPanel Margin="20 10 0 0" Orientation="Horizontal">
+                        <RadioButton Width="100" x:Name="rbItem" GroupName="Selection" Content="Item Wise" IsChecked="{Binding ItemWise}"/>
+                        <RadioButton Width="150" x:Name="rbMGroup" GroupName="Selection" Content="Main Group Wise" IsChecked="{Binding MGroupWise}"/>
+                        <RadioButton Width="100" x:Name="rbGroup" GroupName="Selection" Content="Group Wise" IsChecked="{Binding GroupWise}"/>
+                    </StackPanel>
+                    <StackPanel Visibility="{Binding ElementName=rbItem, Path=IsChecked, Converter={StaticResource BoolToVisibility}}">
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Barcode :" ></Label>
+                            <TextBox Height="25" Width="200"  Text="{Binding Barcode,UpdateSourceTrigger=PropertyChanged}">
+                                <TextBox.InputBindings>
+                                    <KeyBinding Key="Enter" Command="{Binding BarcodeChangeCommand}" />
+                                </TextBox.InputBindings>
+                            </TextBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content='Item :'></Label>
+                            <ComboBox Width="80" Height="25" Style="{DynamicResource VirtualizationKey}" ItemsSource="{Binding ItemList}" IsEditable="True" DisplayMemberPath="MENUCODE" SelectedItem="{Binding SelectedItem}"></ComboBox>
+                            <ComboBox Width="120" Height="25" Style="{DynamicResource VirtualizationKey}" ItemsSource="{Binding ItemList}" IsEditable="True" DisplayMemberPath="DESCA" SelectedItem="{Binding SelectedItem}"></ComboBox>
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Visibility="{Binding ElementName=rbMGroup, Path=IsChecked, Converter={StaticResource BoolToVisibility}}">
+                        <Label Content="Main Group"/>
+                        <ComboBox Width="200" ItemsSource="{Binding MGroupList}" DisplayMemberPath="DESCA" SelectedItem="{Binding SelectedItem}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Visibility="{Binding ElementName=rbGroup, Path=IsChecked, Converter={StaticResource BoolToVisibility}}">
+                        <Label Content="Group"/>
+                        <ComboBox Width="200" ItemsSource="{Binding GroupList}" DisplayMemberPath="DESCA" SelectedItem="{Binding SelectedItem}"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
-                        <Label Content='Item :'></Label>
-                        <ComboBox Width="80" Height="25" Style="{DynamicResource VirtualizationKey}" ItemsSource="{Binding ItemList}" IsEditable="True" DisplayMemberPath="MENUCODE" SelectedItem="{Binding SelectedItem}"></ComboBox>
-                        <ComboBox Width="120" Height="25" Style="{DynamicResource VirtualizationKey}" ItemsSource="{Binding ItemList}" IsEditable="True" DisplayMemberPath="DESCA" SelectedItem="{Binding SelectedItem}"></ComboBox>
+                        <Label Content="From Date"/>
+                        <DatePicker Width="120" Height="26" SelectedDate="{Binding FDate}"/>
+
+                        <Label Margin="50 0 0 0" Content="To Date"/>
+                        <DatePicker Width="120" Height="26" SelectedDate="{Binding TDate}"/>
+
+                        <CheckBox x:Name="chkLocationWise" IsChecked="{Binding LocationWise}" Content="Location Wise" VerticalAlignment="Center" Margin="20 0"/>
+
+                        <Button Style="{StaticResource NewButton}" Command="{Binding LoadDataCommand}" Content="Load" Width="60" Height="30"></Button>
                     </StackPanel>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Visibility="{Binding ElementName=rbMGroup, Path=IsChecked, Converter={StaticResource BoolToVisibility}}">
-                    <Label Content="Main Group"/>
-                    <ComboBox Width="200" ItemsSource="{Binding MGroupList}" DisplayMemberPath="DESCA" SelectedItem="{Binding SelectedItem}"/>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Style="{StaticResource NewButton}" Width="60" Height="40" Command="{Binding LoadDataCommand}" >Load</Button>
+                    <Button Style="{StaticResource NewButton}" Width="60" Height="40" Command="{Binding PreviewCommand}" >Preview</Button>
+                    <Button Style="{StaticResource NewButton}" Width="60" Height="40" Command="{Binding PrintCommand}" >Print</Button>
+                    <Button Style="{StaticResource NewButton}" Width="60" Height="40" Command="{Binding ExportCommand}">Export</Button>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Visibility="{Binding ElementName=rbGroup, Path=IsChecked, Converter={StaticResource BoolToVisibility}}">
-                    <Label Content="Group"/>
-                    <ComboBox Width="200" ItemsSource="{Binding GroupList}" DisplayMemberPath="DESCA" SelectedItem="{Binding SelectedItem}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="From Date"/>
-                    <DatePicker Width="120" Height="26" SelectedDate="{Binding FDate}"/>
-
-                    <Label Margin="50 0 0 0" Content="To Date"/>
-                    <DatePicker Width="120" Height="26" SelectedDate="{Binding TDate}"/>
-
-                    <CheckBox x:Name="chkLocationWise" IsChecked="{Binding LocationWise}" Content="Location Wise" VerticalAlignment="Center" Margin="20 0"/>
-
-                    <Button Style="{StaticResource NewButton}" Command="{Binding LoadDataCommand}" Content="Load" Width="60" Height="30"></Button>
-                </StackPanel>
-            </StackPanel>
+            </Grid>
         </Border>
 
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
@@ -76,25 +88,27 @@
                         </ResourceDictionary.MergedDictionaries>
                     </ResourceDictionary>
                 </sf:SfDataGrid.Resources>
-                <!--<sf:SfDataGrid.PrintSettings>
-                    <sf:PrintSettings          
-                                                PrintPageHeaderTemplate="{StaticResource PrintHeaderTemplate}">                        
+                <sf:SfDataGrid.PrintSettings>
+                    <sf:PrintSettings  PrintPageFooterHeight="20"
+                                                PrintPageHeaderHeight="85"                                                
+                                                PrintPageFooterTemplate="{StaticResource PrintFooterTemplate}"
+                                                PrintPageHeaderTemplate="{StaticResource PrintHeaderTemplate}">
                     </sf:PrintSettings>
-                </sf:SfDataGrid.PrintSettings>-->
+                </sf:SfDataGrid.PrintSettings>
 
                 <sf:SfDataGrid.Columns>
-                    <sf:GridTextColumn AllowEditing="False"  MappingName="VCHRNO" Width="80" HeaderText="Vchr No"></sf:GridTextColumn>
+                    <sf:GridTextColumn AllowEditing="False"  MappingName="VCHRNO" Width="75" HeaderText="Vchr No"></sf:GridTextColumn>
                     <sf:GridTextColumn AllowEditing="False"  MappingName="Date" Width="75" HeaderText="Date"></sf:GridTextColumn>
                     <sf:GridTextColumn AllowEditing="False"  MappingName="BSDATE" Width="75" HeaderText="Miti"></sf:GridTextColumn>
                     <sf:GridTextColumn AllowEditing="False"  MappingName="Particulars" Width="200" HeaderText="Particulars"></sf:GridTextColumn>
                     <sf:GridTextColumn AllowEditing="False"  MappingName="MENUCODE" Width="80" HeaderText="Item Code"></sf:GridTextColumn>
-                    <sf:GridTextColumn AllowEditing="False"  MappingName="DESCA"  HeaderText="Item Name"></sf:GridTextColumn>
-                    <sf:GridTextColumn AllowEditing="False"  MappingName="UNIT" Width="80" HeaderText="Unit"></sf:GridTextColumn>
+                    <sf:GridTextColumn AllowEditing="False"  MappingName="DESCA" Width="250"  HeaderText="Item Name"></sf:GridTextColumn>
+                    <sf:GridTextColumn AllowEditing="False"  MappingName="UNIT" Width="70" HeaderText="Unit"></sf:GridTextColumn>
                     <!--<sf:GridTextColumn AllowEditing="False" MappingName="WAREHOUSE" HeaderText="Warehouse"></sf:GridTextColumn>-->
                     <sf:GridTextColumn AllowEditing="False" MappingName="LocationCode" Width="100" HeaderText="Location" IsHidden="{Binding ElementName=chkLocationWise, Path=IsChecked, Converter={StaticResource ReverseBool}}"/>
-                    <sf:GridTextColumn AllowEditing="False" DisplayBinding="{Binding InQty, Converter={StaticResource HideZero}, ConverterParameter='NO_DECIMAL'}" Width="80" HeaderText="In Qty" TextAlignment="Right"></sf:GridTextColumn>
-                    <sf:GridTextColumn AllowEditing="False" DisplayBinding="{Binding OutQty, Converter={StaticResource HideZero}, ConverterParameter='NO_DECIMAL'}" Width="80" HeaderText="Out Qty" TextAlignment="Right"></sf:GridTextColumn>
-                    <sf:GridTextColumn AllowEditing="False" DisplayBinding="{Binding Balance, Converter={StaticResource HideZero}, ConverterParameter='NO_DECIMAL'}" Width="80" HeaderText="Balance" TextAlignment="Right"></sf:GridTextColumn>
+                    <sf:GridTextColumn AllowEditing="False" DisplayBinding="{Binding InQty, Converter={StaticResource HideZero}, ConverterParameter='NO_DECIMAL'}" Width="75" HeaderText="In Qty" TextAlignment="Right"></sf:GridTextColumn>
+                    <sf:GridTextColumn AllowEditing="False" DisplayBinding="{Binding OutQty, Converter={StaticResource HideZero}, ConverterParameter='NO_DECIMAL'}" Width="75" HeaderText="Out Qty" TextAlignment="Right"></sf:GridTextColumn>
+                    <sf:GridTextColumn AllowEditing="False" DisplayBinding="{Binding Balance, Converter={StaticResource HideZero}, ConverterParameter='NO_DECIMAL'}" Width="75" HeaderText="Balance" TextAlignment="Right"></sf:GridTextColumn>
 
                 </sf:SfDataGrid.Columns>
 

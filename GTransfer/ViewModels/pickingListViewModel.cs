@@ -24,6 +24,8 @@ namespace GTransfer.ViewModels
         private int _ReqId;
         private ObservableCollection<CategoryVsDevice> _CategoryVsDeviceList;
         private ObservableCollection<dynamic> _DeviceList;
+        private SfDataGrid Report;
+
         public ObservableCollection<dynamic> DeviceList
         {
             get
@@ -36,12 +38,11 @@ namespace GTransfer.ViewModels
             set { value = _DeviceList; OnPropertyChanged("DeviceList"); }
         }
 
-        public RelayCommand PrintPreviewCommand { get { return new RelayCommand(ExecutePrintCommand); } }
+        
         public RelayCommand LoadpickingListCommand { get { return new RelayCommand(ExecuteLoadpickingListCommand); } }
         public RelayCommand SavePickingCommand { get { return new RelayCommand(ExecuteSavePickingCommand); } }
         public RelayCommand CancelCommand { get { return new RelayCommand(ExecuteCancelCommand); } }
-        public RelayCommand GeneratePickingListCommand { get { return new RelayCommand(ExecuteGeneratePickingListCommand); } }
-        public RelayCommand PrintCommand { get { return new RelayCommand(Print); } }
+        public RelayCommand GeneratePickingListCommand { get { return new RelayCommand(ExecuteGeneratePickingListCommand); } }        
         public RelayCommand AssignCommand { get { return new RelayCommand(ExecuteAssignCommand); } }
 
 
@@ -52,8 +53,9 @@ namespace GTransfer.ViewModels
 
         public ObservableCollection<PickingList> PickingList { get { return _PickingList; } set { _PickingList = value; OnPropertyChanged("PickingList"); } }
 
-        public pickingListViewModel()
+        public pickingListViewModel(SfDataGrid _Report)
         {
+            Report = _Report;
             IsloadMode = false;
         }
 
@@ -201,7 +203,7 @@ WHERE  ReqId=" + ReqId + " and [Status] = 0 ORDER BY TL.LocationCode");
                     con.Execute("INSERT INTO tblPickingList (ReqId,Mcode,Unit,LocationId,Quantity,Status,Bcode,DeviceId, Warehouse) values(@ReqId,@Mcode,@Unit,@LocationId,@Quantity,@Status,@Bcode,@DeviceId, @Warehouse)", saveList);
                     if (MessageBox.Show("Picking List Saved Successfully.Do U Want To Print", "Print Data", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
-                        ExecutePrintCommand(obj);
+                        ExecutePrint(null);
                     }
                     privateUndo();
                 }
@@ -222,90 +224,62 @@ WHERE  ReqId=" + ReqId + " and [Status] = 0 ORDER BY TL.LocationCode");
             privateUndo();
         }
 
-        private void ExecutePrintCommand(object obj)
+        #region PrintExport
+        public override void ExecuteExport(object obj)
         {
-            SfDataGrid grid = obj as SfDataGrid;
-            new PreviewWindow()
-            {
-                PrintPreviewArea =
-                {
-                    PrintManagerBase = ((PrintManagerBase)new CustomPrintManager(grid))
-                }
-            }.ShowDialog();
+            GlobalClass.ReportName = "Item Picking List";
+
+            GlobalClass.ReportParams = "";// string.Format("From Date : {0} To {1}", FDate.ToString("MM/dd/yyyy"), TDate.ToString("MM/dd/yyyy"));
+
+            wExportFormat ef = new wExportFormat(Report);
+            ef.ShowDialog();
         }
-        private void Print(object obj)
+        protected override bool CanExecutePrint(object obj)
+
         {
-            SfDataGrid grid = obj as SfDataGrid;
-            new PreviewWindow()
-            {
-                PrintPreviewArea =
-                {
-                    PrintManagerBase = ((PrintManagerBase)new CustomPrintManager(grid))
-                }
-            }.PrintPreviewArea.PrintCommand.Execute((object)null);
+            return PickingList != null && PickingList.Count > 0;
         }
+
+        protected override bool CanExecuteExport(object obj)
+        {
+            return PickingList != null && PickingList.Count > 0;
+        }
+        protected override bool CanExecutePreview(object obj)
+        {
+            return PickingList != null && PickingList.Count > 0;
+        }
+
+
+        public override void ExecutePreview(object obj)
+        {
+
+            GlobalClass.ReportName = "Item Picking List";
+            GlobalClass.ReportParams = "";// string.Format("From Date : {0} To {1}", FDate.ToString("MM/dd/yyyy"), TDate.ToString("MM/dd/yyyy"));
+
+            Report.PrintSettings.PrintPageMargin = new Thickness(30);
+            Report.PrintSettings.AllowColumnWidthFitToPrintPage = false;
+            Report.PrintSettings.PrintPageOrientation = PrintOrientation.Portrait;
+            Report.Columns["DeviceName"].IsHidden = true;
+            Report.ShowPrintPreview();
+        }
+
+        public override void ExecutePrint(object obj)
+        {
+
+            GlobalClass.ReportName = "Item Picking List";
+            GlobalClass.ReportParams = "";// string.Format("From Date : {0} To {1}", FDate.ToString("MM/dd/yyyy"), TDate.ToString("MM/dd/yyyy"));
+
+            Report.PrintSettings.PrintPageMargin = new Thickness(30);
+            Report.PrintSettings.AllowColumnWidthFitToPrintPage = false;
+            Report.PrintSettings.PrintPageOrientation = PrintOrientation.Portrait;
+            Report.Columns["DeviceName"].IsHidden = true;
+            Report.Print();
+        }
+        #endregion
+
     }
 
-    public class CustomPrintManager : GridPrintManager
-    {
-        SfDataGrid sfgrid = new SfDataGrid();
-
-        public CustomPrintManager(SfDataGrid grid)
-            : base(grid)
-        {
-            sfgrid = grid;
-
-            //   grid.PrintSettings.PrintPageHeaderHeight = 70;
-            // grid.PrintSettings.PrintPageHeaderTemplate = Application.Current.Resources["PrintHeaderTemplate"] as DataTemplate;
-            //grid.PrintSettings.PrintPageFooterHeight = Double.NaN;
-            //grid.PrintSettings.PrintPageFooterTemplate = Application.Current.Resources["PrintFooterTemplate"] as DataTemplate;
-
-
-
-        }
-
-        protected override double GetColumnWidth(string mappingName)
-        {
-            if (mappingName == "Bcode") { return 100; }
-            else if (mappingName == "MENUCODE") { return 100; }
-            else if (mappingName == "DESCA") { return 200; }
-            else if (mappingName == "Unit") { return 80; }
-            else if (mappingName == "Quantity") { return 80; }
-            else if (mappingName == "LocationCode") { return 80; }
-            else { return 100; }
-
-            //if (ReportFields.ReportObj != null && ReportFields.ReportObj.ReportFormatCollection != null)
-            //{
-            //    var width = ReportFields.ReportObj.ReportFormatCollection.FirstOrDefault(x => x.MappingName == mappingName).Size;
-            //    if (width > 0) { return width; }
-            //    else
-            //    {
-            //        return sfgrid.Columns.FirstOrDefault(x => x.MappingName == mappingName).Width;
-            //    }
-            //}
-            //else
-            //  return sfgrid.Columns.FirstOrDefault(x => x.MappingName == mappingName).Width;
-
-        }
-
-        protected override FormattedText GetFormattedText(PrintManagerBase.RowInfo rowInfo, PrintManagerBase.CellInfo cellInfo, string cellValue)
-        {
-
-            FormattedText formattedText = base.GetFormattedText(rowInfo, cellInfo, cellValue);
-            //if (rowInfo.Record != null)
-            //{
-            //    formattedText.SetFontWeight(PrintPreviewFontSetting.FontWeight);
-            //}
-            //else
-            //{
-            formattedText.SetFontWeight(FontWeights.Bold);
-            // }
-            formattedText.SetFontStyle(FontStyles.Normal);
-            formattedText.SetFontSize(12);
-            formattedText.SetFontFamily((FontFamily)new FontFamilyConverter().ConvertFromString("Segoe UI"));
-            return formattedText;
-        }
-    }
+    
     public class CategoryVsDevice : BaseModel
     {
         private string _MCAT;

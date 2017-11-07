@@ -23,7 +23,7 @@ namespace GTransfer.Reports
         public PackagingList()
         {
             InitializeComponent();
-            this.DataContext = new PackagingListVM() { Report = this.Report };
+            this.DataContext = new PackagingListVM(Report);
         }
     }
 }

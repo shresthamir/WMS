@@ -10,14 +10,6 @@
         xmlns:system="clr-namespace:System;assembly=mscorlib" 
              mc:Ignorable="d" 
              d:DesignHeight="700" d:DesignWidth="1000">
-    <UserControl.Resources>
-        <DataTemplate x:Key="PrintHeaderTemplate">
-            <StackPanel >
-                
-                <TextBlock FontSize="12" HorizontalAlignment="Center" Height="30" Text="Testingdddddddddddddddd" />
-            </StackPanel>
-        </DataTemplate>
-    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
 
@@ -37,9 +29,11 @@
                     <Button Style="{StaticResource RoundCornerButton}" Content="Generate" Height="28" Width="100" Margin="15 0" Command="{Binding GeneratePickingListCommand}"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button  Width="90" Height="28" Style="{StaticResource RoundCornerButton}" Command="{Binding SavePickingCommand}" CommandParameter="{Binding ElementName=Report}" Content="Save" Visibility="{Binding IsloadMode,Converter={StaticResource ReverseBoolToVisibility}}"/>
-                    <Button  Width="90" Height="28" Style="{StaticResource RoundCornerButton}" Command="{Binding PrintPreviewCommand}" CommandParameter="{Binding ElementName=Report}" Content="Print" Visibility="{Binding IsloadMode,Converter={StaticResource BoolToVisibility}}"/>
-                    <Button  Width="90" Height="28" Style="{StaticResource RoundCornerButton}" Command="{Binding CancelCommand}" Content="Cancel"/>
+                    <Button  Width="60" Height="28" Style="{StaticResource NewButton}" Command="{Binding SavePickingCommand}" CommandParameter="{Binding ElementName=Report}" Content="Save" Visibility="{Binding IsloadMode,Converter={StaticResource ReverseBoolToVisibility}}"/>
+                    <Button  Width="60" Height="28" Style="{StaticResource NewButton}" Command="{Binding PreviewCommand}"  Content="Print" Visibility="{Binding IsloadMode,Converter={StaticResource BoolToVisibility}}"/>
+                    <Button  Width="60" Height="28" Style="{StaticResource NewButton}" Command="{Binding PrintCommand}" Content="Print" Visibility="{Binding IsloadMode,Converter={StaticResource BoolToVisibility}}"/>
+                    <Button  Width="60" Height="28" Style="{StaticResource NewButton}" Command="{Binding ExportCommand}"  Content="Print" Visibility="{Binding IsloadMode,Converter={StaticResource BoolToVisibility}}"/>
+                    <Button  Width="60" Height="28" Style="{StaticResource NewButton}" Command="{Binding CancelCommand}" Content="Cancel"/>
                 </StackPanel>
             </Grid>
         </Border>
@@ -71,26 +65,24 @@
                             </ResourceDictionary.MergedDictionaries>
                         </ResourceDictionary>
                     </sf:SfDataGrid.Resources>
-                    <!--<sf:SfDataGrid.PrintSettings>
-                    <sf:PrintSettings  
-                                                
-                                                
-                                               
-                                                PrintPageHeaderTemplate="{StaticResource PrintHeaderTemplate}">                        
-                    </sf:PrintSettings>
-                </sf:SfDataGrid.PrintSettings>-->
-                    <sf:SfDataGrid.Columns>
+                        <sf:SfDataGrid.PrintSettings>
+                            <sf:PrintSettings  PrintPageFooterHeight="20"
+                                                PrintPageHeaderHeight="85"                                                
+                                                PrintPageFooterTemplate="{StaticResource PrintFooterTemplate}"
+                                                PrintPageHeaderTemplate="{StaticResource PrintHeaderTemplate}">
+                            </sf:PrintSettings>
+                        </sf:SfDataGrid.PrintSettings>
+                        <sf:SfDataGrid.Columns>
                         <!--<sf:GridTextColumn AllowEditing="False"  MappingName="Sno" Width="50" HeaderText="Sn."></sf:GridTextColumn>-->
-                        <sf:GridTextColumn AllowEditing="False"  MappingName="Bcode" HeaderText="Barcode"></sf:GridTextColumn>
-                        <sf:GridTextColumn AllowEditing="False" MappingName="MENUCODE" HeaderText="Item Code"></sf:GridTextColumn>
-                        <sf:GridTextColumn AllowEditing="False"   MappingName="DESCA" HeaderText="Item Name"></sf:GridTextColumn>
-                        <sf:GridTextColumn AllowEditing="False"  MappingName="Unit" HeaderText="Unit"/>
+                        <sf:GridTextColumn AllowEditing="False" Width="110"  MappingName="Bcode" HeaderText="Barcode"></sf:GridTextColumn>
+                        <sf:GridTextColumn AllowEditing="False" Width="100" MappingName="MENUCODE" HeaderText="Item Code"></sf:GridTextColumn>
+                        <sf:GridTextColumn AllowEditing="False" Width="180"   MappingName="DESCA" HeaderText="Item Name"></sf:GridTextColumn>
+                        <sf:GridTextColumn AllowEditing="False" Width="70"  MappingName="Unit" HeaderText="Unit"/>
                         <!--<sf:GridTextColumn AllowEditing="False" MappingName="ReqQty" HeaderText="Request Qty"></sf:GridTextColumn>-->
-                        <sf:GridTextColumn AllowEditing="False" MappingName="Quantity" HeaderText="Quantity"></sf:GridTextColumn>
-                        <sf:GridTextColumn AllowEditing="False" MappingName="LocationCode" HeaderText="Location"></sf:GridTextColumn>
-                        <sf:GridTextColumn AllowEditing="False" MappingName="MCAT" HeaderText="Category"></sf:GridTextColumn>
-                        <sf:GridTextColumn AllowEditing="False" MappingName="DeviceName" HeaderText="Device"></sf:GridTextColumn>
-
+                        <sf:GridTextColumn AllowEditing="False" Width="80" MappingName="Quantity" HeaderText="Quantity" TextAlignment="Right"></sf:GridTextColumn>
+                        <sf:GridTextColumn AllowEditing="False" Width="80" MappingName="LocationCode" HeaderText="Location"></sf:GridTextColumn>
+                        <sf:GridTextColumn AllowEditing="False" Width="100" MappingName="MCAT" HeaderText="Category"></sf:GridTextColumn>
+                        <sf:GridTextColumn AllowEditing="False" Width="90" MappingName="DeviceName" HeaderText="Device"></sf:GridTextColumn>
                     </sf:SfDataGrid.Columns>
 
                 </sf:SfDataGrid>

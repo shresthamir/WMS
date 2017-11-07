@@ -23,7 +23,7 @@ namespace GTransfer.Reports
         public LocationWiseStockReport()
         {
             InitializeComponent();
-            this.DataContext = new Reports.LocationWiseStockReportVM();
+            this.DataContext = new Reports.LocationWiseStockReportVM(Report);
         }
     }
 }

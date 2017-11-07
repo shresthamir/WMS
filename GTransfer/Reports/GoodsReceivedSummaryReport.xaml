@@ -13,37 +13,49 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Border Style="{StaticResource PlainBackground}">
-            <StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <Grid VerticalAlignment="Center"  Margin="10 0 0 0" >
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="20"/>
-                            <RowDefinition Height="30"/>
-                        </Grid.RowDefinitions>
-                        <Label HorizontalAlignment="Left" VerticalAlignment="Bottom" Content="Shipment No: " Margin="0 0 0 -5"  />
-                        <TextBox Grid.Row="1" Tag="" HorizontalAlignment="Stretch"  Text="{Binding ShipmentNo,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="280"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Grid VerticalAlignment="Center"  Margin="10 0 0 0" >
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="20"/>
+                                <RowDefinition Height="30"/>
+                            </Grid.RowDefinitions>
+                            <Label HorizontalAlignment="Left" VerticalAlignment="Bottom" Content="Shipment No: " Margin="0 0 0 -5"  />
+                            <TextBox Grid.Row="1" Tag="" HorizontalAlignment="Stretch"  Text="{Binding ShipmentNo,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
 
 
 
-                    </Grid>
-                    <GroupBox Grid.Column="1"  Header="Filter Items" Margin="20 0 0 5">
-                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal">
-                            <RadioButton IsChecked="{Binding ShowAll}" Content="Show All" />
-                            <RadioButton IsChecked="{Binding ShowVariant}" Content="Show Variant only" Margin="10 0 0 0"/>
-                            <RadioButton IsChecked="{Binding ShowNonVariant}" Content="Show Non-variant only" Margin="10 0 0 0"/>
-                        </StackPanel>
-                    </GroupBox>
+                        </Grid>
+                        <GroupBox Grid.Column="1"  Header="Filter Items" Margin="20 0 0 5">
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal">
+                                <RadioButton IsChecked="{Binding ShowAll}" Content="Show All" />
+                                <RadioButton IsChecked="{Binding ShowVariant}" Content="Show Variant only" Margin="10 0 0 0"/>
+                                <RadioButton IsChecked="{Binding ShowNonVariant}" Content="Show Non-variant only" Margin="10 0 0 0"/>
+                            </StackPanel>
+                        </GroupBox>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="From Date"/>
+                        <DatePicker Width="120" Height="26" SelectedDate="{Binding FDate}"/>
+
+                        <Label Margin="50 0 0 0" Content="To Date"/>
+                        <DatePicker Width="120" Height="26" SelectedDate="{Binding TDate}"/>
+
+                        <Button Style="{StaticResource NewButton}" Command="{Binding LoadDataCommand}" Content="Load" Width="60" Height="30"></Button>
+                    </StackPanel>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="From Date"/>
-                    <DatePicker Width="120" Height="26" SelectedDate="{Binding FDate}"/>
-
-                    <Label Margin="50 0 0 0" Content="To Date"/>
-                    <DatePicker Width="120" Height="26" SelectedDate="{Binding TDate}"/>
-
-                    <Button Style="{StaticResource NewButton}" Command="{Binding LoadDataCommand}" Content="Load" Width="60" Height="30"></Button>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Style="{StaticResource NewButton}" Width="60" Height="40" Command="{Binding LoadDataCommand}" >Load</Button>
+                    <Button Style="{StaticResource NewButton}" Width="60" Height="40" Command="{Binding PreviewCommand}" >Preview</Button>
+                    <Button Style="{StaticResource NewButton}" Width="60" Height="40" Command="{Binding PrintCommand}" >Print</Button>
+                    <Button Style="{StaticResource NewButton}" Width="60" Height="40" Command="{Binding ExportCommand}">Export</Button>
                 </StackPanel>
-            </StackPanel>
+            </Grid>
         </Border>
 
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
@@ -68,23 +80,25 @@
                         </ResourceDictionary.MergedDictionaries>
                     </ResourceDictionary>
                 </sf:SfDataGrid.Resources>
-                <!--<sf:SfDataGrid.PrintSettings>
-                    <sf:PrintSettings          
-                                                PrintPageHeaderTemplate="{StaticResource PrintHeaderTemplate}">                        
+                <sf:SfDataGrid.PrintSettings>
+                    <sf:PrintSettings  PrintPageFooterHeight="20"
+                                                PrintPageHeaderHeight="85"                                                
+                                                PrintPageFooterTemplate="{StaticResource PrintFooterTemplate}"
+                                                PrintPageHeaderTemplate="{StaticResource PrintHeaderTemplate}">
                     </sf:PrintSettings>
-                </sf:SfDataGrid.PrintSettings>-->
+                </sf:SfDataGrid.PrintSettings>
                 <sf:SfDataGrid.GroupColumnDescriptions>
                     <sf:GroupColumnDescription ColumnName="OrderNo" />
                 </sf:SfDataGrid.GroupColumnDescriptions>
                 <sf:SfDataGrid.Columns>
-                    <sf:GridTextColumn AllowEditing="False"  MappingName="OrderNo" Width="100" HeaderText="Shipment No"></sf:GridTextColumn>
-                    <sf:GridTextColumn AllowEditing="False"  MappingName="MENUCODE" Width="120" HeaderText="Item Cpde"></sf:GridTextColumn>
-                    <sf:GridTextColumn AllowEditing="False"   MappingName="DESCA" HeaderText="Item Name"></sf:GridTextColumn>
-                    <sf:GridTextColumn AllowEditing="False"  MappingName="UNIT" HeaderText="Unit"></sf:GridTextColumn>
-                    <sf:GridTextColumn AllowEditing="False" MappingName="Warehouse" HeaderText="Warehouse"></sf:GridTextColumn>
-                    <sf:GridTextColumn AllowEditing="False" MappingName="OrderQty" HeaderText="Order Qty"></sf:GridTextColumn>
-                    <sf:GridTextColumn AllowEditing="False" MappingName="ReceivedQty" HeaderText="Received Qty"></sf:GridTextColumn>
-                    <sf:GridTextColumn AllowEditing="False" MappingName="Variance" HeaderText="Variance Qty"></sf:GridTextColumn>
+                    <sf:GridTextColumn AllowEditing="False" MappingName="OrderNo" Width="70" HeaderText="Spt. No"></sf:GridTextColumn>
+                    <sf:GridTextColumn AllowEditing="False" MappingName="MENUCODE" Width="100" HeaderText="Item Cpde"></sf:GridTextColumn>
+                    <sf:GridTextColumn AllowEditing="False" MappingName="DESCA" Width="250" HeaderText="Item Name"></sf:GridTextColumn>
+                    <sf:GridTextColumn AllowEditing="False" MappingName="UNIT" Width="80" HeaderText="Unit"></sf:GridTextColumn>
+                    <sf:GridTextColumn AllowEditing="False" MappingName="Warehouse" Width="120" HeaderText="Warehouse"></sf:GridTextColumn>
+                    <sf:GridTextColumn AllowEditing="False" MappingName="OrderQty" Width="100" HeaderText="Order Qty"></sf:GridTextColumn>
+                    <sf:GridTextColumn AllowEditing="False" MappingName="ReceivedQty" Width="100" HeaderText="Received Qty"></sf:GridTextColumn>
+                    <sf:GridTextColumn AllowEditing="False" MappingName="Variance" Width="100" HeaderText="Variance Qty"></sf:GridTextColumn>
 
 
                 </sf:SfDataGrid.Columns>

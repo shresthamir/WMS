@@ -91,6 +91,7 @@ namespace GTransfer.Library
         public RelayCommand AddCommand { get; set; }
         public RelayCommand FocusCommand { get; set; }
         public RelayCommand HoldCommand { get; set; }
+        
 
         public ButtonAction TransactionMode { get { return _TransactionMode; } set { _TransactionMode = value; OnPropertyChanged("TransactionMode"); } }
         public bool EntryPanelEnabled { get { return _EntryPanelEnabled; } set { _EntryPanelEnabled = value; OnPropertyChanged("EntryPanelEnabled"); } }
@@ -124,7 +125,7 @@ namespace GTransfer.Library
             PostCommand = new RelayCommand(ExecutePost, CanExecutePost);
             ImportCommand = new RelayCommand(ExecuteImport, CanExecuteImport);
             ExportCommand = new RelayCommand(ExecuteExport, CanExecuteExport);
-            HoldCommand = new RelayCommand(ExecuteHold, CanExecuteHold);
+            HoldCommand = new RelayCommand(ExecuteHold, CanExecuteHold);           
    
         }
 
@@ -134,7 +135,7 @@ namespace GTransfer.Library
         {
             return true;
         }
-        private bool CanExecuteExport(object obj)
+        protected virtual bool CanExecuteExport(object obj)
         {
             return (CurMenuRight.EXPORT == 1) ? _ExportEnabled : false; ;
         }
@@ -146,12 +147,12 @@ namespace GTransfer.Library
         {
             return PostEnabled;
         }
-        private bool CanExecutePreview(object obj)
+        protected virtual bool CanExecutePreview(object obj)
         {
             return PreviewEnabled;
         }
 
-        private bool CanExecutePrint(object obj)
+        protected virtual bool CanExecutePrint(object obj)
         {
             return (CurMenuRight.PRINT == 1) ? PrintEnabled : false;
         }
@@ -189,7 +190,7 @@ namespace GTransfer.Library
         #endregion
 
         #region Command Execute methods
-        protected virtual void ExecuteExport(object obj)
+        public virtual void ExecuteExport(object obj)
         {
 
         }
@@ -205,12 +206,12 @@ namespace GTransfer.Library
 
         }
 
-        protected virtual void ExecutePreview(object obj)
+        public virtual void ExecutePreview(object obj)
         {
 
         }
 
-        protected virtual void ExecutePrint(object obj)
+        public virtual void ExecutePrint(object obj)
         {
 
         }

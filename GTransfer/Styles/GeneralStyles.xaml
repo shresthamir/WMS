@@ -272,4 +272,44 @@
         </Setter>
         <Setter Property="Margin" Value="5" />
     </Style>
+
+    <DataTemplate x:Key="PrintHeaderTemplate">
+        <Grid>
+            <Grid.Resources>
+                <Style TargetType="TextBlock">
+                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                </Style>
+            </Grid.Resources>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="15"/>
+                <RowDefinition Height="15"/>
+                <RowDefinition Height="17"/>
+                <RowDefinition Height="15"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Row="0" FontSize="16" FontWeight="SemiBold"  Text="{Binding Path=(Dynamic:GlobalClass.CompanyName)}"/>
+            <TextBlock Grid.Row="1" FontSize="12" Text="{Binding Path=(Dynamic:GlobalClass.CompanyAddress)}" />
+            <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Center">
+                <TextBlock FontSize="12" Text="PAN : " />
+                <TextBlock FontSize="12" Text="{Binding Path=(Dynamic:GlobalClass.CompanyPan)}" />
+            </StackPanel>
+            <TextBlock Grid.Row="3" FontSize="14" FontWeight="SemiBold" Text="{Binding Path=(Dynamic:GlobalClass.ReportName)}" />
+            <TextBlock Grid.Row="4" FontSize="12"  Text="{Binding Path=(Dynamic:GlobalClass.ReportParams)}" />
+        </Grid>
+    </DataTemplate>
+    <DataTemplate x:Key="PrintFooterTemplate" >
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="{Binding Path=(Dynamic:GlobalClass.PrintTime)}"/>
+            <TextBlock Grid.Column="1" HorizontalAlignment="Center" Text="{Binding Path=(Dynamic:GlobalClass.ReportName)}" />
+            <TextBlock Grid.Column="2" HorizontalAlignment="Right" Text="{Binding PageIndex, RelativeSource={RelativeSource AncestorType=syncfusion:PrintPageControl}}" />
+        </Grid>
+    </DataTemplate>
 </ResourceDictionary>

@@ -23,7 +23,7 @@ namespace GTransfer.Reports
         public ItemWiseStockReport()
         {
             InitializeComponent();
-            this.DataContext = new Reports.vmItemWiseStockReport();
+            this.DataContext = new Reports.vmItemWiseStockReport(Report);
         }
     }
 }

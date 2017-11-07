@@ -23,7 +23,7 @@ namespace GTransfer.Reports
         public GoodsReceivedSummaryReport()
         {
             InitializeComponent();
-            this.DataContext = new GoodsReceivedSummaryVM();
+            this.DataContext = new GoodsReceivedSummaryVM(Report);
         }
     }
 }

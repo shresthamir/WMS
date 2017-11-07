@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Dapper;
 using System.Windows;
 using Syncfusion.UI.Xaml.Grid;
+using GTransfer.UserInterfaces;
 
 namespace GTransfer.Reports
 {
@@ -38,10 +39,11 @@ namespace GTransfer.Reports
         public bool FilterBranch { get { return _FilterBranch; } set { _FilterBranch = value; OnPropertyChanged("FilterBranch"); } }
         public bool FilterDate { get { return _FilterDate; } set { _FilterDate = value; OnPropertyChanged("FilterDate"); } }
         public bool SummaryReport { get { return _SummaryReport; } set { _SummaryReport = value; OnPropertyChanged("SummaryReport"); } }
-        public PackagingListVM()
+        public PackagingListVM(SfDataGrid _Report)
         {
             try
             {
+                Report = _Report;
                 FDate = TDate = DateTime.Today;
                 using (SqlConnection con = new SqlConnection(GlobalClass.DataConnectionString))
                 {
@@ -102,6 +104,57 @@ ORDER BY VNUM, DESCA", this);
             }
 
         }
+
+        #region PrintExport
+        public override void ExecuteExport(object obj)
+        {
+            GlobalClass.ReportName = "Packing List Report";
+
+            GlobalClass.ReportParams = string.Format("From Date : {0} To {1}", FDate.ToString("MM/dd/yyyy"), TDate.ToString("MM/dd/yyyy"));
+
+            wExportFormat ef = new wExportFormat(Report);
+            ef.ShowDialog();
+        }
+        protected override bool CanExecutePrint(object obj)
+
+        {
+            return ReportDataList != null && ReportDataList.Count > 0;
+        }
+
+        protected override bool CanExecuteExport(object obj)
+        {
+            return ReportDataList != null && ReportDataList.Count > 0;
+        }
+        protected override bool CanExecutePreview(object obj)
+        {
+            return ReportDataList != null && ReportDataList.Count > 0;
+        }
+
+
+        public override void ExecutePreview(object obj)
+        {
+
+            GlobalClass.ReportName = "Packing List Report";
+            GlobalClass.ReportParams = string.Format("From Date : {0} To {1}", FDate.ToString("MM/dd/yyyy"), TDate.ToString("MM/dd/yyyy"));
+
+            Report.PrintSettings.PrintPageMargin = new Thickness(30);
+            Report.PrintSettings.AllowColumnWidthFitToPrintPage = false;
+            Report.PrintSettings.PrintPageOrientation = PrintOrientation.Landscape;
+            Report.ShowPrintPreview();
+        }
+
+        public override void ExecutePrint(object obj)
+        {
+
+            GlobalClass.ReportName = "Packing List Report";
+            GlobalClass.ReportParams = string.Format("From Date : {0} To {1}", FDate.ToString("MM/dd/yyyy"), TDate.ToString("MM/dd/yyyy"));
+
+            Report.PrintSettings.PrintPageMargin = new Thickness(30);
+            Report.PrintSettings.AllowColumnWidthFitToPrintPage = false;
+            Report.PrintSettings.PrintPageOrientation = PrintOrientation.Landscape;
+            Report.Print();
+        }
+        #endregion
     }
 
     class PackaginListModel

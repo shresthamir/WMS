@@ -8,11 +8,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Dapper;
+using System.Windows;
+using Syncfusion.UI.Xaml.Grid;
+using GTransfer.UserInterfaces;
 
 namespace GTransfer.Reports
 {
     class GoodsReceivedSummaryVM : BaseViewModel
     {
+        private SfDataGrid Report;
         private DateTime _FDate;
         private DateTime _TDate;
         private IEnumerable<GoodsReceivedSummaryModel> _ReportList;
@@ -53,8 +57,9 @@ namespace GTransfer.Reports
             OnPropertyChanged("ShowNonVariant");
         }
 
-        public GoodsReceivedSummaryVM()
+        public GoodsReceivedSummaryVM(SfDataGrid _Report)
         {
+            this.Report = _Report;
             FDate = TDate = DateTime.Today;
         }
 
@@ -87,6 +92,57 @@ GROUP BY B.OrderNo, B.MCODE, B.UNIT, TP.Warehouse, OP.QUANTITY, MI.MENUCODE, MI.
                 }
             }
         }
+
+        #region PrintExport
+        public override void ExecuteExport(object obj)
+        {
+            GlobalClass.ReportName = "Goods Received Summary";
+
+            GlobalClass.ReportParams = string.Format("From Date : {0} To {1}", FDate.ToString("MM/dd/yyyy"), TDate.ToString("MM/dd/yyyy"));
+
+            wExportFormat ef = new wExportFormat(Report);
+            ef.ShowDialog();
+        }
+        protected override bool CanExecutePrint(object obj)
+
+        {
+            return ReportDataList != null && ReportDataList.Count > 0;
+        }
+
+        protected override bool CanExecuteExport(object obj)
+        {
+            return ReportDataList != null && ReportDataList.Count > 0;
+        }
+        protected override bool CanExecutePreview(object obj)
+        {
+            return ReportDataList != null && ReportDataList.Count > 0;
+        }
+
+
+        public override void ExecutePreview(object obj)
+        {
+
+            GlobalClass.ReportName = "Goods Received Summary";
+            GlobalClass.ReportParams = string.Format("From Date : {0} To {1}", FDate.ToString("MM/dd/yyyy"), TDate.ToString("MM/dd/yyyy"));
+
+            Report.PrintSettings.PrintPageMargin = new Thickness(30);
+            Report.PrintSettings.AllowColumnWidthFitToPrintPage = false;
+            Report.PrintSettings.PrintPageOrientation = PrintOrientation.Landscape;
+            Report.ShowPrintPreview();
+        }
+
+        public override void ExecutePrint(object obj)
+        {
+
+            GlobalClass.ReportName = "Goods Received Summary";
+            GlobalClass.ReportParams = string.Format("From Date : {0} To {1}", FDate.ToString("MM/dd/yyyy"), TDate.ToString("MM/dd/yyyy"));
+
+            Report.PrintSettings.PrintPageMargin = new Thickness(30);
+            Report.PrintSettings.AllowColumnWidthFitToPrintPage = false;
+            Report.PrintSettings.PrintPageOrientation = PrintOrientation.Landscape;
+            Report.Print();
+        }
+        #endregion
     }
 
     class GoodsReceivedSummaryModel

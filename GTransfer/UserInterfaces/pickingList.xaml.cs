@@ -24,7 +24,7 @@ namespace GTransfer.UserInterfaces
         public pickingList()
         {
             InitializeComponent();
-            this.DataContext = new ViewModels.pickingListViewModel();
+            this.DataContext = new ViewModels.pickingListViewModel(Report);
         }
     }
 }

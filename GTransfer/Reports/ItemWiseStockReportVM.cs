@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Dapper;
 using System.Windows;
+using Syncfusion.UI.Xaml.Grid;
+using GTransfer.UserInterfaces;
 
 namespace GTransfer.Reports
 {
@@ -34,14 +36,17 @@ namespace GTransfer.Reports
         public ObservableCollection<string> warehouseList { get { return _warehouseList; } set { _warehouseList = value; OnPropertyChanged("warehouseList"); } }
         public ObservableCollection<Item> ItemList { get { return _ItemList; } set { _ItemList = value; OnPropertyChanged("ItemList"); } }
         private ObservableCollection<ItemWiseStockModel> _ReportDataList;
+        private SfDataGrid Report;
+
         public ObservableCollection<ItemWiseStockModel> ReportDataList { get { return _ReportDataList; } set { _ReportDataList = value; OnPropertyChanged("ReportDataList"); } }
 
-        public RelayCommand LoadReportCommand { get { return new RelayCommand(ExecuteLoadReportCommand); } }
+        
         public RelayCommand BarcodeChangeCommand { get { return new RelayCommand(ExecuteBarcodeChangeCommand); } }
 
 
-        public vmItemWiseStockReport()
+        public vmItemWiseStockReport(SfDataGrid _Report)
         {
+            Report = _Report;
             GetList();
         }
         private void ExecuteBarcodeChangeCommand(object obj)
@@ -63,7 +68,7 @@ namespace GTransfer.Reports
 
         }
 
-        private void ExecuteLoadReportCommand(object obj)
+        public override void LoadMethod(object obj)
         {
             if (string.IsNullOrEmpty(selectedItem)) { selectedItem = "%"; }
             if (string.IsNullOrEmpty(selectedWarehouse)) { selectedWarehouse = "%"; }
@@ -103,5 +108,55 @@ namespace GTransfer.Reports
                 ItemList = new ObservableCollection<Item>(con.Query<Item>("SELECT MCODE,MENUCODE,DESCA FROM MENUITEM WHERE TYPE='A'"));
             }
         }
+
+        #region PrintExport
+        public override void ExecuteExport(object obj)
+        {
+            GlobalClass.ReportName = "Item Wise Stock Report";
+
+            GlobalClass.ReportParams = "";// string.Format("From Date : {0} To {1}", FDate.ToString("MM/dd/yyyy"), TDate.ToString("MM/dd/yyyy"));
+
+            wExportFormat ef = new wExportFormat(Report);
+            ef.ShowDialog();
+        }
+        protected override bool CanExecutePrint(object obj)
+
+        {
+            return ReportDataList != null && ReportDataList.Count > 0;
+        }
+
+        protected override bool CanExecuteExport(object obj)
+        {
+            return ReportDataList != null && ReportDataList.Count > 0;
+        }
+        protected override bool CanExecutePreview(object obj)
+        {
+            return ReportDataList != null && ReportDataList.Count > 0;
+        }
+
+
+        public override void ExecutePreview(object obj)
+        {
+
+            GlobalClass.ReportName = "Item Wise Stock Report";
+            GlobalClass.ReportParams = "";// string.Format("From Date : {0} To {1}", FDate.ToString("MM/dd/yyyy"), TDate.ToString("MM/dd/yyyy"));
+
+            Report.PrintSettings.PrintPageMargin = new Thickness(30);
+            Report.PrintSettings.AllowColumnWidthFitToPrintPage = false;
+            
+            Report.ShowPrintPreview();
+        }
+
+        public override void ExecutePrint(object obj)
+        {
+
+            GlobalClass.ReportName = "Item Wise Stock Report";
+            GlobalClass.ReportParams = "";// string.Format("From Date : {0} To {1}", FDate.ToString("MM/dd/yyyy"), TDate.ToString("MM/dd/yyyy"));
+
+            Report.PrintSettings.PrintPageMargin = new Thickness(30);
+            Report.PrintSettings.AllowColumnWidthFitToPrintPage = false;
+            Report.Print();
+        }
+        #endregion
     }
 }

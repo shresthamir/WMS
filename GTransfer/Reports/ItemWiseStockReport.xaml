@@ -20,27 +20,37 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Border Style="{StaticResource PlainBackground}">
-            <StackPanel Orientation="Vertical">
-                <StackPanel Orientation="Horizontal">
-                    <Label Content='Warehouse :' Width="80"></Label>
-                    <ComboBox  Width="670" Height="25" Style="{DynamicResource VirtualizationKey}" ItemsSource="{Binding warehouseList}" IsEditable="True"  SelectedValue="{Binding selectedWarehouse}"></ComboBox>
-
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="280"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Vertical">
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content='Warehouse :' Width="80"></Label>
+                        <ComboBox  Width="670" Height="25" Style="{DynamicResource VirtualizationKey}" ItemsSource="{Binding warehouseList}" IsEditable="True"  SelectedValue="{Binding selectedWarehouse}"></ComboBox>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Barcode :" Width="80"></Label>
+                        <TextBox Height="25" Width="670"  Text="{Binding Barcode,UpdateSourceTrigger=PropertyChanged}">
+                            <TextBox.InputBindings>
+                                <KeyBinding Key="Enter" Command="{Binding BarcodeChangeCommand}" />
+                            </TextBox.InputBindings>
+                        </TextBox>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content='Item :' Width="80"></Label>
+                        <ComboBox Width="120" Height="25" Style="{DynamicResource VirtualizationKey}" ItemsSource="{Binding ItemList}" IsEditable="True" DisplayMemberPath="MENUCODE" SelectedValuePath="MCODE" SelectedValue="{Binding selectedItem}"></ComboBox>
+                        <ComboBox Width="550" Height="25" Style="{DynamicResource VirtualizationKey}" ItemsSource="{Binding ItemList}" IsEditable="True" DisplayMemberPath="DESCA" SelectedValuePath="MCODE" SelectedValue="{Binding selectedItem}" ></ComboBox>                        
+                    </StackPanel>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="Barcode :" Width="80"></Label>
-                    <TextBox Height="25" Width="670"  Text="{Binding Barcode,UpdateSourceTrigger=PropertyChanged}">
-                        <TextBox.InputBindings>
-                            <KeyBinding Key="Enter" Command="{Binding BarcodeChangeCommand}" />
-                        </TextBox.InputBindings>
-                    </TextBox>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Style="{StaticResource NewButton}" Width="60" Height="40" Command="{Binding LoadDataCommand}" >Load</Button>
+                    <Button Style="{StaticResource NewButton}" Width="60" Height="40" Command="{Binding PreviewCommand}" >Preview</Button>
+                    <Button Style="{StaticResource NewButton}" Width="60" Height="40" Command="{Binding PrintCommand}" >Print</Button>
+                    <Button Style="{StaticResource NewButton}" Width="60" Height="40" Command="{Binding ExportCommand}">Export</Button>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <Label Content='Item :' Width="80"></Label>
-                    <ComboBox Width="120" Height="25" Style="{DynamicResource VirtualizationKey}" ItemsSource="{Binding ItemList}" IsEditable="True" DisplayMemberPath="MENUCODE" SelectedValuePath="MCODE" SelectedValue="{Binding selectedItem}"></ComboBox>
-                    <ComboBox Width="550" Height="25" Style="{DynamicResource VirtualizationKey}" ItemsSource="{Binding ItemList}" IsEditable="True" DisplayMemberPath="DESCA" SelectedValuePath="MCODE" SelectedValue="{Binding selectedItem}" ></ComboBox>
-                    <Button Style="{StaticResource NewButton}"  Margin=" 10 0" Content="Load" Width="60" Height="30" Command="{Binding LoadReportCommand}"  />
-                </StackPanel>
-            </StackPanel>
+            </Grid>
         </Border>
         <Border  Style="{StaticResource TransparentBackground}" Grid.Row="1" >
             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
@@ -75,23 +85,22 @@
                             </sf:GridSummaryRow.SummaryColumns>
                         </sf:GridSummaryRow>
                     </sf:SfDataGrid.GroupSummaryRows>
-                    <!--<sf:SfDataGrid.PrintSettings>
-                    <sf:PrintSettings  
-                                                
-                                                
-                                               
-                                                PrintPageHeaderTemplate="{StaticResource PrintHeaderTemplate}">                        
-                    </sf:PrintSettings>
-                </sf:SfDataGrid.PrintSettings>-->
+                    <sf:SfDataGrid.PrintSettings>
+                        <sf:PrintSettings  PrintPageFooterHeight="20"
+                                                PrintPageHeaderHeight="85"                                                
+                                                PrintPageFooterTemplate="{StaticResource PrintFooterTemplate}"
+                                                PrintPageHeaderTemplate="{StaticResource PrintHeaderTemplate}">
+                        </sf:PrintSettings>
+                    </sf:SfDataGrid.PrintSettings>
                     <sf:SfDataGrid.Columns>
                         <!--<sf:GridTextColumn AllowEditing="False"  MappingName="Sno" Width="50" HeaderText="Sn."></sf:GridTextColumn>-->
                         <!--<sf:GridTextColumn AllowEditing="False"  MappingName="Bcode" HeaderText="Barcode"></sf:GridTextColumn>-->
-                        <sf:GridTextColumn Width="120" AllowEditing="False" MappingName="MENUCODE" HeaderText="Item Code"></sf:GridTextColumn>
+                        <sf:GridTextColumn Width="100" AllowEditing="False" MappingName="MENUCODE" HeaderText="Item Code"></sf:GridTextColumn>
 
                         <sf:GridTextColumn Width="250" AllowEditing="False"   MappingName="DESCA" HeaderText="Item Name"></sf:GridTextColumn>
-                        <sf:GridTextColumn Width="150" AllowEditing="False"   MappingName="Warehouse" HeaderText="Warehouse"></sf:GridTextColumn>
-                        <sf:GridTextColumn Width="120" AllowEditing="False" MappingName="LocationCode" HeaderText="Location"></sf:GridTextColumn>
-                        <sf:GridTextColumn Width="120" TextAlignment="Right" AllowEditing="False" MappingName="Stock" HeaderText="Stock"></sf:GridTextColumn>
+                        <sf:GridTextColumn Width="100" AllowEditing="False"   MappingName="Warehouse" HeaderText="Warehouse"></sf:GridTextColumn>
+                        <sf:GridTextColumn Width="100" AllowEditing="False" MappingName="LocationCode" HeaderText="Location"></sf:GridTextColumn>
+                        <sf:GridTextColumn Width="100" TextAlignment="Right" AllowEditing="False" MappingName="Stock" HeaderText="Stock"></sf:GridTextColumn>
 
 
                     </sf:SfDataGrid.Columns>

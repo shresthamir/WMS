@@ -37,7 +37,12 @@ namespace GTransfer.Library
             TELA = "03-78729199",
             VAT = "001628790784"
         };
-
+        public static string ReportName { get; set; }
+        public static string ReportParams { get; set; }
+        public static string PrintTime { get; set; }
+        public static string CompanyName { get { return company.NAME; } }
+        public static string CompanyAddress { get { return company.ADDRESS; } }
+        public static string CompanyPan { get { return company.VAT; } }
         static GlobalClass()
         {
             SqlConnectionStringBuilder sbr = new SqlConnectionStringBuilder();

@@ -23,7 +23,7 @@ namespace GTransfer.Reports
         public StockMovementReport()
         {
             InitializeComponent();
-            this.DataContext = new StockMovementReportVM();
+            this.DataContext = new StockMovementReportVM(Report);
         }
     }
 }

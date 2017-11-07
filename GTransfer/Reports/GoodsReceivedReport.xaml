@@ -9,27 +9,38 @@
              d:DesignHeight="768" d:DesignWidth="1366">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="100"/>
+            <RowDefinition Height="80"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Border Style="{StaticResource PlainBackground}">
-            <StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="Shipment No"/>
-                    <TextBox Width="120" Text="{Binding ShipmentNo}"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="280"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Shipment No"/>
+                        <TextBox Width="120" Text="{Binding ShipmentNo}"/>
 
-                    <CheckBox x:Name="chkLocationWise" IsChecked="{Binding LocationWise}" Content="Location Wise" VerticalAlignment="Center" Margin="20 0"/>
+                        <CheckBox x:Name="chkLocationWise" IsChecked="{Binding LocationWise}" Content="Location Wise" VerticalAlignment="Center" Margin="20 0"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="From Date"/>
+                        <DatePicker Width="120" Height="26" SelectedDate="{Binding FDate}"/>
+
+                        <Label Margin="50 0 0 0" Content="To Date"/>
+                        <DatePicker Width="120" Height="26" SelectedDate="{Binding TDate}"/>
+                        
+                    </StackPanel>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="From Date"/>
-                    <DatePicker Width="120" Height="26" SelectedDate="{Binding FDate}"/>
-
-                    <Label Margin="50 0 0 0" Content="To Date"/>
-                    <DatePicker Width="120" Height="26" SelectedDate="{Binding TDate}"/>
-
-                    <Button Style="{StaticResource NewButton}" Command="{Binding LoadDataCommand}" Content="Load" Width="60" Height="30"></Button>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Style="{StaticResource NewButton}" Width="60" Height="40" Command="{Binding LoadDataCommand}" >Load</Button>
+                    <Button Style="{StaticResource NewButton}" Width="60" Height="40" Command="{Binding PreviewCommand}" >Preview</Button>
+                    <Button Style="{StaticResource NewButton}" Width="60" Height="40" Command="{Binding PrintCommand}" >Print</Button>
+                    <Button Style="{StaticResource NewButton}" Width="60" Height="40" Command="{Binding ExportCommand}">Export</Button>
                 </StackPanel>
-            </StackPanel>
+            </Grid>
         </Border>
 
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
@@ -54,11 +65,15 @@
                         </ResourceDictionary.MergedDictionaries>
                     </ResourceDictionary>
                 </sf:SfDataGrid.Resources>
-                <!--<sf:SfDataGrid.PrintSettings>
-                    <sf:PrintSettings          
-                                                PrintPageHeaderTemplate="{StaticResource PrintHeaderTemplate}">                        
+
+                <sf:SfDataGrid.PrintSettings>
+                    <sf:PrintSettings  PrintPageFooterHeight="20"
+                                                PrintPageHeaderHeight="85"                                                
+                                                PrintPageFooterTemplate="{StaticResource PrintFooterTemplate}"
+                                                PrintPageHeaderTemplate="{StaticResource PrintHeaderTemplate}">
                     </sf:PrintSettings>
-                </sf:SfDataGrid.PrintSettings>-->
+                </sf:SfDataGrid.PrintSettings>
+             
                 <sf:SfDataGrid.GroupColumnDescriptions>
                     <sf:GroupColumnDescription ColumnName="VCHRNO" />
                 </sf:SfDataGrid.GroupColumnDescriptions>
@@ -66,11 +81,11 @@
                     <sf:GridTextColumn AllowEditing="False" Width="70"  MappingName="VCHRNO" HeaderText="PI No"/>
                     <sf:GridTextColumn AllowEditing="False" Width="80"  MappingName="Date" HeaderText="Date"/>
                     <sf:GridTextColumn AllowEditing="False" Width="100" MappingName="REFORDBILL" HeaderText="Shipment No"/>
-                    <sf:GridTextColumn AllowEditing="False" Width="150" MappingName="MENUCODE" HeaderText="Item Code"/>
-                    <sf:GridTextColumn AllowEditing="False"             MappingName="DESCA" HeaderText="Item Name"/>
-                    <sf:GridTextColumn AllowEditing="False" Width="120" MappingName="UNIT" HeaderText="Unit"/>
-                    <sf:GridTextColumn AllowEditing="False" Width="120" MappingName="LocationCode" HeaderText="Location" IsHidden="{Binding ElementName=chkLocationWise, Path=IsChecked, Converter={StaticResource ReverseBool}}"/>
-                    <sf:GridTextColumn AllowEditing="False" Width="150" DisplayBinding="{Binding InQty, Converter={StaticResource HideZero}, ConverterParameter='NO_DECIMAL'}" HeaderText="Quantity" TextAlignment="Right"/>
+                    <sf:GridTextColumn AllowEditing="False" Width="110" MappingName="MENUCODE" HeaderText="Item Code"/>
+                    <sf:GridTextColumn AllowEditing="False" Width="250"            MappingName="DESCA" HeaderText="Item Name"/>
+                    <sf:GridTextColumn AllowEditing="False" Width="80" MappingName="UNIT" HeaderText="Unit"/>
+                    <sf:GridTextColumn AllowEditing="False" Width="80" MappingName="LocationCode" HeaderText="Location" IsHidden="{Binding ElementName=chkLocationWise, Path=IsChecked, Converter={StaticResource ReverseBool}}"/>
+                    <sf:GridTextColumn AllowEditing="False" Width="90" DisplayBinding="{Binding InQty, Converter={StaticResource HideZero}, ConverterParameter='NO_DECIMAL'}" HeaderText="Quantity" TextAlignment="Right"/>
                 </sf:SfDataGrid.Columns>
 
             </sf:SfDataGrid>

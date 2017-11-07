@@ -8,6 +8,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Dapper;
+using GTransfer.UserInterfaces;
+using System.Windows;
+using Syncfusion.UI.Xaml.Grid;
 
 namespace GTransfer.Reports
 {
@@ -24,17 +27,20 @@ namespace GTransfer.Reports
         public ObservableCollection<string> warehouseList { get { return _warehouseList; } set { _warehouseList = value; OnPropertyChanged("warehouseList"); } }
         public ObservableCollection<Location> LocationList { get { return _LocationList; } set { _LocationList = value; OnPropertyChanged("LocationList"); } }
         private ObservableCollection<ItemWiseStockModel> _ReportDataList;
+        private SfDataGrid Report;
+
         public ObservableCollection<ItemWiseStockModel> ReportDataList { get { return _ReportDataList; } set { _ReportDataList = value; OnPropertyChanged("ReportDataList"); } }
 
-        public RelayCommand LoadReportCommand { get { return new RelayCommand(ExecuteLoadReportCommand); } }
+        
 
 
 
-        public LocationWiseStockReportVM()
+        public LocationWiseStockReportVM(SfDataGrid _Report)
         {
+            Report = _Report;
             GetWarehouseList();
         }
-        private void ExecuteLoadReportCommand(object obj)
+        public override void LoadMethod(object obj)
         {
             if (string.IsNullOrEmpty(selectedLocation)) { selectedLocation = "%"; }
             if (string.IsNullOrEmpty(selectedWarehouse)) { selectedWarehouse = "%"; }
@@ -64,6 +70,55 @@ namespace GTransfer.Reports
                 LocationList = new ObservableCollection<Location>(con.Query<Location>("SELECT * FROM TBL_LOCATIONS where Warehouse='" + selectedWarehouse + "'and  Level=" + Settings.LocationLevelLimit));
             }
         }
+
+        #region PrintExport
+        public override void ExecuteExport(object obj)
+        {
+            GlobalClass.ReportName = "Location Wise Stock Report";
+
+            GlobalClass.ReportParams = "";// string.Format("From Date : {0} To {1}", FDate.ToString("MM/dd/yyyy"), TDate.ToString("MM/dd/yyyy"));
+
+            wExportFormat ef = new wExportFormat(Report);
+            ef.ShowDialog();
+        }
+        protected override bool CanExecutePrint(object obj)
+
+        {
+            return ReportDataList != null && ReportDataList.Count > 0;
+        }
+
+        protected override bool CanExecuteExport(object obj)
+        {
+            return ReportDataList != null && ReportDataList.Count > 0;
+        }
+        protected override bool CanExecutePreview(object obj)
+        {
+            return ReportDataList != null && ReportDataList.Count > 0;
+        }
+
+
+        public override void ExecutePreview(object obj)
+        {
+
+            GlobalClass.ReportName = "Location Wise Stock Report";
+            GlobalClass.ReportParams = "";// string.Format("From Date : {0} To {1}", FDate.ToString("MM/dd/yyyy"), TDate.ToString("MM/dd/yyyy"));
+
+            Report.PrintSettings.PrintPageMargin = new Thickness(30);
+            Report.PrintSettings.AllowColumnWidthFitToPrintPage = false;
+            Report.ShowPrintPreview();
+        }
+
+        public override void ExecutePrint(object obj)
+        {
+
+            GlobalClass.ReportName = "Location Wise Stock Report";
+            GlobalClass.ReportParams = "";// string.Format("From Date : {0} To {1}", FDate.ToString("MM/dd/yyyy"), TDate.ToString("MM/dd/yyyy"));
+
+            Report.PrintSettings.PrintPageMargin = new Thickness(30);
+            Report.PrintSettings.AllowColumnWidthFitToPrintPage = false;
+            Report.Print();
+        }
+        #endregion
     }
 
     class ItemWiseStockModel

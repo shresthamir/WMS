@@ -47,8 +47,8 @@ namespace GTransfer.ViewModels
                     var result = con.Query<locationT>(@"select SLog.MCODE, MI.MENUCODE, MI.DESCA, SLog.Unit, L.LocationCode,L.LocationId,L.Warehouse, ISNULL(LB.Balance, 0) ActualStock, SLog.Quantity OutQty, SLog.RealQty_IN InQty from [tblStockInVerificationLog] SLog 
                                                   JOIN MENUITEM MI ON SLog.MCODE = MI.MCODE
                                                   JOIN TBL_LOCATIONS L ON L.LocationId = SLog.LocationId
-                                                  LEFT JOIN vwLocationStockBalance LB ON SLog.MCODE = LB.MCODE AND SLog.Unit = LB.Unit AND SLog.LocationId = LB.LocationId
-                                                   WHERE DeviceId = '" + DeviceId + "' AND DeviceTrnId = '" + LTCode + "' ORDER BY LocationCode, MENUCODE");
+                                                  LEFT JOIN vwLocationStockBalance LB ON SLog.MCODE = LB.MCODE AND SLog.Unit = LB.Unit AND SLog.LocationId = LB.LocationId  AND L.Warehouse = LB.Warehouse
+                                                  WHERE DeviceId = '" + DeviceId + "' AND DeviceTrnId = '" + LTCode + "' ORDER BY LocationCode, MENUCODE");
                     if (result != null)
                     {
                         LTItemList = new ObservableCollection<locationT>(result);
