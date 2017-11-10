@@ -399,6 +399,93 @@ UNION ALL select MCODE,ALTUNIT,CONFACTOR,RATE,CASE WHEN ISDEFAULT=1 THEN 2 ELSE 
         #endregion
 
     }
+    public class Item : BaseModel
+    {
+        private string _MCODE;
 
-    
+        public string MCODE
+        {
+            get { return _MCODE; }
+            set { _MCODE = value; }
+        }
+        private string _MENUCODE;
+
+        public string MENUCODE
+        {
+            get { return _MENUCODE; }
+            set { _MENUCODE = (value == null) ? string.Empty : value; }
+        }
+        private string _DESCA;
+
+        public string DESCA
+        {
+            get { return _DESCA; }
+            set { _DESCA = value; }
+        }
+        private string _BARCODE;
+
+        public string BARCODE
+        {
+            get { return _BARCODE; }
+            set { _BARCODE = value; }
+        }
+        private decimal _RATE;
+
+        public decimal RATE
+        {
+            get { return _RATE; }
+            set { _RATE = value; }
+        }
+        private decimal _PRATE;
+
+        public decimal PRATE
+        {
+            get { return _PRATE; }
+            set { _PRATE = value; }
+        }
+        private string _UNIT;
+
+        public string UNIT
+        {
+            get { return _UNIT; }
+            set { _UNIT = value; }
+        }
+        private decimal _QUANTITY;
+
+        public decimal QUANTITY
+        {
+            get { return _QUANTITY; }
+            set { _QUANTITY = value; }
+        }
+        private decimal _QUANTITY2;
+
+        public decimal QUANTITY2
+        {
+            get { return _QUANTITY2; }
+            set { _QUANTITY2 = value; OnPropertyChanged("QUANTITY2"); }
+        }
+        private bool _ISVAT;
+
+        public bool ISVAT
+        {
+            get { return _ISVAT; }
+            set { _ISVAT = value; }
+        }
+        private bool _ISSERVICECHARGE;
+
+        public bool ISSERVICECHARGE
+        {
+            get { return _ISSERVICECHARGE; }
+            set { _ISSERVICECHARGE = value; }
+        }
+        private bool _IsCheckItem;
+
+        public bool IsCheckItem
+        {
+            get { return _IsCheckItem; }
+            set { _IsCheckItem = value; }
+        }
+        public string sagun { get; set; }
+    }
+
 }

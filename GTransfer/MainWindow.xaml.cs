@@ -152,5 +152,13 @@ namespace GTransfer
             la.Title = "Goods Received Summary";
             LayDocPane.Children.Add(la);
         }
+        private void StockSettlementEntry_Click(object sender, RoutedEventArgs e)
+        {
+            LayoutAnchorable la = new LayoutAnchorable();
+            la.Content = new UserInterfaces.StockSettlementEntry();
+            la.IsActive = true;
+            la.Title = "Stock Settlement Entry";
+            LayDocPane.Children.Add(la);
+        }
     }
 }

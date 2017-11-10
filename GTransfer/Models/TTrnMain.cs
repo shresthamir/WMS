@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using GTransfer.Models;
 using GTransfer.Library;
 using System.Collections.ObjectModel;
+using System.Data.SqlClient;
 
 namespace GTransfer.Models
 {
@@ -436,6 +437,54 @@ namespace GTransfer.Models
 
     public class TrnMain : TTrnMain
     {
+        private ObservableCollection<TrnProd> _TrnProdList;
+        public ObservableCollection<TrnProd> ProdList { get { return _TrnProdList; } set { _TrnProdList = value; OnPropertyChanged("ProdList"); } }
+        private string _mode = "NOTHING";
+        public string Mode
+        {
+            get { return _mode; }
+            set { _mode = value; OnPropertyChanged("Mode"); }
+        }
+        public void ReCalculateBill()
+        {
+
+            TOTAMNT = ProdList.Where(x => x.ADDTIONALROW == 0).Sum(x => x.AMOUNT);
+            int i = 0;
+            foreach (TrnProd prod in ProdList)
+            {
+                i++; prod.SNO = i;
+
+               
+                if (prod.ISVAT == 1)
+                {
+                    prod.TAXABLE = prod.AMOUNT - prod.DISCOUNT + prod.SERVICETAX; prod.VAT = prod.TAXABLE * Settings.VatRate; prod.NONTAXABLE = 0;
+                    if (prod.REALQTY_IN == 0)
+                    { prod.NCRATE = prod.PRATE; }
+                    else
+                    { prod.NCRATE = prod.TAXABLE / prod.REALQTY_IN; }
+                }
+                else
+                {
+                    prod.TAXABLE = 0; prod.VAT = 0; prod.NONTAXABLE = prod.AMOUNT - prod.DISCOUNT + prod.SERVICETAX;
+                    if (prod.REALQTY_IN == 0)
+                    { prod.NCRATE = prod.PRATE; }
+                    else
+                    { prod.NCRATE = prod.NONTAXABLE / prod.REALQTY_IN; }
+                }
+               
+                prod.NETAMOUNT = prod.TAXABLE + prod.NONTAXABLE + prod.SERVICETAX + prod.VAT;
+
+            }
+            TOTAMNT = ProdList.Sum(x => x.AMOUNT);
+            DCAMNT = ProdList.Sum(x => x.DISCOUNT);
+            ServiceCharge = ProdList.Sum(x => x.SERVICETAX);
+            TAXABLE = ProdList.Sum(x => x.TAXABLE);
+            NONTAXABLE = ProdList.Sum(x => x.NONTAXABLE);
+            VATAMNT = ProdList.Sum(x => x.VAT);
+            NETWITHOUTROUNDOFF = ProdList.Sum(x => x.NETAMOUNT);
+            NETAMNT = Math.Round(NETWITHOUTROUNDOFF, 2);
+        }
+
     }
 
 }
