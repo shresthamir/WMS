@@ -92,7 +92,7 @@
                 </sf:SfDataGrid.GroupColumnDescriptions>
                 <sf:SfDataGrid.Columns>
                     <sf:GridTextColumn AllowEditing="False" MappingName="OrderNo" Width="70" HeaderText="Spt. No"></sf:GridTextColumn>
-                    <sf:GridTextColumn AllowEditing="False" MappingName="MENUCODE" Width="100" HeaderText="Item Cpde"></sf:GridTextColumn>
+                    <sf:GridTextColumn AllowEditing="False" MappingName="MENUCODE" Width="100" HeaderText="Item Code"></sf:GridTextColumn>
                     <sf:GridTextColumn AllowEditing="False" MappingName="DESCA" Width="250" HeaderText="Item Name"></sf:GridTextColumn>
                     <sf:GridTextColumn AllowEditing="False" MappingName="UNIT" Width="80" HeaderText="Unit"></sf:GridTextColumn>
                     <sf:GridTextColumn AllowEditing="False" MappingName="Warehouse" Width="120" HeaderText="Warehouse"></sf:GridTextColumn>

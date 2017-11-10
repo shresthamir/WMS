@@ -30,9 +30,9 @@
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                     <Button  Width="60" Height="28" Style="{StaticResource NewButton}" Command="{Binding SavePickingCommand}" CommandParameter="{Binding ElementName=Report}" Content="Save" Visibility="{Binding IsloadMode,Converter={StaticResource ReverseBoolToVisibility}}"/>
-                    <Button  Width="60" Height="28" Style="{StaticResource NewButton}" Command="{Binding PreviewCommand}"  Content="Print" Visibility="{Binding IsloadMode,Converter={StaticResource BoolToVisibility}}"/>
+                    <Button  Width="60" Height="28" Style="{StaticResource NewButton}" Command="{Binding PreviewCommand}"  Content="Preview" Visibility="{Binding IsloadMode,Converter={StaticResource BoolToVisibility}}"/>
                     <Button  Width="60" Height="28" Style="{StaticResource NewButton}" Command="{Binding PrintCommand}" Content="Print" Visibility="{Binding IsloadMode,Converter={StaticResource BoolToVisibility}}"/>
-                    <Button  Width="60" Height="28" Style="{StaticResource NewButton}" Command="{Binding ExportCommand}"  Content="Print" Visibility="{Binding IsloadMode,Converter={StaticResource BoolToVisibility}}"/>
+                    <Button  Width="60" Height="28" Style="{StaticResource NewButton}" Command="{Binding ExportCommand}"  Content="Export" Visibility="{Binding IsloadMode,Converter={StaticResource BoolToVisibility}}"/>
                     <Button  Width="60" Height="28" Style="{StaticResource NewButton}" Command="{Binding CancelCommand}" Content="Cancel"/>
                 </StackPanel>
             </Grid>

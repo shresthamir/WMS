@@ -34,6 +34,7 @@
                     <MenuItem Name="stockMovementReport" Header="Stock Movement Report" Click="stockMovementReport_Click"/>
                     <MenuItem Name="locationWiseItem" Header="Item Wise Stock Report" Click="locationWiseItem_Click"/>
                     <MenuItem Name="ItemWiseLocation" Header="Location Wise Stock Report" Click="ItemWiseLocation_Click"/>
+                    <MenuItem Name="PickingListVariance" Header="Picking List Variance" Click="PickingListVariance_Click"/>
                 </MenuItem>
             </Menu>
         </Border>

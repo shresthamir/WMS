@@ -222,7 +222,7 @@ JOIN RMD_TRNMAIN M ON L.OrderNo = M.REFORDBILL
 JOIN RMD_TRNPROD P ON M.VCHRNO = P.VCHRNO AND M.DIVISION = P.DIVISION AND M.PhiscalID = P.PhiscalID AND L.MCODE = P.MCODE AND L.Unit = P.UNIT
 WHERE L.OrderNo = @REFORDBILL", main, tran);
 
-                        conn.Execute("UPDATE tblStockInVerificationLog SET [Status] = 1 WHERE OrderNo = @OrderNo AND SyncDate <= @SyncDate", new { OrderNo = main.REFORDBILL, SyncDate = _AllProdList.First().MFGDATE }, tran);
+                        conn.Execute("UPDATE tblStockInVerificationLog SET [Status] = 1 WHERE OrderNo = @OrderNo AND SyncDate <= @SyncDate", new { OrderNo = main.REFORDBILL, SyncDate = _AllProdList.Max(x=>x.MFGDATE) }, tran);
 
                         conn.Execute("UPDATE RMD_SEQUENCES SET CURNO = CURNO + 1 WHERE VNAME = @VNAME AND DIV = @DIV", new { VNAME = "Purchase", DIV = GlobalClass.DIVISION }, tran);
                         tran.Commit();

@@ -152,5 +152,14 @@ namespace GTransfer
             la.Title = "Goods Received Summary";
             LayDocPane.Children.Add(la);
         }
+
+        private void PickingListVariance_Click(object sender, RoutedEventArgs e)
+        {
+            LayoutAnchorable la = new LayoutAnchorable();
+            la.Content = new Reports.PickingListVariance();
+            la.IsActive = true;
+            la.Title = "Picking List Variance";
+            LayDocPane.Children.Add(la);
+        }
     }
 }
