@@ -73,6 +73,7 @@ namespace GTransfer.Library
                 DataConnectionString = sbr.ConnectionString;
                 using (SqlConnection conn = new SqlConnection(DataConnectionString))
                     Warehouse = conn.ExecuteScalar<string>("SELECT NAME FROM RMD_WAREHOUSE WHERE DIVISION = '" + DIVISION + "'");
+                CreateDefaultLocations();
             }
         }
 
@@ -367,6 +368,46 @@ namespace GTransfer.Library
             catch (Exception ex)
             {
                 throw ex;
+            }
+        }
+
+
+        static void CreateDefaultLocations()
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(DataConnectionString))
+                {
+                    var Warehouses = conn.Query<TWarehouse>("SELECT NAME, DIVISION FROM RMD_WAREHOUSE").ToList();
+                    foreach (TWarehouse w in Warehouses)
+                    {
+                        CreateDefaultLocation(w, "VL", "Virtual Location", conn);
+                        CreateDefaultLocation(w, "ML", "Missing Location", conn);
+                        CreateDefaultLocation(w, "DL", "Damage Location", conn);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+        static void CreateDefaultLocation(TWarehouse w, string Prefix, string LocationName, SqlConnection conn)
+        {
+            if (conn.ExecuteScalar<int>("SELECT COUNT(*) FROM TBL_LOCATIONS WHERE WAREHOUSE = '" + w.NAME + "' AND LocationCode LIKE '" + Prefix + "%'") == 0)
+            {
+                Location l = new Location
+                {
+                    LocationId = conn.ExecuteScalar("SELECT ISNULL(MAX(CAST(LocationId AS Int)),0)+1 FROM TBL_LOCATIONS WHERE LocationId NOT LIKE '%[a-z]%' AND ISNUMERIC(LocationId) = 1").ToString(),
+                    LocationCode = Prefix + w.DIVISION + new Random().Next(999),
+                    LocationName = LocationName,
+                    ParentLocation = w.NAME,
+                    Level = 4,
+                    Warehouse = w.NAME
+                };
+                l.Path = l.Warehouse + "\\" + l.LocationCode;
+                conn.Execute("INSERT INTO TBL_LOCATIONS(LocationId,LocationCode, LocationName, ParentLocation, Level, Warehouse, Path,cellRowCode) VALUES(@LocationId,@LocationCode,@LocationName,@ParentLocation,@Level,@Warehouse, @Path,@cellRowCode)", l);
             }
         }
     }

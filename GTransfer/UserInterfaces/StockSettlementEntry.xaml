@@ -211,7 +211,7 @@
                     </StackPanel>
                     <DockPanel Grid.Row="4" Grid.Column="1" Width="400" HorizontalAlignment="Left">
                         <Label Content="Warehouse :" Width="80" Margin="30 0 0 0"></Label>
-                        <ComboBox  IsEditable="True" Width="150"  ItemsSource="{Binding  WarehouseList}" DisplayMemberPath="NAME" SelectedValuePath="NAME" SelectedValue="{Binding SelectedWarehouse}" HorizontalAlignment="Left"  />
+                        <ComboBox IsEditable="True" Width="150"  ItemsSource="{Binding  WarehouseList}" DisplayMemberPath="NAME" SelectedValuePath="NAME" SelectedValue="{Binding SelectedWarehouse}" HorizontalAlignment="Left"  />
                     </DockPanel>
                     <Button  VerticalAlignment="Bottom" Style="{StaticResource RoundCornerButton}" Grid.Column="1" Grid.Row="2" Grid.RowSpan="2"    HorizontalAlignment="Right" Content="Add" Width="60" Height="60" Command="{Binding AddCommand}" ToolTip="Add Ctrl+A" >
                         <Button.InputBindings>

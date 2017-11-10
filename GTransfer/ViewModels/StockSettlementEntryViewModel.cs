@@ -83,7 +83,7 @@ namespace GTransfer.ViewModels
             set
             {
                 _BARCODE = value;
-                OnPropertyChanged("BARCODE");              
+                OnPropertyChanged("BARCODE");
             }
         }
         public Product _productObj;
@@ -118,7 +118,8 @@ namespace GTransfer.ViewModels
                 _selectedAltUnit = value; OnPropertyChanged("SelectedAltUnit");
                 if (value != null)
                 {
-                    if (TrnProdObj == null) {
+                    if (TrnProdObj == null)
+                    {
                         TrnProdObj = new TrnProd();
                         TrnProdObj.PropertyChanged += TrnProdObj_PropertyChanged;
                     }
@@ -132,7 +133,7 @@ namespace GTransfer.ViewModels
 
         private void TrnProdObj_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "RATE" || e.PropertyName=="Quantity") { TrnProdObj.CalculateNormal(); }
+            if (e.PropertyName == "RATE" || e.PropertyName == "Quantity") { TrnProdObj.CalculateNormal(); }
         }
         #endregion
 
@@ -168,8 +169,8 @@ namespace GTransfer.ViewModels
 
 
         #region Relaycommand
-      //  public RelayCommand ItemCodeFocusLostEvent { get; set; }
-      //  public RelayCommand BarcodeFocusLostEvent { get; set; }
+        //  public RelayCommand ItemCodeFocusLostEvent { get; set; }
+        //  public RelayCommand BarcodeFocusLostEvent { get; set; }
         public RelayCommand LoadGridData { get; set; }
         public RelayCommand BarcodeChangeCommand { get { return new RelayCommand(ExecuteBarcodeChangeCommand); } }
 
@@ -304,7 +305,6 @@ namespace GTransfer.ViewModels
             {
                 MessageBox.Show("Please select the warehouse from the list", "Alert Message", MessageBoxButton.OK, MessageBoxImage.Error);
                 //FocusedElement = (short)FocusElements.warehouse;
-
                 return;
             }
 
@@ -315,7 +315,6 @@ namespace GTransfer.ViewModels
                 {
                     MessageBox.Show("Item  is already in the Table below", "Duplicate Data", MessageBoxButton.OK, MessageBoxImage.Error);
                     // FocusedElement = (short)FocusElements.ItemCode;
-
                     return;
                 }
             }
@@ -328,14 +327,13 @@ namespace GTransfer.ViewModels
             TrnProdObj.REALRATE = SelectedAltUnit.CONFACTOR * TrnProdObj.RATE;
             TrnProdObj.PRATE = productObj.PRATE_A;
             TrnMainBaseModelObj.ProdList.Add(TrnProdObj);
-             TrnMainBaseModelObj.ReCalculateBill();
+            TrnMainBaseModelObj.ReCalculateBill();
             // GetMultiWarehousePerTransactionSetting(TrnMainBaseModelObj.ProdList, SelectedWarehouse);
             TrnProdObj = null;
             SelectedProductMCODE = null;
             SelectedAltUnit = null;
             BARCODE = null;
             //SelectedWarehouse = null;
-
             // FocusedElement = (short)FocusElements.ItemCode;
 
         }
@@ -375,7 +373,8 @@ namespace GTransfer.ViewModels
                     con.Execute(que, TrnMainBaseModelObj, tran);
                     tran.Commit();
                 }
-                catch (Exception ex) {
+                catch (Exception ex)
+                {
                     tran.Rollback();
                     MessageBox.Show(ex.Message);
                 }
@@ -391,25 +390,25 @@ namespace GTransfer.ViewModels
             string Div;
 
             Tmode = "NEW";
-            TrnMainBaseModelObj.DIVISION = string.IsNullOrEmpty(TrnMainBaseModelObj.DIVISION)? GlobalClass.DIVISION : TrnMainBaseModelObj.DIVISION;
+            TrnMainBaseModelObj.DIVISION = string.IsNullOrEmpty(TrnMainBaseModelObj.DIVISION) ? GlobalClass.DIVISION : TrnMainBaseModelObj.DIVISION;            
             TrnMainBaseModelObj.TRNDATE = DateTime.Now;
+            TrnProdObj = new TrnProd();
+            TrnProdObj.PropertyChanged += TrnProdObj_PropertyChanged;
             string vnum = string.Empty;
             string vno = string.Empty;
             string chalanNo = string.Empty;
             GlobalClass.GetBillSequences("StockSettlement", TrnMainBaseModelObj.VoucherPrefix, TrnMainBaseModelObj.VoucherName, TrnMainBaseModelObj.VoucherPrefix, ref vno, ref chalanNo, ref vnum);
             TrnMainBaseModelObj.VCHRNO = vno;
             TrnMainBaseModelObj.VNUM = vnum;
-
-
+            SelectedWarehouse = GlobalClass.Warehouse;
             //FocusedElement = (short)FocusElements.RefNo;
-
         }
 
 
         public override bool UndoMethod(object obj)
         {
 
-            TrnMainBaseModelObj = new TrnMain() {DIVISION=GlobalClass.DIVISION };
+            TrnMainBaseModelObj = new TrnMain() { DIVISION = GlobalClass.DIVISION };
             TrnMainBaseModelObj.VoucherPrefix = "ST";
             TrnMainBaseModelObj.VoucherType = VoucherTypeEnum.StockSettlement;
             TrnMainBaseModelObj.ProdList = new ObservableCollection<TrnProd>();
@@ -442,13 +441,20 @@ namespace GTransfer.ViewModels
 
             //For TrnUser and EditedUser
 
-            if (string.IsNullOrEmpty(TrnMainBaseModelObj.TRNUSER)) { TrnMainBaseModelObj.TRNUSER = GlobalClass.CurrentUser.UNAME; }
-            else { TrnMainBaseModelObj.EditUser = GlobalClass.CurrentUser.UNAME; }
+            if (string.IsNullOrEmpty(TrnMainBaseModelObj.TRNUSER))
+            {
+                TrnMainBaseModelObj.TRNUSER = GlobalClass.CurrentUser.UNAME;
+            }
+            else
+            {
+                TrnMainBaseModelObj.EditUser = GlobalClass.CurrentUser.UNAME;
+            }
 
             //  TrnMainBaseModelObj.TERMINAL = GlobalClass.TERMINAL;
-            TrnMainBaseModelObj.EDATE = DateTime.Today;
+            TrnMainBaseModelObj.EDATE = TrnMainBaseModelObj.TRNDATE = DateTime.Today;
             TrnMainBaseModelObj.TRN_DATE = DateTime.Today;
             TrnMainBaseModelObj.TRNMODE = SelectedSettlementMode.DESCRIPTION;
+            TrnMainBaseModelObj.TRNTIME = DateTime.Now.ToString("hh:mm tt");
             TrnMainBaseModelObj.PhiscalID = GlobalClass.CurFiscalYear.ToString();
             foreach (var tp in TrnMainBaseModelObj.ProdList)
             {
@@ -482,7 +488,7 @@ namespace GTransfer.ViewModels
                     {
 
                         string que;
-                       
+
                         que = @"Delete from RMD_TRNPROD where Vchrno=@VCHRNO and Division =@DIVISION AND PHISCALID = @PHISCALID;";
                         con.Execute(que, TrnMainBaseModelObj, tran);
                         que = @"Delete from RMD_TRNMAIN where Vchrno=@VCHRNO and Division =@DIVISION AND PHISCALID = @PHISCALID;";
@@ -493,34 +499,31 @@ namespace GTransfer.ViewModels
                     }
                     if (Tmode == "NEW")
                     {
-                        TrnMainBaseModelObj.VCHRNO = con.ExecuteScalar<string>(
-    @"IF EXISTS (SELECT * FROM RMD_SEQUENCES WHERE VNAME = @VNAME AND DIV = @DIV)
-	SELECT 'ST' + CAST(CurNo AS VARCHAR) FROM RMD_SEQUENCES WHERE VNAME = @VNAME AND DIV = @DIV
-ELSE 
-	INSERT INTO RMD_SEQUENCES(VNAME, AUTO, Start, CurNo, DIV, DIVISION, VoucherType, VoucherName)
-	OUTPUT 'ST' + CAST(inserted.CurNo AS VARCHAR)
-	VALUES (@VNAME, 1, 1, 1, @DIV, @DIV, 'ST', 'StockSettlement')", new { VNAME = "StockSettlement", DIV = TrnMainBaseModelObj.DIVISION }, tran);
+                        string vno = string.Empty;
+                        string chalanNo = string.Empty;
+                        string vnum = string.Empty;
+                        GlobalClass.GetBillSequences("StockSettlement", TrnMainBaseModelObj.VoucherPrefix, TrnMainBaseModelObj.VoucherName, TrnMainBaseModelObj.VoucherPrefix, ref vno, ref chalanNo, ref vnum);
+                        TrnMainBaseModelObj.VCHRNO = vno;
+                        TrnMainBaseModelObj.VNUM = vnum;
                     }
                     string qstring = "insert into RMD_TRNMAIN (VCHRNO,DIVISION,CHALANNO,TRNDATE,BSDATE,TRNTIME,TOTAMNT,DCAMNT,DCRATE,VATAMNT,NETAMNT,ADVANCE,TRNMODE,BILLTO,BILLTOADD,TRNUSER,VATBILL,DELIVERYDATE,DELIVERYTIME,ORDERS,REFORDBILL,INDDIS,CREBATE,CREDIT,DUEDATE,TRNAC,PARAC,PARTRNAMNT,RETTO,REFBILL,CHEQUENO,CHEQUEDATE,REMARKS,POST,POSTUSER,FPOSTUSER,TERMINAL,SHIFT,EXPORT,CHOLDER,CARDNO,EditUser,MEMBERNO,MEMBERNAME,EDITED,TAXABLE,NONTAXABLE,VMODE,BILLTOTEL,BILLTOMOB,TRN_DATE,BS_DATE,STAX,TOTALCASH,TOTALCREDIT,TOTALCREDITCARD,TOTALGIFTVOUCHER,TENDER,CHANGE,CardTranID,ReturnVchrID,TranID,VoucherStatus,VoucherType,PRESCRIBEBY,DISPENSEBY,RECEIVEBY,Edate,STATUS,CONFIRMEDBY,CONFIRMEDTIME,PhiscalID,Stamp,ROUNDOFF,Customer_Count,DBUSER,HOSTID)" +
                               "Values(@VCHRNO,@DIVISION,@CHALANNO,@TRNDATE,@BSDATE,@TRNTIME,@TOTAMNT,@DCAMNT,@DCRATE,@VATAMNT,@NETAMNT,@ADVANCE,@TRNMODE,@BILLTO,@BILLTOADD,@TRNUSER,@VATBILL,@DELIVERYDATE,@DELIVERYTIME,@ORDERS,@REFORDBILL,@INDDIS,@CREBATE,@CREDIT,@DUEDATE,@TRNAC,@PARAC,@PARTRNAMNT,@RETTO,@REFBILL,@CHEQUENO,@CHEQUEDATE,@REMARKS,@POST,@POSTUSER,@FPOSTUSER,@TERMINAL,@SHIFT,@EXPORT,@CHOLDER,@CARDNO,@EditUser,@MEMBERNO,@MEMBERNAME,@EDITED,@TAXABLE,@NONTAXABLE,@VMODE,@BILLTOTEL,@BILLTOMOB,@TRN_DATE,@BS_DATE,@STAX,@TOTALCASH,@TOTALCREDIT,@TOTALCREDITCARD,@TOTALGIFTVOUCHER,@TENDER,@CHANGE,@CardTranID,@ReturnVchrID,@TranID,@VoucherStatus,@VoucherType,@PRESCRIBEBY,@DISPENSEBY,@RECEIVEBY,@Edate,@STATUS,@CONFIRMEDBY,@CONFIRMEDTIME,@PhiscalID,@Stamp,@ROUNDOFF,@Customer_Count,@DBUSER,@HOSTID)";
 
                     con.Execute(qstring, TrnMainBaseModelObj, tran);
                     string qstring2 = @"insert into RMD_TRNPROD (VCHRNO,CHALANNO,DIVISION,MCODE,UNIT,Quantity,RealQty,AltQty,RATE,AMOUNT,DISCOUNT,VAT,REALRATE,EXPORT,IDIS,OPQTY,REALQTY_IN,ALTQTY_IN,WAREHOUSE,REFBILLQTY,SPRICE,EXPDATE,REFOPBILL,ALTUNIT,TRNAC,PRATE,VRATE,ALTRATE,VPRATE,VSRATE,TAXABLE,NONTAXABLE,INVRATE,EXRATE,NCRATE,CRATE,SNO,CUSTOM,WEIGHT,DRATE,CARTON,INVOICENO,ISSUENO,BC,GENERIC,BATCH,MFGDATE,MANUFACTURER,SERVICETAX,BCODEID,VoucherType,SALESMANID,PhiscalID,STAMP)" +
-                 "VALUES(@VCHRNO,@CHALANNO,@DIVISION,@MCODE,@UNIT,@Quantity,@RealQty,@AltQty,@RATE,@AMOUNT,@DISCOUNT,@VAT,@REALRATE,@EXPORT,@IDIS,@OPQTY,@REALQTY_IN,@ALTQTY_IN,@WAREHOUSE,@REFBILLQTY,@SPRICE,@EXPDATE,@REFOPBILL,@ALTUNIT,@TRNAC,@PRATE,@VRATE,@ALTRATE,@VPRATE,@VSRATE,@TAXABLE,@NONTAXABLE,@INVRATE,@EXRATE,@NCRATE,@CRATE,@SNO,@CUSTOM,@WEIGHT,@DRATE,@CARTON,@INVOICENO,@ISSUENO,@BC,@GENERIC,@BATCH,@MFGDATE,@MANUFACTURER,@SERVICETAX,@BCODEID,@VoucherType,@SALESMANID,@PhiscalID,@STAMP)";
+                 "VALUES('" + TrnMainBaseModelObj.VCHRNO + "', @CHALANNO, @DIVISION, @MCODE, @UNIT, @Quantity, @RealQty, @AltQty, @RATE, @AMOUNT, @DISCOUNT,@VAT,@REALRATE,@EXPORT,@IDIS,@OPQTY,@REALQTY_IN,@ALTQTY_IN,@WAREHOUSE,@REFBILLQTY,@SPRICE,@EXPDATE,@REFOPBILL,@ALTUNIT,@TRNAC,@PRATE,@VRATE,@ALTRATE,@VPRATE,@VSRATE,@TAXABLE,@NONTAXABLE,@INVRATE,@EXRATE,@NCRATE,@CRATE,@SNO,@CUSTOM,@WEIGHT,@DRATE,@CARTON,@INVOICENO,@ISSUENO,@BC,@GENERIC,@BATCH,@MFGDATE,@MANUFACTURER,@SERVICETAX,@BCODEID,@VoucherType,@SALESMANID,@PhiscalID,@STAMP)";
                     int RowsEffected = con.Execute(qstring2, TrnMainBaseModelObj.ProdList, tran);
-                   
+
                     foreach (var tp in TrnMainBaseModelObj.ProdList)
                     {
-                        int id =Convert.ToInt32(con.ExecuteScalar("SELECT ISNULL(MAX(RecId),0)+1 FROM RMD_TRNPROD_DETAIL",null,tran));
-                        string prod_detail_query = @" SET IDENTITY_INSERT RMD_TRNPROD_DETAIL ON  INSERT INTO RMD_TRNPROD_DETAIL(RecId,VCHRNO,DIVISION,PhiscalID,MCODE,UNIT,Warehouse,LocationId,InQty,OutQty,SNO)VALUES(@RecId,@VCHRNO,@DIVISION,@PhiscalID,@MCODE,@UNIT,@Warehouse,@LocationId,@InQty,@OutQty,@SNO)  SET IDENTITY_INSERT RMD_TRNPROD_DETAIL OFF";
-                        con.Execute(prod_detail_query, new { RecId = id, VCHRNO = TrnMainBaseModelObj.VCHRNO, DIVISION = TrnMainBaseModelObj.DIVISION, PhiscalID = TrnMainBaseModelObj.PhiscalID, MCODE = tp.MCODE, UNIT = tp.UNIT, Warehouse = tp.WAREHOUSE, LocationId = 0, InQty = tp.REALQTY_IN, OutQty = tp.RealQty, SNO = 0 }, tran);
-                    
-                       
+                        string LocationId = con.ExecuteScalar<string>("SELECT LocationId FROM TBL_LOCATIONS WHERE Warehouse = '" + tp.WAREHOUSE + "' AND LocationCode LIKE '" + SelectedSettlementMode.LocationPrefix + "%'", transaction: tran);
+                        string prod_detail_query = @"INSERT INTO RMD_TRNPROD_DETAIL(VCHRNO, DIVISION, PhiscalID, MCODE, UNIT, Warehouse, LocationId, InQty, OutQty, SNO)VALUES(@VCHRNO, @DIVISION, @PhiscalID, @MCODE, @UNIT, @Warehouse, @LocationId, @InQty, @OutQty, @SNO)";
+                        con.Execute(prod_detail_query, new { VCHRNO = TrnMainBaseModelObj.VCHRNO, DIVISION = TrnMainBaseModelObj.DIVISION, PhiscalID = TrnMainBaseModelObj.PhiscalID, MCODE = tp.MCODE, UNIT = tp.UNIT, Warehouse = tp.WAREHOUSE, LocationId = LocationId, InQty = tp.REALQTY_IN, OutQty = tp.RealQty, SNO = 0 }, tran);
                     }
-                   
+
                     if (Tmode == "NEW")
                     {
-                        con.Execute("UPDATE RMD_SEQUENCES SET CURNO = CURNO + 1 WHERE VNAME = @VNAME AND DIV = @DIV", new { VNAME = "StockSettlement", DIV = TrnMainBaseModelObj.DIVISION }, tran);
+                        con.Execute("UPDATE RMD_SEQUENCES SET CURNO = CURNO + 1 WHERE VNAME = @VNAME AND DIVISION = @DIVISION", new { VNAME = "StockSettlement", DIVISION = TrnMainBaseModelObj.DIVISION }, tran);
 
                     }
                     tran.Commit();
@@ -528,7 +531,10 @@ ELSE
                     MessageBox.Show("Records are saved sucessfully...");
                     UndoMethod(null);
                 }
-                catch (Exception e) { tran.Rollback(); MessageBox.Show("Error :" + e); }
+                catch (Exception e)
+                {
+                    tran.Rollback(); MessageBox.Show("Error :" + e);
+                }
 
             }
 
@@ -544,7 +550,7 @@ ELSE
         public override void LoadMethod(object obj)
         {
             string vchrno = TrnMainBaseModelObj.VCHRNO = "ST" + TrnMainBaseModelObj.VNUM;
-            string division = string.IsNullOrEmpty(TrnMainBaseModelObj.DIVISION)? GlobalClass.DIVISION : TrnMainBaseModelObj.DIVISION;
+            string division = string.IsNullOrEmpty(TrnMainBaseModelObj.DIVISION) ? GlobalClass.DIVISION : TrnMainBaseModelObj.DIVISION;
             using (SqlConnection con = new SqlConnection(GlobalClass.DataConnectionString))
             {
                 con.Open();
@@ -607,16 +613,20 @@ ELSE
         #region methods
         private void changeItemEvent(bool IsbarcodeChangeEvent = false)
         {
-           
+
             _productObj = new Product(SelectedProductMCODE, true);
             if (_productObj.AlternateUnits != null && _productObj.AlternateUnits.Count > 0) SelectedAltUnit = _productObj.AlternateUnits.First();
             _BARCODE = _productObj.BARCODE;
 
-            if (TrnProdObj == null) { TrnProdObj = new TrnProd(); TrnProdObj.PropertyChanged += TrnProdObj_PropertyChanged; }
+            if (TrnProdObj == null)
+            {
+                TrnProdObj = new TrnProd();
+                TrnProdObj.PropertyChanged += TrnProdObj_PropertyChanged;
+            }
             TrnProdObj.MENUCODE = _productObj.MENUCODE;
             TrnProdObj.ITEMDESC = _productObj.DESCA;
             TrnProdObj.MCODE = _productObj.MCODE;
-           
+
             TrnProdObj.ALTUNIT = _productObj.BASEUNIT;
             TrnProdObj.UNIT = SelectedAltUnit.ALTUNIT;
             // TrnProdObj.RATE = _productObj.RATE_A;
@@ -648,7 +658,7 @@ ELSE
                 }
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
-          
+
         }
         private void GetComboBoxList()
         {
@@ -658,8 +668,8 @@ ELSE
                 {
                     con.Open();
                     ProductList = new ObservableCollection<Item>(con.Query<Item>("select MENUCODE,MCODE,DESCA,BASEUNIT UNIT,PRATE_A PRATE,RATE_A RATE FROM MENUITEM WHERE TYPE='A'"));
-                    WarehouseList = new ObservableCollection<TWarehouse>(con.Query<TWarehouse>("select NAME from RMD_WAREHOUSE"));
-                     SettlementModeList = new ObservableCollection<TSettlementMode>(con.Query<TSettlementMode>("select * from settlementmode"));
+                    WarehouseList = new ObservableCollection<TWarehouse>(con.Query<TWarehouse>("select NAME from RMD_WAREHOUSE WHERE DIVISION = '" + GlobalClass.DIVISION + "'"));
+                    SettlementModeList = new ObservableCollection<TSettlementMode>(con.Query<TSettlementMode>("select * from settlementmode"));
                     Divisions = new ObservableCollection<Division>(con.Query<Division>("select * from division"));
                 }
             }

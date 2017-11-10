@@ -6,7 +6,7 @@ using System.Text;
 
 namespace GTransfer.Models
 {
-    public class UnitAndQty:BaseModel
+    public class UnitAndQty : BaseModel
     {
         string _Unit;
         double _Qty;
@@ -50,12 +50,13 @@ namespace GTransfer.Models
     public class Unit : BaseModel
     {
         string _UNITS;
-        public string UNITS { get { return _UNITS; }set { _UNITS = value;OnPropertyChanged("UNITS"); } }
+        public string UNITS { get { return _UNITS; } set { _UNITS = value; OnPropertyChanged("UNITS"); } }
     }
     public class TSettlementMode : BaseModel
     {
         private string _DESCRIPTION;
         private byte _DECREASE;
+        private string _LocationPrefix;
 
         public byte DECREASE
         {
@@ -67,6 +68,12 @@ namespace GTransfer.Models
         {
             get { return _DESCRIPTION; }
             set { _DESCRIPTION = value; OnPropertyChanged("DESCRIPTION"); }
+        }
+
+        public string LocationPrefix
+        {
+            get { return _LocationPrefix; }
+            set { _LocationPrefix = value; OnPropertyChanged("LocationPrefix"); }
         }
     }
 }

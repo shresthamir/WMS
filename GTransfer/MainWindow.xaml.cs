@@ -160,6 +160,8 @@ namespace GTransfer
             la.IsActive = true;
             la.Title = "Picking List Variance";
             LayDocPane.Children.Add(la);
+        }
+
         private void StockSettlementEntry_Click(object sender, RoutedEventArgs e)
         {
             LayoutAnchorable la = new LayoutAnchorable();
@@ -167,7 +169,6 @@ namespace GTransfer
             la.IsActive = true;
             la.Title = "Stock Settlement Entry";
             LayDocPane.Children.Add(la);
-        }
-        }
+        }        
     }
 }

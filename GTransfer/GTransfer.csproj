@@ -241,6 +241,9 @@
     <Compile Include="UserInterfaces\requisitionEntry.xaml.cs">
       <DependentUpon>requisitionEntry.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserInterfaces\StockSettlementEntry.xaml.cs">
+      <DependentUpon>StockSettlementEntry.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserInterfaces\wExportFormat.xaml.cs">
       <DependentUpon>wExportFormat.xaml</DependentUpon>
     </Compile>
@@ -251,6 +254,7 @@
     <Compile Include="ViewModels\ItemLocationMappingViewModel.cs" />
     <Compile Include="ViewModels\LocationEntryViewModel.cs" />
     <Compile Include="ViewModels\RequisitionEntryViewModel.cs" />
+    <Compile Include="ViewModels\StockSettlementEntryViewModel.cs" />
     <Page Include="Controls\ucActionBar.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -354,6 +358,10 @@
     <Page Include="UserInterfaces\requisitionEntry.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserInterfaces\StockSettlementEntry.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="UserInterfaces\wExportFormat.xaml">
       <Generator>MSBuild:Compile</Generator>
