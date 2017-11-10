@@ -21,6 +21,7 @@
                     <MenuItem Name="RequisitionEntry" Header="Requisition Entry" Click="RequisitionEntry_Click"></MenuItem>
                     <MenuItem Name="PickingListEntry" Header="Picking List" Click="PickingListEntry_Click"></MenuItem>
                     <MenuItem Name="LocationTransferEntry" Header="Location Transfer" Click="LoationTransferEntry_Click"></MenuItem>
+                    <MenuItem Name="StockSettlementEntry" Header="Stock Settlement Entry" Click="StockSettlementEntry_Click"></MenuItem>
                 </MenuItem>
                 <MenuItem Name="Utilities" Header="Utilities">
                     <MenuItem Name="SRL" Header="Shipment Receive Log" Click="SRL_Click"/>

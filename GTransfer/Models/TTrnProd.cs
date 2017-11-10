@@ -236,5 +236,25 @@ namespace GTransfer.Models
 
         public decimal VarianceQty { get { return _VarianceQty; } set { _VarianceQty = value; OnPropertyChanged("VarianceQty"); } }
         public decimal OrderQty { get { return _OrderQty; } set { _OrderQty = value; OnPropertyChanged("OrderQty"); } }
+
+        public void CalculateNormal()
+        {
+
+            AMOUNT = Quantity * RATE;
+            if (ISVAT == 1)
+            {
+                TAXABLE = (AMOUNT - DISCOUNT) + SERVICETAX;
+                NONTAXABLE = 0;
+                VAT = TAXABLE * Settings.VatRate;
+            }
+            else
+            {
+                TAXABLE = 0;
+                NONTAXABLE = (AMOUNT - DISCOUNT) + SERVICETAX;
+            }
+            NETAMOUNT = TAXABLE + NONTAXABLE + VAT;
+
+
+        }
     }
 }

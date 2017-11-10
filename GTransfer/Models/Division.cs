@@ -60,4 +60,50 @@ namespace GTransfer.Models
 
     
     }
+    public class TWarehouse : BaseModel
+    {
+        #region Members
+        private string _NAME;
+        private string _ADDRESS;
+        private string _PHONE;
+        private string _REMARKS;
+        private bool _ISDEFAULT;
+        private byte _IsAdjustment;
+        private string _AdjustmentAcc;
+        private byte _ISVIRTUAL;
+        private string _VIRTUAL_PARENT;
+        private string _DIVISION;
+        private short _ISDELWARE;
+        private int _WID;
+        #endregion
+
+        #region Properties
+        public string NAME { get { return _NAME; } set { _NAME = value; OnPropertyChanged("NAME"); } }
+
+        public string ADDRESS { get { return _ADDRESS; } set { _ADDRESS = value; OnPropertyChanged("ADDRESS"); } }
+
+        public string PHONE { get { return _PHONE; } set { _PHONE = value; OnPropertyChanged("PHONE"); } }
+
+        public string REMARKS { get { return _REMARKS; } set { _REMARKS = value; OnPropertyChanged("REMARKS"); } }
+
+        public bool ISDEFAULT { get { return _ISDEFAULT; } set { _ISDEFAULT = value; OnPropertyChanged("ISDEFAULT"); } }
+
+        public byte IsAdjustment { get { return _IsAdjustment; } set { _IsAdjustment = value; OnPropertyChanged("IsAdjustment"); } }
+
+        public string AdjustmentAcc { get { return _AdjustmentAcc; } set { _AdjustmentAcc = value; OnPropertyChanged("AdjustmentAcc"); } }
+
+        public byte ISVIRTUAL { get { return _ISVIRTUAL; } set { _ISVIRTUAL = value; OnPropertyChanged("ISVIRTUAL"); } }
+
+        public string VIRTUAL_PARENT { get { return _VIRTUAL_PARENT; } set { _VIRTUAL_PARENT = value; OnPropertyChanged("VIRTUAL_PARENT"); } }
+
+        public string DIVISION { get { return _DIVISION; } set { _DIVISION = value; OnPropertyChanged("DIVISION"); } }
+
+        public short ISDELWARE { get { return _ISDELWARE; } set { _ISDELWARE = value; OnPropertyChanged("ISDELWARE"); } }
+
+        public int WID { get { return _WID; } set { _WID = value; OnPropertyChanged("WID"); } }
+
+        #endregion
+
+        public TWarehouse() { }
+    }
 }

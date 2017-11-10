@@ -52,4 +52,21 @@ namespace GTransfer.Models
         string _UNITS;
         public string UNITS { get { return _UNITS; }set { _UNITS = value;OnPropertyChanged("UNITS"); } }
     }
+    public class TSettlementMode : BaseModel
+    {
+        private string _DESCRIPTION;
+        private byte _DECREASE;
+
+        public byte DECREASE
+        {
+            get { return _DECREASE; }
+            set { _DECREASE = value; OnPropertyChanged("DECREASE"); }
+        }
+
+        public string DESCRIPTION
+        {
+            get { return _DESCRIPTION; }
+            set { _DESCRIPTION = value; OnPropertyChanged("DESCRIPTION"); }
+        }
     }
+}
