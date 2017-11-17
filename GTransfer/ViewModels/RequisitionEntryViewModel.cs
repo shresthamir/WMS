@@ -279,7 +279,7 @@ namespace GTransfer.ViewModels
         }
 
         #region importFromExcel
-        private DataTable getExcelDataToDataTable()
+        public static DataTable getExcelDataToDataTable()
         {
             DataTable dt = new DataTable();
             OpenFileDialog openFile = new OpenFileDialog();
@@ -331,7 +331,6 @@ namespace GTransfer.ViewModels
                     }
                     strData = strData.Remove(strData.Length - 1, 1);
                     dt.Rows.Add(strData.Split('|'));
-
                 }
                 excelBook.Close(true, null, null);
                 excelApp.Quit();

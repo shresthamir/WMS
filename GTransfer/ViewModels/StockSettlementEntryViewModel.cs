@@ -9,11 +9,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using Dapper;
+using System.Data;
+using System.ComponentModel;
 
 namespace GTransfer.ViewModels
 {
     class StockSettlementEntryViewModel : BaseViewModel
     {
+        private BackgroundWorker worker;
         #region member and properties
         private TSettlementMode _SelectedSettlementMode;
 
@@ -173,6 +176,64 @@ namespace GTransfer.ViewModels
         //  public RelayCommand BarcodeFocusLostEvent { get; set; }
         public RelayCommand LoadGridData { get; set; }
         public RelayCommand BarcodeChangeCommand { get { return new RelayCommand(ExecuteBarcodeChangeCommand); } }
+        public RelayCommand ExcelImportEvent { get { return new RelayCommand(ImportDataFromExcel); } }
+
+        private void ImportDataFromExcel(object obj)
+        {
+            TrnMainBaseModelObj.ProdList.Clear();
+            worker = new BackgroundWorker();
+            worker.DoWork += worker_DoWork;
+            worker.RunWorkerAsync();
+            
+        }
+
+        private void worker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            try
+            {
+                DataTable dt = RequisitionEntryViewModel.getExcelDataToDataTable();
+                if (dt.Columns["Barcode"] == null || dt.Columns["Quantity"] == null || dt.Columns["Warehouse"] == null)
+                {
+                    MessageBox.Show("Invalid excel format.", "Stock Settlement", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                using (SqlConnection conn = new SqlConnection(GlobalClass.DataConnectionString))
+                {
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        if (row["Barcode"] == null || row["Barcode"].ToString() == string.Empty)
+                            continue;
+                        var Product = conn.Query(@"SELECT A.BCODE, A.MCODE, A.UNIT, A.SUPCODE, A.SRATE, B.DESCA, B.MENUCODE, B.BASEUNIT, B.PRATE_A, B.PRATE_B, B.RATE_A, B.VAT
+FROM BARCODE A inner join Menuitem B on A.mcode = B.mcode WHERE A.BCODE = '" + row["Barcode"] + "'").FirstOrDefault();
+                        TrnProd tPod = new TrnProd
+                        {
+                            MCODE = Product.MCODE,
+                            MENUCODE = Product.MENUCODE,
+                            ITEMDESC = Product.DESCA,
+                            BC = Product.BCODE,
+                            UNIT = Product.UNIT,
+                            RATE = Product.SRATE,
+                            REALRATE = Product.SRATE,
+                            ISVAT = Product.VAT,
+                            Quantity = Convert.ToDecimal(row["Quantity"]),
+                            WAREHOUSE = row["Warehouse"].ToString(),
+                        };
+                        tPod.CalculateNormal();
+                        App.Current.Dispatcher.Invoke((Action)delegate // <--- HERE
+                        {
+                            TrnMainBaseModelObj.ProdList.Add(tPod);
+                        });                       
+                        
+                    }
+                    TrnMainBaseModelObj.ReCalculateBill();
+                }
+            }
+            catch (Exception ex)
+            {
+                GlobalClass.ProcessError(ex, "Report Load Failure");
+            }
+        }
 
         private void ExecuteBarcodeChangeCommand(object obj)
         {
@@ -390,7 +451,7 @@ namespace GTransfer.ViewModels
             string Div;
 
             Tmode = "NEW";
-            TrnMainBaseModelObj.DIVISION = string.IsNullOrEmpty(TrnMainBaseModelObj.DIVISION) ? GlobalClass.DIVISION : TrnMainBaseModelObj.DIVISION;            
+            TrnMainBaseModelObj.DIVISION = string.IsNullOrEmpty(TrnMainBaseModelObj.DIVISION) ? GlobalClass.DIVISION : TrnMainBaseModelObj.DIVISION;
             TrnMainBaseModelObj.TRNDATE = DateTime.Now;
             TrnProdObj = new TrnProd();
             TrnProdObj.PropertyChanged += TrnProdObj_PropertyChanged;
@@ -613,9 +674,9 @@ namespace GTransfer.ViewModels
         #region methods
         private void changeItemEvent(bool IsbarcodeChangeEvent = false)
         {
-
             _productObj = new Product(SelectedProductMCODE, true);
-            if (_productObj.AlternateUnits != null && _productObj.AlternateUnits.Count > 0) SelectedAltUnit = _productObj.AlternateUnits.First();
+            if (_productObj.AlternateUnits != null && _productObj.AlternateUnits.Count > 0)
+                SelectedAltUnit = _productObj.AlternateUnits.First();
             _BARCODE = _productObj.BARCODE;
 
             if (TrnProdObj == null)
@@ -642,6 +703,7 @@ namespace GTransfer.ViewModels
                 TrnProdObj.BC = _BARCODE;
             }
         }
+
         public void GetProductFromBarcode()
         {
             try
@@ -651,7 +713,11 @@ namespace GTransfer.ViewModels
                     using (SqlConnection con = new SqlConnection(GlobalClass.DataConnectionString))
                     {
                         var result = con.Query("SELECT A.BCODE,A.MCODE,A.UNIT,A.ISSUENO,A.EDATE,A.BCODEID,A.SUPCODE,A.BATCHNO,A.EXPIRY,A.REMARKS,A.INVNO,A.DIV,A.FYEAR,A.SRATE,B.DESCA FROM BARCODE A inner join Menuitem B on A.mcode=B.mcode WHERE A.BCODE='" + TrnProdObj.BC + "'").FirstOrDefault();
-                        if (result == null) { MessageBox.Show("Invalid Barcode"); return; }
+                        if (result == null)
+                        {
+                            MessageBox.Show("Invalid Barcode");
+                            return;
+                        }
                         SelectedProductMCODE = result.MCODE;
                         changeItemEvent(true);
                     }
